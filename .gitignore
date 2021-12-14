@@ -1,0 +1,11 @@
+# Editor directories and files
+.idea
+
+# Environment
+.env
+
+# Node.js
+node_modules
+
+# Hardhat
+cache
