@@ -1,4 +1,3 @@
-// contracts/TreasureNFT.sol
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
@@ -6,6 +5,9 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
+/**
+ * @dev Implementation of Openzeppelin's ERC721Enumerable and ERC721URIStorage contracts
+ */
 contract TreasureNFT is ERC721Enumerable, ERC721URIStorage {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
@@ -44,16 +46,20 @@ contract TreasureNFT is ERC721Enumerable, ERC721URIStorage {
         return super.tokenURI(tokenId);
     }
 
+    /**
+     * @dev Function for mint new tokens
+     * @param owner The owner of the token being minted
+     * @param tokenUri The URI of the token being minted
+     * @return tokenId The ID of the token minted
+     */
     function mintTresure(address owner, string memory tokenUri)
         public
-        returns (uint256)
+        returns (uint256 tokenId)
     {
         _tokenIds.increment();
 
-        uint256 tokenId = _tokenIds.current();
+        tokenId = _tokenIds.current();
         _mint(owner, tokenId);
         _setTokenURI(tokenId, tokenUri);
-
-        return tokenId;
     }
 }
