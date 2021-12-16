@@ -1,11 +1,4 @@
-<h1 align="center">Echoes Of The Past - User Interface</h1>
-
-<br>
-
-## Requirements
-* NPM
-
-<br>
+# user-interface
 
 ## Project setup
 ```

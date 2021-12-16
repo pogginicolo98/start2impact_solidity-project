@@ -1,5 +1,11 @@
 <template>
   <div id="app">
+    <div id="nav">
+        <b-button variant="primary">123</b-button>
+        <b-button variant="secondary">123</b-button>
+      <router-link to="/">Home</router-link> |
+      <router-link to="/about">About</router-link>
+    </div>
     <router-view />
   </div>
 </template>
