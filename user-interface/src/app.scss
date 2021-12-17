@@ -1,7 +1,13 @@
-// Define variable defaults
 $body-bg: #F5E1C0;
 $body-color: #574038;
+$primary: #574038;
+$secondary: #86092C;
+$info: #F5E1C0;
 
-// Then import Bootstrap an BootstrapVue SCSS files (order is important)
+$theme-colors: (
+  primary: $primary,
+  secondary: $secondary,
+  info: $info,
+);
+
 @import 'node_modules/bootstrap/scss/bootstrap.scss';
-@import 'node_modules/bootstrap-vue/src/index.scss';

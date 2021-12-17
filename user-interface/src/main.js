@@ -1,13 +1,18 @@
 import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
-import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
-import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
+import "bootstrap/dist/css/bootstrap.min.css"
+import "bootstrap"
 import './app.scss'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faRocket } from '@fortawesome/free-solid-svg-icons'
+import { faGithub, faLinkedinIn } from '@fortawesome/free-brands-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-Vue.use(BootstrapVue)
-Vue.use(IconsPlugin)
+library.add(faRocket,faGithub, faLinkedinIn);
+
+Vue.component('font-awesome-icon', FontAwesomeIcon);
+
 Vue.config.productionTip = false;
 
 new Vue({

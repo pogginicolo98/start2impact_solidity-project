@@ -1,34 +1,27 @@
 <template>
   <div id="app">
-    <div id="nav">
-        <b-button variant="primary">123</b-button>
-        <b-button variant="secondary">123</b-button>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
+    <NavbarComponent />
     <router-view />
+    <FooterComponent />
   </div>
 </template>
 
+<script>
+  // @ is an alias to /src
+  import NavbarComponent from "@/components/Navbar.vue";
+  import FooterComponent from "@/components/Footer.vue";
+
+  export default {
+    name: "App",
+    components: {
+      NavbarComponent,
+      FooterComponent,
+    }
+  }
+</script>
+
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-}
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
+  html, body {
+    height: 100%;
+  }
 </style>
