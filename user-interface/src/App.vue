@@ -1,8 +1,9 @@
 <template>
   <div id="app">
     <NavbarComponent :metamaskDetected="metamaskDetected"
+                     :metamaskConnected="metamaskConnected"
                      :connectBtnText="connectBtnText"
-                     @connectMetamask="connectMetamask()" />
+                     @connect-metamask="connectMetamask()" />
     <router-view />
     <FooterComponent />
   </div>
@@ -31,6 +32,9 @@
     computed: {
       metamaskDetected() {
         return this.provider !== null;
+      },
+      metamaskConnected() {
+        return this.userAccount !== null;
       },
       connectBtnText() {
         const address =
