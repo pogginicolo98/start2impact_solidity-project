@@ -4,12 +4,11 @@
       <h1 class="mb-3">Ropsten WISP token faucet</h1>
       <h5>Receive 1000 WISP per request</h5>
     </div>
-    <div class="position-absolute top-50 start-50 translate-middle"
-         v-if="!metamaskConnected">
+    <div class="position-absolute top-50 start-50 translate-middle">
          <div class="box">
            <div class="row justify-content-center mt-4">
              <div class="col-10">
-               <form novalidate @submit.prevent="onSubmit">
+               <form novalidate @submit.prevent="handleRequest">
                  <div class="mb-3">
                    <label for="addressInput" class="form-label">Enter your Ropsten address</label>
                    <input type="text" class="form-control text-center" id="addressInput" v-model="requestAddress">
@@ -24,7 +23,7 @@
 </template>
 
 <script>
-  // @ is an alias to /src
+  import { mapGetters } from "vuex";
 
   export default {
     name: "Faucet",
@@ -34,14 +33,18 @@
       }
     },
     computed: {
+      ...mapGetters({
+        wallet: "getWallet",
+        web3Instance: "getWeb3Instance",
+      }),
       metamaskConnected() {
-        return this.$wallet.address !== null;
-      },
+        return this.wallet && this.wallet.address;
+      }
     },
     methods: {
-      onSubmit() {
-        if (this.validate() && this.welcomeChest && this.$wallet.address) {
-          this.welcomeChest.methods.request(this.requestAddress).send({from: this.$wallet.address})
+      handleRequest() {
+        if (this.validate() && this.welcomeChest && this.wallet.address) {
+          this.welcomeChest.methods.request(this.requestAddress).send({from: this.wallet.address})
             .then(receipt => {
               console.log(receipt);
             });
@@ -56,10 +59,10 @@
       }
     },
     created() {
-      if(this.$wallet.provider) {
+      if(this.metamaskConnected) {
         let Interface = require("../../../smart-contracts/artifacts/contracts/WelcomeChest.sol/WelcomeChest.json");
         let Address = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
-        this.welcomeChest = new this.$web3.eth.Contract(Interface.abi, Address);
+        this.welcomeChest = new this.web3Instance.eth.Contract(Interface.abi, Address);
       }
     }
   };

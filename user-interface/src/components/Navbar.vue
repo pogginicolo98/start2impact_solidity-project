@@ -8,8 +8,8 @@
                            src="../assets/logo.png">
         </router-link>
         <div class="mx-auto"
-             v-show="false">
-             <div class="navbar-nav">
+             v-show="metamaskConnected">
+             <div class="navbar-nav pe-4">
                <router-link class="nav-link"
                             :to="{ name: 'Marketplace' }"
                             >Marketplace
@@ -25,8 +25,7 @@
              </div>
         </div>
         <button class="btn btn-primary btn-nav px-4 ms-auto"
-                :class="{'disabled': false}"
-                @click="handleConnect()"
+                @click="handleConnect"
                 >{{ connectBtnText }}
         </button>
       </div>
@@ -41,8 +40,7 @@
     name: "NavbarComponent",
     computed: {
       ...mapGetters({
-        wallet: "getWallet",
-        isMobileMenu: "getMobileMenu",
+        wallet: "getWallet"
       }),
       connectBtnText() {
         const address =
@@ -54,8 +52,11 @@
           const str2 = String(address).slice(address.length - 4, address.length);
           return `${str1}...${str2}`;
         }
-        return "Connect";
+        return "Connect Metamask";
       },
+      metamaskConnected() {
+        return this.wallet && this.wallet.address;
+      }
     },
     methods: {
       handleConnect() {
