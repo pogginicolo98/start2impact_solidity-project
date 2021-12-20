@@ -1,5 +1,6 @@
 // Only requiring hardhat-waffle here because it depends on hardhat-ethers so adding both isn't necessary.
 require("@nomiclabs/hardhat-waffle");
+require('hardhat-docgen');
 require('dotenv').config();
 
 const { API_URL, PRIVATE_KEY } = process.env;
@@ -17,5 +18,10 @@ module.exports = {
       url: API_URL,
       accounts: [`0x${PRIVATE_KEY}`]
     }
+  },
+  docgen: {
+    path: './docs',
+    clear: true,
+    runOnCompile: true,
   }
 };

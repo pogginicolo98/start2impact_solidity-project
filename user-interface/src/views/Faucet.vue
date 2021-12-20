@@ -9,10 +9,10 @@
          <div class="box">
            <div class="row justify-content-center mt-4">
              <div class="col-10">
-               <form>
+               <form novalidate @submit.prevent="onSubmit">
                  <div class="mb-3">
                    <label for="addressInput" class="form-label">Enter your Ropsten address</label>
-                   <input type="text" class="form-control text-center" id="addressInput">
+                   <input type="text" class="form-control text-center" id="addressInput" v-model="requestAddress">
                  </div>
                  <button type="submit" class="btn btn-primary mb-4">Send WISP</button>
                </form>
@@ -28,12 +28,40 @@
 
   export default {
     name: "Faucet",
-    props: {
-      metamaskConnected: {
-        type: Boolean,
-        required: true
+    data() {
+      return {
+        requestAddress: null,
+      }
+    },
+    computed: {
+      metamaskConnected() {
+        return this.$wallet.address !== null;
       },
     },
+    methods: {
+      onSubmit() {
+        if (this.validate() && this.welcomeChest && this.$wallet.address) {
+          this.welcomeChest.methods.request(this.requestAddress).send({from: this.$wallet.address})
+            .then(receipt => {
+              console.log(receipt);
+            });
+          this.welcomeChest.events.allEvents({fromBlock: "pending"}, (error, event) => {
+            console.log(event);
+          })
+          this.requestAddress = null;
+        }
+      },
+      validate() {
+        return true;
+      }
+    },
+    created() {
+      if(this.$wallet.provider) {
+        let Interface = require("../../../smart-contracts/artifacts/contracts/WelcomeChest.sol/WelcomeChest.json");
+        let Address = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
+        this.welcomeChest = new this.$web3.eth.Contract(Interface.abi, Address);
+      }
+    }
   };
 </script>
 

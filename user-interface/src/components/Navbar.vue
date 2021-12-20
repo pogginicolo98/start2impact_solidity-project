@@ -8,7 +8,7 @@
                            src="../assets/logo.png">
         </router-link>
         <div class="mx-auto"
-             v-show="metamaskConnected">
+             v-show="false">
              <div class="navbar-nav">
                <router-link class="nav-link"
                             :to="{ name: 'Marketplace' }"
@@ -25,8 +25,8 @@
              </div>
         </div>
         <button class="btn btn-primary btn-nav px-4 ms-auto"
-                :class="{'disabled': !metamaskDetected}"
-                @click="connectMetamaskHandler()"
+                :class="{'disabled': false}"
+                @click="handleConnect()"
                 >{{ connectBtnText }}
         </button>
       </div>
@@ -35,26 +35,32 @@
 </template>
 
 <script>
+  import { mapGetters } from "vuex";
+
   export default {
     name: "NavbarComponent",
-    props: {
-      metamaskDetected: {
-        type: Boolean,
-        required: true
+    computed: {
+      ...mapGetters({
+        wallet: "getWallet",
+        isMobileMenu: "getMobileMenu",
+      }),
+      connectBtnText() {
+        const address =
+          this.wallet && this.wallet.address
+            ? this.wallet.address.toString()
+            : "";
+        if (address && address.length === 42) {
+          const str1 = String(address).slice(0, 6);
+          const str2 = String(address).slice(address.length - 4, address.length);
+          return `${str1}...${str2}`;
+        }
+        return "Connect";
       },
-      metamaskConnected: {
-        type: Boolean,
-        required: true
-      },
-      connectBtnText: {
-        type: String,
-        required: true
-      }
     },
     methods: {
-      connectMetamaskHandler() {
-        this.$emit("connect-metamask");
-      }
+      handleConnect() {
+        this.$connectWallet();
+      },
     },
   }
 </script>
