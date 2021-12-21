@@ -23,7 +23,7 @@ Vue.use(connectWallet);
 library.add(faRocket,faGithub, faLinkedinIn);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 
-Vue.prototype.$web3 = "web3Instance";
+Vue.prototype.$web3 = web3Instance;
 
 Vue.config.productionTip = false;
 

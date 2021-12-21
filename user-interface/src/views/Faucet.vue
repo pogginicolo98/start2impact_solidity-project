@@ -30,6 +30,7 @@
     data() {
       return {
         requestAddress: null,
+        welcomeChest: null
       }
     },
     computed: {
@@ -43,7 +44,12 @@
     },
     methods: {
       handleRequest() {
-        if (this.validate() && this.welcomeChest && this.wallet.address) {
+        let Interface = require("../../../smart-contracts/artifacts/contracts/WelcomeChest.sol/WelcomeChest.json");
+        let Address = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
+        this.welcomeChest = new this.web3Instance.eth.Contract(Interface.abi, Address);
+        console.log("handleRequest");
+        if (this.welcomeChest != null && this.wallet.address != null) {
+          console.log("handleRequest1");
           this.welcomeChest.methods.request(this.requestAddress).send({from: this.wallet.address})
             .then(receipt => {
               console.log(receipt);
@@ -56,13 +62,6 @@
       },
       validate() {
         return true;
-      }
-    },
-    created() {
-      if(this.metamaskConnected) {
-        let Interface = require("../../../smart-contracts/artifacts/contracts/WelcomeChest.sol/WelcomeChest.json");
-        let Address = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
-        this.welcomeChest = new this.web3Instance.eth.Contract(Interface.abi, Address);
       }
     }
   };
