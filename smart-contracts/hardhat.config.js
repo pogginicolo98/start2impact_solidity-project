@@ -12,7 +12,11 @@ module.exports = {
   solidity: "0.8.0",
   networks: {
     hardhat: {
-      chainId: 1337  // Adaptation for development with Metamask
+      chainId: 1337,  // Adaptation for development with Metamask
+      mining: {
+        auto: false,
+        interval: 10000
+      }
     },
     ropsten: {
       url: API_URL,
