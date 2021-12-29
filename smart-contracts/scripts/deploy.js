@@ -25,6 +25,9 @@ async function main() {
   const _welcomeChest = await ethers.getContractFactory("WelcomeChest");
   const welcomeChest = await _welcomeChest.deploy(wispToken.address);
   console.log("WelcomeChest contract address:", welcomeChest.address);
+
+  const amount = ethers.utils.parseUnits("100000", 18);
+  await wispToken.transfer(welcomeChest.address, amount);
 }
 
 main()

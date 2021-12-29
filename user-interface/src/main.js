@@ -5,11 +5,8 @@ import store from "./store";
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap"
 import './app.scss'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faRocket } from '@fortawesome/free-solid-svg-icons'
-import { faGithub, faLinkedinIn } from '@fortawesome/free-brands-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import connectWallet from "./plugins/connectWallet";
+import Toasted from "vue-toasted";
 
 const Web3 = require("web3");
 const web3Instance = new Web3();
@@ -19,9 +16,13 @@ if (window.ethereum) {
 }
 
 Vue.use(connectWallet);
-
-library.add(faRocket,faGithub, faLinkedinIn);
-Vue.component('font-awesome-icon', FontAwesomeIcon);
+Vue.use(Toasted, {
+  position: "bottom-right",
+  duration: 8000,
+  className: "vue-toast rounded fw-bold",
+  iconPack: "fontawesome",
+  singleton: true
+});
 
 Vue.prototype.$web3 = web3Instance;
 

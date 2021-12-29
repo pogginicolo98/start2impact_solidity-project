@@ -138,9 +138,10 @@
             .on("receipt", receipt => {
               console.log(receipt);
               if (receipt.events.Sent.returnValues.to === to) {
-                console.log("event sent detected");
+                const amount = this.web3.utils.fromWei(receipt.events.Sent.returnValues.amount);
+                this.$toasted.show(`Sent ${amount} WISP`, {icon: "check" });
               } else {
-                console.log("event sent not detected");
+                this.$toasted.show(`Error`, {icon: "ban"});
               }
               this.formDisabled = false;
               this.setLoadingStatus("disable");
@@ -149,6 +150,7 @@
               console.log("error + receipt");
               console.log(error);
               console.log(receipt);
+              this.$toasted.show(`Error`, {icon: "ban"});
               this.formDisabled = false;
               this.setLoadingStatus("disable");
             });
