@@ -1,25 +1,29 @@
 <template>
   <div class="mint">
-    <div class="position-absolute top-50 start-50 translate-middle">
-      <div class="box">
-        <h1 class="mb-3">Mint</h1>
-        <h4>Next opening!</h4>
+    <div class="container mt-5">
+      <!-- Title -->
+      <div class="text-center">
+        <h1 class="mb-3">Create</h1>
+        <h5>Mint a new Treasure Chest NFT</h5>
       </div>
+
+      <!-- Form -->
+      <MintFormComponent />
     </div>
   </div>
 </template>
 
 <script>
-  // @ is an alias to /src
+  import MintFormComponent from "@/components/MintForm.vue";
 
   export default {
     name: "Mint",
+
+    components: {
+      MintFormComponent,
+    },
   };
 </script>
 
 <style scoped>
-  .box {
-    width: 22rem;
-    text-align: center;
-  }
 </style>

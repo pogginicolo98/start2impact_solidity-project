@@ -16,7 +16,7 @@
                </router-link>
                <router-link class="nav-link"
                             :to="{ name: 'Mint' }"
-                            >Mint
+                            >Create
                </router-link>
                <router-link class="nav-link"
                             :to="{ name: 'Faucet' }"

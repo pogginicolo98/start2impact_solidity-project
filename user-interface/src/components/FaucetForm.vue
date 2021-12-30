@@ -52,7 +52,6 @@
           value: null,
           errors: [],
         },
-        destAddress1: null
       }
     },
 
@@ -98,7 +97,7 @@
 
       validateForm() {
         /*
-            Validation send WISP form fields.
+            Validation form fields.
 
             :fields
             - destAddress:
