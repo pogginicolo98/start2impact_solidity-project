@@ -89,13 +89,27 @@
               </button>
             </div>
       </form>
+
+      <button class="btn btn-primary"
+              @click="handleUri"
+              >Get URI
+      </button>
     </div> <!-- Box -->
+
+    <div class="card" style="width: 18rem;">
+      <img :src="nft.image" class="card-img-top" alt="nft-image">
+      <div class="card-body">
+        <h5 class="card-title">{{ nft.name }}</h5>
+        <p class="card-text">{{ nft.description }}</p>
+      </div>
+    </div>
   </div> <!-- Mint form -->
 </template>
 
 <script>
   import { mapGetters } from "vuex";
-  import { create } from 'ipfs-http-client'
+  import { create } from 'ipfs-http-client';
+  import { apiService } from "@/common/api.service.js";
 
   export default {
     name: "MintFormComponent",
@@ -118,6 +132,11 @@
           value: null,
           errors: [],
         },
+        nft: {
+          name: null,
+          description: null,
+          image: null
+        }
       }
     },
 
@@ -195,7 +214,7 @@
         //   this.destAddress.errors.push("Please enter a valid Ropsten address");
         //   return false;
         // }
-        return false;
+        return true;
       },
 
       async handleRequest() {
@@ -204,53 +223,66 @@
           The contract will send WISP tokens to the address provided.
         */
 
-        try {
-          const imageIpfs = await this.ipfs.add(this.image.value);
-          const imageUrl = `https://ipfs.io/ipfs/${imageIpfs.path}`;
-          const metadata = {
-            "name": this.name.value,
-            "description": this.description.value,
-            "image": imageUrl
-          }
-          console.log(url);
-        } catch (error) {
-          console.log('Error uploading file: ', error);
-        }
-
         if (this.validateForm()) {
-          // let name = this.name.value;
-          // let description = this.description.value;
-          // let image = this.image.value;
-          let owner = this.wallet.address;
-          let metadataUri = this.wallet.address;
-          this.formDisabled = true;
-          this.treasureNft.methods.mintTresure(owner, metadataUri).send({from: this.wallet.address})
-            .on("transactionHash", () => {
-              this.name.value = null;
-              this.description.value = null;
-              this.image.value = null;
-              this.setLoadingStatus("enable");
-            })
-            .on("receipt", receipt => {
-              console.log(receipt);
-              if (receipt.events.Minted.returnValues.to === "to") {
-                const amount = this.web3.utils.fromWei(receipt.events.Sent.returnValues.amount);
-                this.$toasted.show(`Sent ${amount} WISP`, {icon: "check" });
-              } else {
+          try {
+            const imageCid = await this.ipfs.add(this.image.value);
+            const imageUri = `http://192.168.1.142/ipfs/${imageCid.path}`;
+            const metadata = {
+              "name": this.name.value,
+              "description": this.description.value,
+              "image": imageUri
+            }
+            const metadataCid = await this.ipfs.add(JSON.stringify(metadata));
+            const metadataUri = `http://192.168.1.142/ipfs/${metadataCid.path}`;
+
+            this.formDisabled = true;
+            this.treasureNft.methods.mintTresure(this.wallet.address, metadataUri).send({from: this.wallet.address})
+              .on("transactionHash", () => {
+                this.name.value = null;
+                this.description.value = null;
+                this.image.value = null;
+                this.setLoadingStatus("enable");
+              })
+              .on("receipt", receipt => {
+                console.log(receipt);
+                // if (receipt.events.Minted.returnValues.to === "to") {
+                //   const amount = this.web3.utils.fromWei(receipt.events.Sent.returnValues.amount);
+                //   this.$toasted.show(`Sent ${amount} WISP`, {icon: "check" });
+                // } else {
+                //   this.$toasted.show(`Error`, {icon: "ban"});
+                // }
+                this.$toasted.show(`Minted`, {icon: "check"});
+                this.formDisabled = false;
+                this.setLoadingStatus("disable");
+              })
+              .on("error", (error, receipt) => {
+                console.log("error + receipt");
+                console.log(error);
+                console.log(receipt);
                 this.$toasted.show(`Error`, {icon: "ban"});
-              }
-              this.formDisabled = false;
-              this.setLoadingStatus("disable");
-            })
-            .on("error", (error, receipt) => {
-              console.log("error + receipt");
-              console.log(error);
-              console.log(receipt);
-              this.$toasted.show(`Error`, {icon: "ban"});
-              this.formDisabled = false;
-              this.setLoadingStatus("disable");
-            });
+                this.formDisabled = false;
+                this.setLoadingStatus("disable");
+              });
+          } catch (error) {
+            console.log('Error uploading file: ', error);
+          }
         }
+      },
+
+      async handleUri() {
+        const index = await this.treasureNft.methods.balanceOf(this.wallet.address).call();
+        const tokenId = await this.treasureNft.methods.tokenByIndex(index-1).call();
+        const tokenUri = await this.treasureNft.methods.tokenURI(tokenId).call();
+
+        await apiService(tokenUri)
+          .then(response => {
+            this.nft.name = response.name;
+            this.nft.description = response.description;
+            this.nft.image = response.image;
+          })
+          .catch(error => {
+            console.log(error);
+          });
       },
     }
   }
