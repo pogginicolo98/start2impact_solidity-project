@@ -1,6 +1,6 @@
 <template>
   <div class="mint-form">
-    <div class="position-absolute top-50 start-50 translate-middle box">
+    <div class="box">
       <form class="row justify-content-center mt-4"
             novalidate
             @submit.prevent="handleRequest">
@@ -81,7 +81,7 @@
             </div>
 
             <!-- Mint -->
-            <div class="col-10 mt-4 mb-4">
+            <div class="col-10 mt-4">
               <button class="btn btn-primary"
                       type="submit"
                       :disabled="formDisabled"
@@ -89,27 +89,13 @@
               </button>
             </div>
       </form>
-
-      <button class="btn btn-primary"
-              @click="handleUri"
-              >Get URI
-      </button>
     </div> <!-- Box -->
-
-    <div class="card" style="width: 18rem;">
-      <img :src="nft.image" class="card-img-top" alt="nft-image">
-      <div class="card-body">
-        <h5 class="card-title">{{ nft.name }}</h5>
-        <p class="card-text">{{ nft.description }}</p>
-      </div>
-    </div>
   </div> <!-- Mint form -->
 </template>
 
 <script>
   import { mapGetters } from "vuex";
   import { create } from 'ipfs-http-client';
-  import { apiService } from "@/common/api.service.js";
 
   export default {
     name: "MintFormComponent",
@@ -117,7 +103,6 @@
     data() {
       return {
         treasureNft: null,
-        ipfs: null,
         mintBtn: "Mint",
         formDisabled: false,
         name: {
@@ -132,11 +117,7 @@
           value: null,
           errors: [],
         },
-        nft: {
-          name: null,
-          description: null,
-          image: null
-        }
+        ipfs: null,
       }
     },
 
@@ -268,22 +249,6 @@
           }
         }
       },
-
-      async handleUri() {
-        const index = await this.treasureNft.methods.balanceOf(this.wallet.address).call();
-        const tokenId = await this.treasureNft.methods.tokenByIndex(index-1).call();
-        const tokenUri = await this.treasureNft.methods.tokenURI(tokenId).call();
-
-        await apiService(tokenUri)
-          .then(response => {
-            this.nft.name = response.name;
-            this.nft.description = response.description;
-            this.nft.image = response.image;
-          })
-          .catch(error => {
-            console.log(error);
-          });
-      },
     }
   }
 </script>
@@ -293,5 +258,7 @@
     width: 38rem;
     border: 1px solid black;
     background-color: #fff;
+    margin-right: auto;
+    margin-left: auto;
   }
 </style>
