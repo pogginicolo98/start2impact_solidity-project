@@ -1,8 +1,9 @@
 <template>
   <div id="app">
-    <NavbarComponent />
+    <NavbarComponent v-if="isValidPath" />
     <router-view />
-    <FooterComponent />
+    <FooterComponent v-if="isValidPath"
+                     :isFixedFooter="isFixedFooter" />
   </div>
 </template>
 
@@ -13,6 +14,30 @@
 
   export default {
     name: "App",
+
+    data() {
+      return {
+        path: ["Home", "Marketplace", "Mint", "Faucet"],
+        fixedFooter: ["Home", "Marketplace", "Faucet"],
+      };
+    },
+
+    computed: {
+      isValidPath() {
+        if (this.path.includes(this.$route.name)) {
+          return true;
+        }
+        return false;
+      },
+
+      isFixedFooter() {
+        if (this.fixedFooter.includes(this.$route.name)) {
+          return true;
+        }
+        return false;
+      },
+    },
+
     components: {
       NavbarComponent,
       FooterComponent,
@@ -21,7 +46,7 @@
 </script>
 
 <style>
-  html, body {
+  html, body, #app {
     height: 100%;
   }
 </style>
