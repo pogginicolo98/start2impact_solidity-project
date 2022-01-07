@@ -91,6 +91,30 @@ describe("Merchant contract", function () {
     });
   });
 
+  describe("Get orders", function () {
+    it("Should return the order details", async function () {
+      // Minting 2 NFTs
+      await treasureNFT.mintTresure(owner.address, "Token URI");
+      await treasureNFT.mintTresure(owner.address, "Token URI");
+      const tokenId1 = await treasureNFT.tokenOfOwnerByIndex(owner.address, 0);
+      const tokenId2 = await treasureNFT.tokenOfOwnerByIndex(owner.address, 1);
+
+      // Placing 2 orders
+      await treasureNFT.approve(merchant.address, tokenId1);
+      await treasureNFT.approve(merchant.address, tokenId2);
+      await merchant.placeOrder(tokenId1, 100);
+      await merchant.placeOrder(tokenId2, 200);
+
+      // Checking the results
+      const order1 = await merchant.orderOfOwnerByIndex(owner.address, 0);
+      await expect(order1.tokenId).to.equal(tokenId1);
+      await expect(order1.price).to.equal(100);
+      const order2 = await merchant.orderOfOwnerByIndex(owner.address, 1);
+      await expect(order2.tokenId).to.equal(tokenId2);
+      await expect(order2.price).to.equal(200);
+    });
+  });
+
   describe("Cancel orders", function () {
     it("Should cancel an existing order", async function () {
       // Minting 2 NFTs
@@ -109,8 +133,11 @@ describe("Merchant contract", function () {
       // Checking the results
       const ownerNfts = await treasureNFT.balanceOf(owner.address);
       const ownerOrders = await merchant.ordersOf(owner.address);
+      const order = await merchant.orderOfOwnerByIndex(owner.address, 0);
       await expect(ownerNfts).to.equal(1);
       await expect(ownerOrders).to.equal(1);
+      await expect(order.tokenId).to.equal(tokenId1);
+      await expect(order.price).to.equal(100);
     });
 
     it("Should fail if canceling without existing orders", async function () {
@@ -145,6 +172,33 @@ describe("Merchant contract", function () {
       await expect(merchant.cancelOrderByIndex(0))
         .to.emit(merchant, "OrderCanceled")
         .withArgs(owner.address, tokenId);
+    });
+  });
+
+  describe("Execute orders", function () {
+    it("Should sell the NFT to the buyer", async function () {
+      // Minting 1 NFT
+      await treasureNFT.mintTresure(owner.address, "Token URI");
+      const tokenId = await treasureNFT.tokenOfOwnerByIndex(owner.address, 0);
+      const amount = ethers.utils.parseUnits("50", 18);
+      await wispToken.transfer(addr1.address, amount);
+      const initialOwnerBalance = await wispToken.balanceOf(owner.address);
+
+      // Placing 1 order
+      await treasureNFT.approve(merchant.address, tokenId);
+      await merchant.placeOrder(tokenId, amount);
+      await wispToken.connect(addr1).approve(merchant.address, amount);
+      await merchant.connect(addr1).buyTreasureOfOwnerByIndex(owner.address, 0);
+
+      // Checking the results
+      const ownerBalance = await wispToken.balanceOf(owner.address);
+      await expect(ownerBalance).to.equal(initialOwnerBalance.add(amount));
+      const addr1Balance = await wispToken.balanceOf(addr1.address);
+      await expect(addr1Balance).to.equal(0);
+      const addr1Nfts = await treasureNFT.balanceOf(addr1.address);
+      await expect(addr1Nfts).to.equal(1);
+      await expect(merchant.orderOfOwnerByIndex(owner.address, 0))
+        .to.be.revertedWith("No order available.");
     });
   });
 });

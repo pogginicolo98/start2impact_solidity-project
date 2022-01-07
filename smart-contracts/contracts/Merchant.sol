@@ -30,17 +30,25 @@ contract Merchant {
       _;
     }
 
-    modifier onlyExistingOrders(uint256 _index) {
+    modifier onlyWispTokenApproved(address _buyer, address _seller, uint256 _index) {
       require(
-        orders[msg.sender].length > 0,
+        wispContract.allowance(_buyer, address(this)) >= orders[_seller][_index].price,
+        "Insufficient approved balance."
+      );
+      _;
+    }
+
+    modifier onlyExistingOrders(address _owner) {
+      require(
+        orders[_owner].length > 0,
         "No order available."
       );
       _;
     }
 
-    modifier onlyValidIndex(uint256 _index) {
+    modifier onlyValidIndex(address _owner, uint256 _index) {
       require(
-        _index < orders[msg.sender].length,
+        _index < orders[_owner].length,
         "Index out of range."
       );
       _;
@@ -48,7 +56,7 @@ contract Merchant {
 
     event OrderPlaced(address by, uint256 tokenId);
     event OrderCanceled(address by, uint256 tokenId);
-    // event Sold(address to, uint256 tokenId);
+    event Sold(address to, uint256 tokenId);
     // event Withdrawn(address by, uint256 amount);
 
     function placeOrder(uint256 tokenId, uint256 price)
@@ -73,14 +81,39 @@ contract Merchant {
 
     function cancelOrderByIndex(uint256 index)
       external
-      onlyExistingOrders(index)
-      onlyValidIndex(index)
+      onlyExistingOrders(msg.sender)
+      onlyValidIndex(msg.sender, index)
     {
       uint256 tokenId = orders[msg.sender][index].tokenId;
-      treasureContract.transferFrom(address(this), msg.sender, tokenId);
       orders[msg.sender][index] = orders[msg.sender][orders[msg.sender].length - 1];
       orders[msg.sender].pop();
+      treasureContract.transferFrom(address(this), msg.sender, tokenId);
       emit OrderCanceled(msg.sender, tokenId);
     }
 
+    function orderOfOwnerByIndex(address owner, uint256 index)
+      external
+      view
+      onlyExistingOrders(owner)
+      onlyValidIndex(owner, index)
+      returns (uint256 tokenId, uint256 price)
+    {
+      tokenId = orders[owner][index].tokenId;
+      price = orders[owner][index].price;
+    }
+
+    function buyTreasureOfOwnerByIndex(address seller, uint256 index)
+      external
+      onlyExistingOrders(seller)
+      onlyValidIndex(seller, index)
+      onlyWispTokenApproved(msg.sender, seller, index)
+    {
+      uint256 amount = orders[seller][index].price;
+      uint256 tokenId = orders[seller][index].tokenId;
+      orders[seller][index] = orders[seller][orders[seller].length - 1];
+      orders[seller].pop();
+      wispContract.transferFrom(msg.sender, seller, amount);
+      treasureContract.transferFrom(address(this), msg.sender, tokenId);
+      emit Sold(msg.sender, tokenId);
+    }
 }
