@@ -22,10 +22,10 @@ contract Merchant {
         treasureContract = _treasureContract;
     }
 
-    modifier onlyTresureNFTApproved(uint256 _tokenId) {
+    modifier onlyTresureNFTApproved(address _owner) {
       require(
-        treasureContract.getApproved(_tokenId) == address(this),
-        "TreasureNFT not approved."
+        treasureContract.isApprovedForAll(_owner, address(this)) == true,
+        "TreasureNFT: contract not approved"
       );
       _;
     }
@@ -33,7 +33,7 @@ contract Merchant {
     modifier onlyWispTokenApproved(address _buyer, address _seller, uint256 _index) {
       require(
         wispContract.allowance(_buyer, address(this)) >= orders[_seller][_index].price,
-        "Insufficient approved balance."
+        "WispToken: contract not approved"
       );
       _;
     }
@@ -41,7 +41,7 @@ contract Merchant {
     modifier onlyExistingOrders(address _owner) {
       require(
         orders[_owner].length > 0,
-        "No order available."
+        "No order available"
       );
       _;
     }
@@ -49,7 +49,7 @@ contract Merchant {
     modifier onlyValidIndex(address _owner, uint256 _index) {
       require(
         _index < orders[_owner].length,
-        "Index out of range."
+        "Index out of range"
       );
       _;
     }
@@ -57,11 +57,10 @@ contract Merchant {
     event OrderPlaced(address by, uint256 tokenId);
     event OrderCanceled(address by, uint256 tokenId);
     event Sold(address to, uint256 tokenId);
-    // event Withdrawn(address by, uint256 amount);
 
     function placeOrder(uint256 tokenId, uint256 price)
       external
-      onlyTresureNFTApproved(tokenId)
+      onlyTresureNFTApproved(msg.sender)
     {
       treasureContract.transferFrom(msg.sender, address(this), tokenId);
       orders[msg.sender].push(Order({

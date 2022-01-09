@@ -57,7 +57,6 @@ contract TreasureNFT is ERC721Enumerable, ERC721URIStorage {
         returns (uint256 tokenId)
     {
         _tokenIds.increment();
-
         tokenId = _tokenIds.current();
         _mint(owner, tokenId);
         _setTokenURI(tokenId, tokenUri);

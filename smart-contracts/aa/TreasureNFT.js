@@ -3,7 +3,7 @@ const { ethers } = require("hardhat");
 
 describe("TreasureNFT contract", function () {
   /*
-  TreasureNFT.sol test unit
+    TreasureNFT.sol test unit
   */
 
   let _treasureNFT;
@@ -16,7 +16,7 @@ describe("TreasureNFT contract", function () {
 
   beforeEach(async function () {
     /*
-      Deploy TreasureNFT.sol and mint one token
+      Deploy TreasureNFT.sol and mint one NFT
     */
 
     [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
@@ -29,11 +29,13 @@ describe("TreasureNFT contract", function () {
 
   describe("Deployment", function () {
     it("Should set the right name", async function () {
-      await expect(await treasureNFT.name()).to.equal("Treasure");
+      const name = await treasureNFT.name();
+      await expect(name).to.equal("Treasure");
     });
 
     it("Should set the right symbol", async function () {
-      await expect(await treasureNFT.symbol()).to.equal("TRS");
+      const symbol = await treasureNFT.symbol();
+      await expect(symbol).to.equal("TRS");
     });
   });
 
@@ -54,7 +56,7 @@ describe("TreasureNFT contract", function () {
       await treasureNFT.transferFrom(owner.address, addr1.address, tokenId);
       await treasureNFT.connect(addr1).transferFrom(addr1.address, addr2.address, tokenId);
 
-      // Checking the results
+      // Check the results
       const addr2Balance = await treasureNFT.balanceOf(addr2.address);
       await expect(addr2Balance).to.equal(1);
     });
@@ -66,13 +68,13 @@ describe("TreasureNFT contract", function () {
       await expect(treasureNFT.connect(addr1).transferFrom(owner.address, addr1.address, tokenId))
         .to.be.revertedWith("ERC721: transfer caller is not owner nor approved");
 
-      // Checking the results
+      // Check the results
       const ownerBalance = await treasureNFT.balanceOf(owner.address);
       await expect(ownerBalance).to.equal(initialOwnerBalance);
     });
 
     it("Should update balances after transfers", async function () {
-      // Minting tokens
+      // Mint 3 NFTs
       await treasureNFT.mintTresure(owner.address, "Token URI");
       await treasureNFT.mintTresure(owner.address, "Token URI");
       const token1Id = await treasureNFT.tokenOfOwnerByIndex(owner.address, 0);
@@ -101,7 +103,7 @@ describe("TreasureNFT contract", function () {
     });
 
     it("Should give permission to another account", async function () {
-      // Minting tokens
+      // Mint tokens
       await treasureNFT.mintTresure(owner.address, "Token URI");
       let token1Id = await treasureNFT.tokenOfOwnerByIndex(owner.address, 0);
       let token2Id = await treasureNFT.tokenOfOwnerByIndex(owner.address, 1);
@@ -112,7 +114,7 @@ describe("TreasureNFT contract", function () {
       const addr2Balance = await treasureNFT.balanceOf(addr2.address);
       await expect(addr2Balance).to.equal(1);
 
-      // Not approved transfer from owner to addr2
+      // Transfer from owner to addr2 without approval
       await expect(treasureNFT.connect(addr1).transferFrom(owner.address, addr2.address, token2Id))
         .to.be.revertedWith("ERC721: transfer caller is not owner nor approved");
     });
