@@ -4,6 +4,21 @@ pragma solidity ^0.8.0;
 import "./WispToken.sol";
 import "./TreasureNFT.sol";
 
+contract AcceptableNFTs {
+  TreasureNFT public trs;
+
+  constructor(TreasureNFT contractAddress) {
+    trs = contractAddress;
+  }
+}
+
+contract AcceptableTokens {
+  WispToken public wisp;
+
+  constructor(WispToken contractAddress) {
+    wisp = contractAddress;
+  }
+}
 
 /**
  * @dev WISP token faucet
@@ -15,7 +30,7 @@ contract Merchant {
       uint256 tokenId;
       uint256 price;
     }
-    mapping(address => Order[]) public orders;
+    mapping(address => Order[]) orders;
 
     constructor(WispToken _wispContract, TreasureNFT _treasureContract) {
         wispContract = _wispContract;
