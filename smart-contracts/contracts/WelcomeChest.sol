@@ -55,5 +55,6 @@ abstract contract ERC20Faucet is IERC20Faucet, SupportedTokens {
  * @title The welcome chest
  */
 contract WelcomeChest is ERC20Faucet {
+  /// @param wispContract WispToken.sol address
   constructor(WispToken wispContract) SupportedTokens(wispContract) {}
 }

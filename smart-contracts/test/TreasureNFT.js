@@ -23,7 +23,7 @@ describe("TreasureNFT contract", function () {
 
     _treasureNFT = await ethers.getContractFactory("TreasureNFT");
     treasureNFT = await _treasureNFT.deploy();
-    await treasureNFT.mintTresure(owner.address, "Token URI");
+    await treasureNFT.mint(owner.address, "Token URI");
     initialOwnerBalance = await treasureNFT.balanceOf(owner.address);
   });
 
@@ -41,7 +41,7 @@ describe("TreasureNFT contract", function () {
 
   describe("Minting", function () {
     it("Should mint a new token", async function () {
-      await treasureNFT.mintTresure(owner.address, "Token URI");
+      await treasureNFT.mint(owner.address, "Token URI");
 
       const ownerBalance = await treasureNFT.balanceOf(owner.address);
       await expect(ownerBalance).to.equal(initialOwnerBalance.add(1));
@@ -75,8 +75,8 @@ describe("TreasureNFT contract", function () {
 
     it("Should update balances after transfers", async function () {
       // Mint 3 NFTs
-      await treasureNFT.mintTresure(owner.address, "Token URI");
-      await treasureNFT.mintTresure(owner.address, "Token URI");
+      await treasureNFT.mint(owner.address, "Token URI");
+      await treasureNFT.mint(owner.address, "Token URI");
       const token1Id = await treasureNFT.tokenOfOwnerByIndex(owner.address, 0);
       const token2Id = await treasureNFT.tokenOfOwnerByIndex(owner.address, 1);
       const token3Id = await treasureNFT.tokenOfOwnerByIndex(owner.address, 2);
@@ -104,7 +104,7 @@ describe("TreasureNFT contract", function () {
 
     it("Should give permission to another account", async function () {
       // Mint tokens
-      await treasureNFT.mintTresure(owner.address, "Token URI");
+      await treasureNFT.mint(owner.address, "Token URI");
       let token1Id = await treasureNFT.tokenOfOwnerByIndex(owner.address, 0);
       let token2Id = await treasureNFT.tokenOfOwnerByIndex(owner.address, 1);
 

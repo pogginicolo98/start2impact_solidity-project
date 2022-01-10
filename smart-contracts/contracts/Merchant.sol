@@ -13,6 +13,7 @@ import "./TreasureNFT.sol";
 contract SupportedTokens {
   WispToken public wisp;
 
+  /// @param contractAddress WispToken.sol address
   constructor(WispToken contractAddress) {
     wisp = contractAddress;
   }
@@ -26,6 +27,7 @@ contract SupportedTokens {
 contract SupportedNFTs {
   TreasureNFT public trs;
 
+  /// @param contractAddress TreasureNFT.sol address
   constructor(TreasureNFT contractAddress) {
     trs = contractAddress;
   }
@@ -167,8 +169,12 @@ abstract contract MarketplaceNFT is IMarketplaceNFT, SupportedTokens, SupportedN
 
 
 /**
- * @title The Merchant
+ * @title The merchant
  */
 contract Merchant is MarketplaceNFT {
+  /*
+   * @param wispContract WispToken.sol address
+   * @param trsContract TreasureNFT.sol address
+   */
   constructor(WispToken wispContract, TreasureNFT trsContract) SupportedTokens(wispContract) SupportedNFTs(trsContract) {}
 }

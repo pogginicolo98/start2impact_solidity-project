@@ -43,8 +43,8 @@ describe("Merchant contract", function () {
     merchant = await _merchant.deploy(wispToken.address, treasureNFT.address);
 
     // Mint 2 NFTs with owner
-    await treasureNFT.mintTresure(owner.address, "Token URI");
-    await treasureNFT.mintTresure(owner.address, "Token URI");
+    await treasureNFT.mint(owner.address, "Token URI");
+    await treasureNFT.mint(owner.address, "Token URI");
     tokenId1 = await treasureNFT.tokenOfOwnerByIndex(owner.address, 0);
     tokenId2 = await treasureNFT.tokenOfOwnerByIndex(owner.address, 1);
     initialOwnerNFTs = await treasureNFT.balanceOf(owner.address);
