@@ -52,13 +52,13 @@ describe("Merchant contract", function () {
 
   describe("Deployment", function () {
     it("Should set the right WispToken contract address", async function () {
-      const wispContract = await merchant.wispContract();
-      await expect(wispContract).to.equal(wispToken.address);
+      const wisp = await merchant.wisp();
+      await expect(wisp).to.equal(wispToken.address);
     });
 
     it("Should set the right TreasureNFT contract address", async function () {
-      const treasureContract = await merchant.treasureContract();
-      await expect(treasureContract).to.equal(treasureNFT.address);
+      const trs = await merchant.trs();
+      await expect(trs).to.equal(treasureNFT.address);
     });
   });
 
@@ -66,17 +66,17 @@ describe("Merchant contract", function () {
     it("Should place a new order", async function () {
       // Approve Merchant and place 1 order
       await treasureNFT.setApprovalForAll(merchant.address, true);
-      await merchant.placeOrder(tokenId1, 100);
+      await merchant.sellItem(tokenId1, 100);
 
       // Check the results
       const ownerNFTs = await treasureNFT.balanceOf(owner.address);
-      const ownerOrders = await merchant.ordersOf(owner.address);
+      const ownerSales = await merchant.salesOf(owner.address);
       await expect(ownerNFTs).to.equal(initialOwnerNFTs.sub(1));
-      await expect(ownerOrders).to.equal(1);
+      await expect(ownerSales).to.equal(1);
     });
 
     it("Should fail if place a new order without approval", async function () {
-      await expect(merchant.placeOrder(tokenId1, 100))
+      await expect(merchant.sellItem(tokenId1, 100))
         .to.be.revertedWith("TreasureNFT: contract not approved");
       const ownerNfts = await treasureNFT.balanceOf(owner.address);
       await expect(ownerNfts).to.equal(initialOwnerNFTs);
@@ -87,8 +87,8 @@ describe("Merchant contract", function () {
       await treasureNFT.setApprovalForAll(merchant.address, true);
 
       // Check the results
-      await expect(merchant.placeOrder(tokenId1, 100))
-        .to.emit(merchant, "OrderPlaced")
+      await expect(merchant.sellItem(tokenId1, 100))
+        .to.emit(merchant, "SaleCreated")
         .withArgs(owner.address, tokenId1);
     });
   });
@@ -97,16 +97,16 @@ describe("Merchant contract", function () {
     it("Should return the order details", async function () {
       // Approve Merchant and place 2 orders
       await treasureNFT.setApprovalForAll(merchant.address, true);
-      await merchant.placeOrder(tokenId1, 100);
-      await merchant.placeOrder(tokenId2, 200);
+      await merchant.sellItem(tokenId1, 100);
+      await merchant.sellItem(tokenId2, 200);
 
       // Check the results
-      const order1 = await merchant.orderOfOwnerByIndex(owner.address, 0);
-      await expect(order1.tokenId).to.equal(tokenId1);
-      await expect(order1.price).to.equal(100);
-      const order2 = await merchant.orderOfOwnerByIndex(owner.address, 1);
-      await expect(order2.tokenId).to.equal(tokenId2);
-      await expect(order2.price).to.equal(200);
+      const sale1 = await merchant.saleOfOwnerByIndex(owner.address, 0);
+      await expect(sale1.tokenId).to.equal(tokenId1);
+      await expect(sale1.price).to.equal(100);
+      const sale2 = await merchant.saleOfOwnerByIndex(owner.address, 1);
+      await expect(sale2.tokenId).to.equal(tokenId2);
+      await expect(sale2.price).to.equal(200);
     });
   });
 
@@ -114,43 +114,43 @@ describe("Merchant contract", function () {
     it("Should cancel an existing order", async function () {
       // Approve Merchant, place 2 orders and cancel one
       await treasureNFT.setApprovalForAll(merchant.address, true);
-      await merchant.placeOrder(tokenId1, 100);
-      await merchant.placeOrder(tokenId2, 200);
-      await merchant.cancelOrderByIndex(0);
+      await merchant.sellItem(tokenId1, 100);
+      await merchant.sellItem(tokenId2, 200);
+      await merchant.cancelSaleByIndex(0);
 
       // Check the results
       const ownerNfts = await treasureNFT.balanceOf(owner.address);
       await expect(ownerNfts).to.equal(initialOwnerNFTs.sub(1));
-      const ownerOrders = await merchant.ordersOf(owner.address);
-      await expect(ownerOrders).to.equal(1);
-      const order2 = await merchant.orderOfOwnerByIndex(owner.address, 0);
-      await expect(order2.tokenId).to.equal(tokenId2);
-      await expect(order2.price).to.equal(200);
+      const ownerSales = await merchant.salesOf(owner.address);
+      await expect(ownerSales).to.equal(1);
+      const sale2 = await merchant.saleOfOwnerByIndex(owner.address, 0);
+      await expect(sale2.tokenId).to.equal(tokenId2);
+      await expect(sale2.price).to.equal(200);
     });
 
     it("Should fail if canceling a non existing order", async function () {
-      await expect(merchant.cancelOrderByIndex(0))
-        .to.be.revertedWith("No order available");
+      await expect(merchant.cancelSaleByIndex(0))
+        .to.be.revertedWith("No sales available");
     });
 
     it("Should fail if provide a bad index", async function () {
       // Approve Merchant and place 1 order
       await treasureNFT.setApprovalForAll(merchant.address, true);
-      await merchant.placeOrder(tokenId1, 100);
+      await merchant.sellItem(tokenId1, 100);
 
       // Check the results
-      await expect(merchant.cancelOrderByIndex(1))
+      await expect(merchant.cancelSaleByIndex(1))
         .to.be.revertedWith("Index out of range");
     });
 
     it("Should emit an event after successfully canceling an order", async function () {
       // Approve Merchant and place 1 order
       await treasureNFT.setApprovalForAll(merchant.address, true);
-      await merchant.placeOrder(tokenId1, 100);
+      await merchant.sellItem(tokenId1, 100);
 
       // Check the results
-      await expect(merchant.cancelOrderByIndex(0))
-        .to.emit(merchant, "OrderCanceled")
+      await expect(merchant.cancelSaleByIndex(0))
+        .to.emit(merchant, "SaleCanceled")
         .withArgs(owner.address, tokenId1);
     });
   });
@@ -160,15 +160,15 @@ describe("Merchant contract", function () {
       // Place 1 order and execute it
       await treasureNFT.setApprovalForAll(merchant.address, true);
       const price = initialAddr1Balance;
-      await merchant.placeOrder(tokenId1, price);
+      await merchant.sellItem(tokenId1, price);
       await wispToken.connect(addr1).approve(merchant.address, unlimitedBalance);
-      await merchant.connect(addr1).buyTreasureOfOwnerByIndex(owner.address, 0);
+      await merchant.connect(addr1).buyItemOfOwnerByIndex(owner.address, 0);
 
       // Check the results
       const ownerBalance = await wispToken.balanceOf(owner.address);
       await expect(ownerBalance).to.equal(initialOwnerBalance.add(price));
-      const ownerOrders = await merchant.ordersOf(owner.address);
-      await expect(ownerOrders).to.equal(0);
+      const ownerSales = await merchant.salesOf(owner.address);
+      await expect(ownerSales).to.equal(0);
       const addr1Balance = await wispToken.balanceOf(addr1.address);
       await expect(addr1Balance).to.equal(initialAddr1Balance.sub(price));
       const addr1Nfts = await treasureNFT.balanceOf(addr1.address);
@@ -179,15 +179,15 @@ describe("Merchant contract", function () {
       // Place 1 order
       await treasureNFT.setApprovalForAll(merchant.address, true);
       const price = initialAddr1Balance;
-      await merchant.placeOrder(tokenId1, price);
+      await merchant.sellItem(tokenId1, price);
 
       // Check the results
-      await expect(merchant.connect(addr1).buyTreasureOfOwnerByIndex(owner.address, 0))
+      await expect(merchant.connect(addr1).buyItemOfOwnerByIndex(owner.address, 0))
         .to.be.revertedWith("WispToken: contract not approved");
       const ownerBalance = await wispToken.balanceOf(owner.address);
       await expect(ownerBalance).to.equal(initialOwnerBalance);
-      const ownerOrders = await merchant.ordersOf(owner.address);
-      await expect(ownerOrders).to.equal(1);
+      const ownerSales = await merchant.salesOf(owner.address);
+      await expect(ownerSales).to.equal(1);
       const addr1Balance = await wispToken.balanceOf(addr1.address);
       await expect(addr1Balance).to.equal(initialAddr1Balance);
       const addr1Nfts = await treasureNFT.balanceOf(addr1.address);
@@ -199,20 +199,33 @@ describe("Merchant contract", function () {
       /// Place 1 order
       await treasureNFT.setApprovalForAll(merchant.address, true);
       const price = initialAddr1Balance.add(1);
-      await merchant.placeOrder(tokenId1, price);
+      await merchant.sellItem(tokenId1, price);
       await wispToken.connect(addr1).approve(merchant.address, unlimitedBalance);
 
       // Check the results
-      await expect(merchant.connect(addr1).buyTreasureOfOwnerByIndex(owner.address, 0))
+      await expect(merchant.connect(addr1).buyItemOfOwnerByIndex(owner.address, 0))
         .to.be.revertedWith("ERC20: transfer amount exceeds balance");
       const ownerBalance = await wispToken.balanceOf(owner.address);
       await expect(ownerBalance).to.equal(initialOwnerBalance);
-      const ownerOrders = await merchant.ordersOf(owner.address);
-      await expect(ownerOrders).to.equal(1);
+      const ownerSales = await merchant.salesOf(owner.address);
+      await expect(ownerSales).to.equal(1);
       const addr1Balance = await wispToken.balanceOf(addr1.address);
       await expect(addr1Balance).to.equal(initialAddr1Balance);
       const addr1Nfts = await treasureNFT.balanceOf(addr1.address);
       await expect(addr1Nfts).to.equal(0);
+    });
+
+    it("Should emit an event after succesfully selling NFT", async function () {
+      // Place 1 order and execute it
+      await treasureNFT.setApprovalForAll(merchant.address, true);
+      const price = initialAddr1Balance;
+      await merchant.sellItem(tokenId1, price);
+      await wispToken.connect(addr1).approve(merchant.address, unlimitedBalance);
+
+      // Check the results
+      await expect(merchant.connect(addr1).buyItemOfOwnerByIndex(owner.address, 0))
+        .to.emit(merchant, "ItemSold")
+        .withArgs(owner.address, addr1.address, tokenId1);
     });
   });
 });
