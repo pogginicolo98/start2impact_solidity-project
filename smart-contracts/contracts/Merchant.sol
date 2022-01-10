@@ -162,5 +162,5 @@ abstract contract MarketplaceNFT is IMarketplaceNFT, AcceptableTokens, Acceptabl
  * @title The Merchant
  */
 contract Merchant is MarketplaceNFT {
-  constructor(WispToken wispcontract, TreasureNFT trsContract) AcceptableTokens(wispcontract) AcceptableNFTs(trsContract) {}
+  constructor(WispToken wispContract, TreasureNFT trsContract) AcceptableTokens(wispContract) AcceptableNFTs(trsContract) {}
 }
