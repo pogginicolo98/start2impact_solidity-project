@@ -62,8 +62,8 @@ describe("Merchant contract", function () {
     });
   });
 
-  describe("Place orders", function () {
-    it("Should place a new order", async function () {
+  describe("Sales creation", function () {
+    it("Should create a sale", async function () {
       // Approve Merchant and place 1 order
       await treasureNFT.setApprovalForAll(merchant.address, true);
       await merchant.sellItem(tokenId1, 100);
@@ -75,14 +75,14 @@ describe("Merchant contract", function () {
       await expect(ownerSales).to.equal(1);
     });
 
-    it("Should fail if place a new order without approval", async function () {
+    it("Should fail if create a sale without approving the NFT contract", async function () {
       await expect(merchant.sellItem(tokenId1, 100))
         .to.be.revertedWith("TreasureNFT: contract not approved");
       const ownerNfts = await treasureNFT.balanceOf(owner.address);
       await expect(ownerNfts).to.equal(initialOwnerNFTs);
     });
 
-    it("Should emit an event after successfully placing an order", async function () {
+    it("Should emit an event after successfully creating a sale", async function () {
       // Approve Merchant
       await treasureNFT.setApprovalForAll(merchant.address, true);
 
@@ -93,8 +93,19 @@ describe("Merchant contract", function () {
     });
   });
 
-  describe("Get orders", function () {
-    it("Should return the order details", async function () {
+  describe("Sales retrieve", function () {
+    it("Should return the number of active sales", async function () {
+      // Approve Merchant and place 2 orders
+      await treasureNFT.setApprovalForAll(merchant.address, true);
+      await merchant.sellItem(tokenId1, 100);
+      await merchant.sellItem(tokenId2, 200);
+
+      // Check the results
+      const sales = await merchant.salesOf(owner.address);
+      await expect(sales).to.equal(2);
+    });
+
+    it("Should return the details of the selected sale", async function () {
       // Approve Merchant and place 2 orders
       await treasureNFT.setApprovalForAll(merchant.address, true);
       await merchant.sellItem(tokenId1, 100);
@@ -108,10 +119,25 @@ describe("Merchant contract", function () {
       await expect(sale2.tokenId).to.equal(tokenId2);
       await expect(sale2.price).to.equal(200);
     });
+
+    it("Should fail if retrieving a non existing sale", async function () {
+      await expect(merchant.saleOfOwnerByIndex(owner.address, 0))
+        .to.be.revertedWith("No sales available");
+    });
+
+    it("Should fail if provide a bad index", async function () {
+      // Approve Merchant and place 1 order
+      await treasureNFT.setApprovalForAll(merchant.address, true);
+      await merchant.sellItem(tokenId1, 100);
+
+      // Check the results
+      await expect(merchant.saleOfOwnerByIndex(owner.address, 1))
+        .to.be.revertedWith("Index out of range");
+    });
   });
 
-  describe("Cancel orders", function () {
-    it("Should cancel an existing order", async function () {
+  describe("Sales cancellation", function () {
+    it("Should cancel an existing sale", async function () {
       // Approve Merchant, place 2 orders and cancel one
       await treasureNFT.setApprovalForAll(merchant.address, true);
       await merchant.sellItem(tokenId1, 100);
@@ -128,7 +154,7 @@ describe("Merchant contract", function () {
       await expect(sale2.price).to.equal(200);
     });
 
-    it("Should fail if canceling a non existing order", async function () {
+    it("Should fail if canceling a non existing sale", async function () {
       await expect(merchant.cancelSaleByIndex(0))
         .to.be.revertedWith("No sales available");
     });
@@ -143,7 +169,7 @@ describe("Merchant contract", function () {
         .to.be.revertedWith("Index out of range");
     });
 
-    it("Should emit an event after successfully canceling an order", async function () {
+    it("Should emit an event after successfully canceling a sale", async function () {
       // Approve Merchant and place 1 order
       await treasureNFT.setApprovalForAll(merchant.address, true);
       await merchant.sellItem(tokenId1, 100);
@@ -155,7 +181,7 @@ describe("Merchant contract", function () {
     });
   });
 
-  describe("Execute orders", function () {
+  describe("Sales executions", function () {
     it("Should sell the NFT to the buyer", async function () {
       // Place 1 order and execute it
       await treasureNFT.setApprovalForAll(merchant.address, true);
@@ -175,7 +201,7 @@ describe("Merchant contract", function () {
       await expect(addr1Nfts).to.equal(1);
     });
 
-    it("Should not sell the NFT if the buyer has not approved the contract", async function () {
+    it("Should fail if the buyer has not approved the ERC20 token contract", async function () {
       // Place 1 order
       await treasureNFT.setApprovalForAll(merchant.address, true);
       const price = initialAddr1Balance;
@@ -195,7 +221,7 @@ describe("Merchant contract", function () {
 
     });
 
-    it("Should not sell the NFT if the buyer has not enough WISP", async function () {
+    it("Should fail if the buyer has not enough ERC20 tokens", async function () {
       /// Place 1 order
       await treasureNFT.setApprovalForAll(merchant.address, true);
       const price = initialAddr1Balance.add(1);
@@ -215,7 +241,7 @@ describe("Merchant contract", function () {
       await expect(addr1Nfts).to.equal(0);
     });
 
-    it("Should emit an event after succesfully selling NFT", async function () {
+    it("Should emit an event after succesfully selling the NFT", async function () {
       // Place 1 order and execute it
       await treasureNFT.setApprovalForAll(merchant.address, true);
       const price = initialAddr1Balance;
