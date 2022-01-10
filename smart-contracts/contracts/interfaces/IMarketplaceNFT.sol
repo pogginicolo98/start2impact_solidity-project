@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+
 /**
  * @title The interface for the MarketplaceNFT
  * @notice The MarketplaceNFT allows the sale of ERC721 NFTs via ERC20 tokens
@@ -38,7 +39,7 @@ interface IMarketplaceNFT {
 
   /**
    * @notice It takes custody of a given NFT and creates a sell order with the price provided
-   * @dev The owner of the NFT must have approved the contract before run the code
+   * @dev The owner of the NFT must have approved the contract before running the code
    *
    * @param tokenId The token ID of the NFT put up for sale
    * @param price The price at which to sell the NFT
@@ -56,7 +57,7 @@ interface IMarketplaceNFT {
   /**
    * @notice Cancel a sales order for a given index and returns the NFT
    * @dev There must be sales orders belonging to the sender and the index provided
-   *  must be validated before run the code
+   *  must be validated before running the code
    *
    * @param index The index representative of the sale to be canceled
    */
@@ -65,7 +66,7 @@ interface IMarketplaceNFT {
   /**
    * @notice Returns the details of the sale for a given owner and index
    * @dev There must be sales orders belonging to the owner and the index provided
-   *  must be validated before run the code
+   *  must be validated before running the code
    *
    * @param owner The address of the owner of the sale
    * @param index The index representative of the desired sale
@@ -77,7 +78,7 @@ interface IMarketplaceNFT {
   /**
    * @notice Exchange the amount of ERC20 tokens required in the sale in exchange for the desired NFT
    * @dev There must be sales orders belonging to the owner, the index provided
-   *  must be validated and the sender must have approved the ERC20 token contract before run the code
+   *  must be validated and the sender must have approved the ERC20 token contract before running the code
    *
    * @param owner The address of the owner of the sale
    * @param index The index representative of the desired sale

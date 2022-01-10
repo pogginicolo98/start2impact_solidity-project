@@ -5,11 +5,12 @@ import "./interfaces/IMarketplaceNFT.sol";
 import "./WispToken.sol";
 import "./TreasureNFT.sol";
 
+
 /**
  * @title The acceptable tokens
  * @notice ERC20 contracts supported for payment
  */
-contract AcceptableTokens {
+contract SupportedTokens {
   WispToken public wisp;
 
   constructor(WispToken contractAddress) {
@@ -17,11 +18,12 @@ contract AcceptableTokens {
   }
 }
 
+
 /**
  * @title The acceptable NFTs
  * @notice ERC721 contracts supported for sales
  */
-contract AcceptableNFTs {
+contract SupportedNFTs {
   TreasureNFT public trs;
 
   constructor(TreasureNFT contractAddress) {
@@ -29,11 +31,12 @@ contract AcceptableNFTs {
   }
 }
 
+
 /**
  * @title The NFT marketplace
  * @notice Marketplace that allows the sale of ERC721 NFTs via ERC20 tokens
  */
-abstract contract MarketplaceNFT is IMarketplaceNFT, AcceptableTokens, AcceptableNFTs {
+abstract contract MarketplaceNFT is IMarketplaceNFT, SupportedTokens, SupportedNFTs {
   /// @dev Set of all sales grouped by owner
   mapping(address => Sale[]) internal sales;
 
@@ -162,9 +165,10 @@ abstract contract MarketplaceNFT is IMarketplaceNFT, AcceptableTokens, Acceptabl
   }
 }
 
+
 /**
  * @title The Merchant
  */
 contract Merchant is MarketplaceNFT {
-  constructor(WispToken wispContract, TreasureNFT trsContract) AcceptableTokens(wispContract) AcceptableNFTs(trsContract) {}
+  constructor(WispToken wispContract, TreasureNFT trsContract) SupportedTokens(wispContract) SupportedNFTs(trsContract) {}
 }
