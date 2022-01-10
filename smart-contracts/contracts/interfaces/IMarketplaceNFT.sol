@@ -56,7 +56,7 @@ interface IMarketplaceNFT {
   /**
    * @notice Cancel a sales order for a given index and returns the NFT
    * @dev There must be sales orders belonging to the sender and the index provided
-   * must be validated before run the code
+   *  must be validated before run the code
    *
    * @param index The index representative of the sale to be canceled
    */
@@ -65,7 +65,7 @@ interface IMarketplaceNFT {
   /**
    * @notice Returns the details of the sale for a given owner and index
    * @dev There must be sales orders belonging to the owner and the index provided
-   * must be validated before run the code
+   *  must be validated before run the code
    *
    * @param owner The address of the owner of the sale
    * @param index The index representative of the desired sale
@@ -77,7 +77,7 @@ interface IMarketplaceNFT {
   /**
    * @notice Exchange the amount of ERC20 tokens required in the sale in exchange for the desired NFT
    * @dev There must be sales orders belonging to the owner, the index provided
-   * must be validated and the sender must have approved the ERC20 token contract before run the code
+   *  must be validated and the sender must have approved the ERC20 token contract before run the code
    *
    * @param owner The address of the owner of the sale
    * @param index The index representative of the desired sale
