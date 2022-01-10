@@ -14,7 +14,7 @@ npm install
 
 ### Compile
 ```
-npx hardhat test
+npx hardhat compile
 ```
 
 ### Run tests
