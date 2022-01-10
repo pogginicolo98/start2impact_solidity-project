@@ -13,6 +13,7 @@ interface IMarketplaceNFT {
 
   /**
    * @notice Emitted when a sale of an NFT is created
+   *
    * @param from The address that created the sale
    * @param tokenId The token ID of the NFT put up for sale
    */
@@ -20,6 +21,7 @@ interface IMarketplaceNFT {
 
   /**
    * @notice Emitted when a sale of an NFT is canceled
+   *
    * @param from The address that canceled the sale
    * @param tokenId The token ID of the NFT of the canceled sale
    */
@@ -27,6 +29,7 @@ interface IMarketplaceNFT {
 
   /**
    * @notice Emitted when a sale of an NFT is completed
+   *
    * @param from The address that put the NFT up for sale
    * @param to The address that purchased the NFT
    * @param tokenId The token ID of the NFT being sold
@@ -36,6 +39,7 @@ interface IMarketplaceNFT {
   /**
    * @notice It takes custody of a given NFT and creates a sell order with the price provided
    * @dev The owner of the NFT must have approved the contract before run the code
+   *
    * @param tokenId The token ID of the NFT put up for sale
    * @param price The price at which to sell the NFT
    */
@@ -43,6 +47,7 @@ interface IMarketplaceNFT {
 
   /**
    * @notice Returns the total number of active sales for a given address
+   *
    * @param owner The address of the sales owner
    * @return salesNum The total number of active sales
    */
@@ -61,6 +66,7 @@ interface IMarketplaceNFT {
    * @notice Returns the details of the sale for a given owner and index
    * @dev There must be sales orders belonging to the owner and the index provided
    * must be validated before run the code
+   *
    * @param owner The address of the owner of the sale
    * @param index The index representative of the desired sale
    * @return tokenId The token id of the NFT put up for sale

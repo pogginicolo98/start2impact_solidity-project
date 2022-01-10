@@ -107,6 +107,7 @@ abstract contract MarketplaceNFT is IMarketplaceNFT, AcceptableTokens, Acceptabl
 
   /**
    * @dev Allows execution only if the NFT of the owner has been approved for Merchant
+   *
    * @param _owner The address of the owner of the NFT
    * @param _tokenId The token ID of the NFT
    */
@@ -120,6 +121,7 @@ abstract contract MarketplaceNFT is IMarketplaceNFT, AcceptableTokens, Acceptabl
 
   /**
    * @dev Allows execution only if ERC20 tokens of the buyer have been approved for Merchant
+   *
    * @param _buyer The address of the buyer of the NFT
    * @param _seller The address of the owner of the NFT
    * @param _index The index representative of the sale of the owner
@@ -134,6 +136,7 @@ abstract contract MarketplaceNFT is IMarketplaceNFT, AcceptableTokens, Acceptabl
 
   /**
    * @dev Allows execution only if there are active sales for a given owner
+   *
    * @param _owner The address of the owner of the sale
    */
   modifier onlyExistingSales(address _owner) {
@@ -146,6 +149,7 @@ abstract contract MarketplaceNFT is IMarketplaceNFT, AcceptableTokens, Acceptabl
 
   /**
    * @dev Allows execution only if the index provided refers to an existing sale
+   *
    * @param _owner The address of the owner of the sale
    * @param _index The index representative of the sale of the owner
    */
