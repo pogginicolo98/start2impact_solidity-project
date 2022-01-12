@@ -4,6 +4,7 @@ async function main() {
     1) WispToken.sol
     2) TreasureNFT.sol
     3) WelcomeChest.sol
+    4) Merchant.sol
   */
 
   const [deployer] = await ethers.getSigners();
@@ -25,6 +26,11 @@ async function main() {
   const _welcomeChest = await ethers.getContractFactory("WelcomeChest");
   const welcomeChest = await _welcomeChest.deploy(wispToken.address);
   console.log("WelcomeChest contract address:", welcomeChest.address);
+
+  // Merchant.sol
+  const _merchant = await ethers.getContractFactory("Merchant");
+  const merchant = await _merchant.deploy(wispToken.address, treasureNFT.address);
+  console.log("Merchant contract address:", merchant.address);
 
   const amount = ethers.utils.parseUnits("100000", 18);
   await wispToken.transfer(welcomeChest.address, amount);

@@ -15,12 +15,9 @@ describe("WispToken contract", function () {
   let initialSupply;
 
   beforeEach(async function () {
-    /*
-      Deploy WispToken.sol and set initialSupply
-    */
-
     [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
 
+    // Deploy WispToken.sol
     _wispToken = await ethers.getContractFactory("WispToken");
     initialSupply = ethers.utils.parseUnits("100000000000", 18);
     wispToken = await _wispToken.deploy(initialSupply);

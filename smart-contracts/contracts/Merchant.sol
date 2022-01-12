@@ -6,6 +6,72 @@ import "./WispToken.sol";
 import "./TreasureNFT.sol";
 
 
+struct Sale {
+  uint256 tokenId;
+  uint256 price;
+}
+
+
+library IterableMapping {
+  // Iterable mapping from address to uint;
+  struct Map {
+    address[] keys;
+    mapping(address => Sale[]) values;
+    mapping(address => uint) indexOf;
+    mapping(address => bool) inserted;
+  }
+
+  function get(Map storage map, address key) public view returns (Sale[] memory) {
+    return map.values[key];
+  }
+
+  function getKeyAtIndex(Map storage map, uint index) public view returns (address) {
+    return map.keys[index];
+  }
+
+  function size(Map storage map) public view returns (uint) {
+    return map.keys.length;
+  }
+
+  function set(Map storage map, address key, Sale calldata val) public {
+    if (map.inserted[key]) {
+      map.values[key].push(val);
+    } else {
+      map.inserted[key] = true;
+      map.values[key].push(val);
+      map.indexOf[key] = map.keys.length;
+      map.keys.push(key);
+    }
+  }
+
+  function remove(Map storage map, address key, uint256 indexValue) public {
+    if (!map.inserted[key]) {
+      return;
+    }
+
+    if (map.values[key].length == 1) {
+      delete map.inserted[key];
+      delete map.values[key];
+
+      uint index = map.indexOf[key];
+      uint lastIndex = map.keys.length - 1;
+      address lastKey = map.keys[lastIndex];
+
+      map.indexOf[lastKey] = index;
+      delete map.indexOf[key];
+
+      map.keys[index] = lastKey;
+      map.keys.pop();
+
+      return;
+    }
+
+    map.values[key][indexValue] = map.values[key][map.values[key].length -1];
+    map.values[key].pop();
+  }
+}
+
+
 /**
  * @title The acceptable tokens
  * @notice ERC20 contracts supported for payment
@@ -39,8 +105,8 @@ contract SupportedNFTs {
  * @notice Marketplace that allows the sale of ERC721 NFTs via ERC20 tokens
  */
 abstract contract MarketplaceNFT is IMarketplaceNFT, SupportedTokens, SupportedNFTs {
-  /// @dev Set of all sales grouped by owner
-  mapping(address => Sale[]) internal sales;
+  using IterableMapping for IterableMapping.Map;
+  IterableMapping.Map internal sales;
 
   /// @inheritdoc IMarketplaceNFT
   function sellItem(uint256 tokenId, uint256 price)
@@ -49,10 +115,11 @@ abstract contract MarketplaceNFT is IMarketplaceNFT, SupportedTokens, SupportedN
     onlyTrsApproved(msg.sender, tokenId)
   {
     trs.transferFrom(msg.sender, address(this), tokenId);
-    sales[msg.sender].push(Sale({
-      tokenId: tokenId,
-      price: price
-    }));
+    sales.set(msg.sender, Sale({
+        tokenId: tokenId,
+        price: price
+      })
+    );
     emit SaleCreated(msg.sender, tokenId);
   }
 
@@ -63,7 +130,7 @@ abstract contract MarketplaceNFT is IMarketplaceNFT, SupportedTokens, SupportedN
     override
     returns (uint256 salesNum)
   {
-    salesNum = sales[owner].length;
+    salesNum = sales.get(owner).length;
   }
 
   /// @inheritdoc IMarketplaceNFT
@@ -73,9 +140,9 @@ abstract contract MarketplaceNFT is IMarketplaceNFT, SupportedTokens, SupportedN
     onlyExistingSales(msg.sender)
     onlyValidIndex(msg.sender, index)
   {
-    uint256 tokenId = sales[msg.sender][index].tokenId;
-    sales[msg.sender][index] = sales[msg.sender][sales[msg.sender].length - 1];
-    sales[msg.sender].pop();
+
+    uint256 tokenId = sales.get(msg.sender)[index].tokenId;
+    sales.remove(msg.sender, index);
     trs.transferFrom(address(this), msg.sender, tokenId);
     emit SaleCanceled(msg.sender, tokenId);
   }
@@ -89,8 +156,8 @@ abstract contract MarketplaceNFT is IMarketplaceNFT, SupportedTokens, SupportedN
     onlyValidIndex(owner, index)
     returns (uint256 tokenId, uint256 price)
   {
-    tokenId = sales[owner][index].tokenId;
-    price = sales[owner][index].price;
+    tokenId = sales.get(owner)[index].tokenId;
+    price = sales.get(owner)[index].price;
   }
 
   /// @inheritdoc IMarketplaceNFT
@@ -101,13 +168,22 @@ abstract contract MarketplaceNFT is IMarketplaceNFT, SupportedTokens, SupportedN
     onlyValidIndex(owner, index)
     onlyWispApproved(msg.sender, owner, index)
   {
-    uint256 amount = sales[owner][index].price;
-    uint256 tokenId = sales[owner][index].tokenId;
-    sales[owner][index] = sales[owner][sales[owner].length - 1];
-    sales[owner].pop();
+    uint256 amount = sales.get(owner)[index].price;
+    uint256 tokenId = sales.get(owner)[index].tokenId;
+    sales.remove(owner, index);
     wisp.transferFrom(msg.sender, owner, amount);
     trs.transferFrom(address(this), msg.sender, tokenId);
     emit ItemSold(owner, msg.sender, tokenId);
+  }
+
+  /// @inheritdoc IMarketplaceNFT
+  function totalSellers() external view override returns(uint256 sellersNum) {
+    sellersNum = sales.size();
+  }
+
+  /// @inheritdoc IMarketplaceNFT
+  function sellerByIndex(uint256 index) external view override returns(address seller) {
+    seller = sales.getKeyAtIndex(index);
   }
 
   /**
@@ -133,7 +209,7 @@ abstract contract MarketplaceNFT is IMarketplaceNFT, SupportedTokens, SupportedN
    */
   modifier onlyWispApproved(address _buyer, address _seller, uint256 _index) {
     require(
-      wisp.allowance(_buyer, address(this)) >= sales[_seller][_index].price,
+      wisp.allowance(_buyer, address(this)) >= sales.get(_seller)[_index].price,
       "WispToken: contract not approved"
     );
     _;
@@ -146,7 +222,7 @@ abstract contract MarketplaceNFT is IMarketplaceNFT, SupportedTokens, SupportedN
    */
   modifier onlyExistingSales(address _owner) {
     require(
-      sales[_owner].length > 0,
+      sales.get(_owner).length > 0,
       "No sales available"
     );
     _;
@@ -160,7 +236,7 @@ abstract contract MarketplaceNFT is IMarketplaceNFT, SupportedTokens, SupportedN
    */
   modifier onlyValidIndex(address _owner, uint256 _index) {
     require(
-      _index < sales[_owner].length,
+      _index < sales.get(_owner).length,
       "Index out of range"
     );
     _;

@@ -34,12 +34,18 @@ describe("Merchant contract", function () {
     wispToken = await _wispToken.deploy(initialSupply);
     await wispToken.transfer(addr1.address, initialAddr1Balance);
 
-    // Deploy WispToken.sol
+    // Deploy TreasureNFT.sol
     _treasureNFT = await ethers.getContractFactory("TreasureNFT");
     treasureNFT = await _treasureNFT.deploy();
 
-    // Deploy WispToken.sol
-    _merchant = await ethers.getContractFactory("Merchant");
+    // Deploy Merchant.sol
+    _iterableMapping = await ethers.getContractFactory("IterableMapping");
+    iterableMapping = await _iterableMapping.deploy();
+    _merchant = await ethers.getContractFactory("Merchant", {
+      libraries: {
+        IterableMapping: iterableMapping.address,
+      },
+    });
     merchant = await _merchant.deploy(wispToken.address, treasureNFT.address);
 
     // Mint 2 NFTs with owner
@@ -94,7 +100,7 @@ describe("Merchant contract", function () {
   });
 
   describe("Sales retrieve", function () {
-    it("Should return the number of active sales", async function () {
+    it("Should return the number of active sales of owner", async function () {
       // Approve Merchant and place 2 orders
       await treasureNFT.setApprovalForAll(merchant.address, true);
       await merchant.sellItem(tokenId1, 100);
@@ -252,6 +258,38 @@ describe("Merchant contract", function () {
       await expect(merchant.connect(addr1).buyItemOfOwnerByIndex(owner.address, 0))
         .to.emit(merchant, "ItemSold")
         .withArgs(owner.address, addr1.address, tokenId1);
+    });
+  });
+
+  describe("Sellers", function () {
+    it("Should return the number of active sellers", async function () {
+      // Mint 1 NFT, approve Merchant and place 2 orders
+      await treasureNFT.connect(addr1).mint(addr1.address, "Token URI");
+      tokenId3 = await treasureNFT.tokenOfOwnerByIndex(addr1.address, 0);
+      await treasureNFT.setApprovalForAll(merchant.address, true);
+      await treasureNFT.connect(addr1).setApprovalForAll(merchant.address, true);
+      await merchant.sellItem(tokenId1, 100);
+      await merchant.connect(addr1).sellItem(tokenId3, 100);
+
+      // Check the results
+      const sellers = await merchant.totalSellers();
+      await expect(sellers).to.equal(2);
+    });
+
+    it("Should return the address of the seller", async function () {
+      // Mint 1 NFT, approve Merchant and place 2 orders
+      await treasureNFT.connect(addr1).mint(addr1.address, "Token URI");
+      tokenId3 = await treasureNFT.tokenOfOwnerByIndex(addr1.address, 0);
+      await treasureNFT.setApprovalForAll(merchant.address, true);
+      await treasureNFT.connect(addr1).setApprovalForAll(merchant.address, true);
+      await merchant.sellItem(tokenId1, 100);
+      await merchant.connect(addr1).sellItem(tokenId3, 100);
+
+      // Check the results
+      const seller1 = await merchant.sellerByIndex(0);
+      await expect(seller1).to.equal(owner.address);
+      const seller2 = await merchant.sellerByIndex(1);
+      await expect(seller2).to.equal(addr1.address);
     });
   });
 });

@@ -15,12 +15,9 @@ describe("TreasureNFT contract", function () {
   let initialOwnerBalance;
 
   beforeEach(async function () {
-    /*
-      Deploy TreasureNFT.sol and mint one NFT
-    */
-
     [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
 
+    // Deploy TreasureNFT.sol and mint 1 NFT
     _treasureNFT = await ethers.getContractFactory("TreasureNFT");
     treasureNFT = await _treasureNFT.deploy();
     await treasureNFT.mint(owner.address, "Token URI");

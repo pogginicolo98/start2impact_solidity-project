@@ -7,11 +7,6 @@ pragma solidity ^0.8.0;
  * @notice The MarketplaceNFT allows the sale of ERC721 NFTs via ERC20 tokens
  */
 interface IMarketplaceNFT {
-  struct Sale {
-    uint256 tokenId;
-    uint256 price;
-  }
-
   /**
    * @notice Emitted when a sale of an NFT is created
    *
@@ -84,4 +79,19 @@ interface IMarketplaceNFT {
    * @param index The index representative of the desired sale
    */
   function buyItemOfOwnerByIndex(address owner, uint256 index) external;
+
+  /**
+   * @notice Returns the total number of active sellers
+   *
+   * @return sellersNum The total number of active sellers
+   */
+  function totalSellers() external view returns(uint256 sellersNum);
+
+  /**
+   * @notice Returns the address of the seller for a given index
+   *
+   * @param index The index representative of the desired seller
+   * @return seller The address of the seller
+   */
+  function sellerByIndex(uint256 index) external view returns(address seller);
 }
