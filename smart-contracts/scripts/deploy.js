@@ -28,7 +28,13 @@ async function main() {
   console.log("WelcomeChest contract address:", welcomeChest.address);
 
   // Merchant.sol
-  const _merchant = await ethers.getContractFactory("Merchant");
+  const _iterableMapping = await ethers.getContractFactory("IterableMapping");
+  const iterableMapping = await _iterableMapping.deploy();
+  const _merchant = await ethers.getContractFactory("Merchant", {
+    libraries: {
+      IterableMapping: iterableMapping.address,
+    },
+  });
   const merchant = await _merchant.deploy(wispToken.address, treasureNFT.address);
   console.log("Merchant contract address:", merchant.address);
 

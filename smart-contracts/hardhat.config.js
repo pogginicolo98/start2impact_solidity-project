@@ -13,10 +13,10 @@ module.exports = {
   networks: {
     hardhat: {
       chainId: 1337,  // Adaptation for development with Metamask
-      // mining: {
-      //   auto: false,
-      //   interval: 3000
-      // }
+      mining: {
+        auto: false,
+        interval: 3000
+      }
     },
     ropsten: {
       url: API_URL,

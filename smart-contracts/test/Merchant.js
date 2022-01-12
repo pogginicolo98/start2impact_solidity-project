@@ -39,8 +39,8 @@ describe("Merchant contract", function () {
     treasureNFT = await _treasureNFT.deploy();
 
     // Deploy Merchant.sol
-    _iterableMapping = await ethers.getContractFactory("IterableMapping");
-    iterableMapping = await _iterableMapping.deploy();
+    const _iterableMapping = await ethers.getContractFactory("IterableMapping");
+    const iterableMapping = await _iterableMapping.deploy();
     _merchant = await ethers.getContractFactory("Merchant", {
       libraries: {
         IterableMapping: iterableMapping.address,

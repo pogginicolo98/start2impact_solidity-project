@@ -217,7 +217,7 @@
             const metadataUri = `http://192.168.1.142/ipfs/${metadataCid.path}`;
 
             this.formDisabled = true;
-            this.treasureNft.methods.mintTresure(this.wallet.address, metadataUri).send({from: this.wallet.address})
+            this.treasureNft.methods.mint(this.wallet.address, metadataUri).send({from: this.wallet.address})
               .on("transactionHash", () => {
                 this.name.value = null;
                 this.description.value = null;

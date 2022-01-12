@@ -1,39 +1,43 @@
 <template>
   <div class="faucet-form">
-    <div class="position-absolute top-50 start-50 translate-middle box">
-      <div class="row justify-content-center mt-4">
-        <div class="col-10">
-          <form novalidate
-                @submit.prevent="handleRequest">
-                <label class="form-label"
-                       for="addressInput"
-                       >Enter your Ropsten address
-                </label>
-                <div class="input-group has-validation mb-3">
-                  <input class="form-control text-center"
-                         id="addressInput"
-                         type="text"
-                         v-model="destAddress.value"
-                         :class="{'is-invalid': !destAddressValid}"
-                         :disabled="formDisabled">
-                  <div class="invalid-feedback text-start">
-                    <ul>
-                      <li v-for="(error, index) in destAddress.errors"
-                          :key="index"
-                          >{{ error }}
-                      </li>
-                    </ul>
-                  </div> <!-- Feedback -->
-                </div> <!-- Input group -->
-                <button class="btn btn-primary mb-4"
+    <form novalidate
+          @submit.prevent="handleRequest">
+          <div class="row justify-content-center">
+            <!-- Input -->
+            <div class="col-10">
+              <label class="position-relative d-block">
+                <i class="fa-brands fa-ethereum position-absolute top-50 start-0 translate-middle ms-3"></i>
+                <input aria-describedby="faucetFormFeedback"
+                       class="form-control input-address"
+                       placeholder="Ropsten address"
+                       type="text"
+                       v-model="destAddress.value"
+                       :class="{'is-invalid': !destAddressValid}"
+                       :disabled="formDisabled">
+              </label>
+              <div class="invalid-feedback text-start d-block"
+                   id="faucetFormFeedback">
+                   <ul>
+                     <li v-for="(error, index) in destAddress.errors"
+                         :key="index"
+                         >{{ error }}
+                     </li>
+                   </ul>
+              </div> <!-- Feedback -->
+            </div>
+
+            <!-- Submit -->
+            <div class="col-4">
+              <span class="btn-wrap">
+                <button class="btn btn-dark py-2"
                         type="submit"
                         :disabled="formDisabled"
                         v-html="sendWispBtn">
                 </button>
-          </form>
-        </div> <!-- Col-10 -->
-      </div> <!-- Row -->
-    </div> <!-- Box -->
+              </span>
+            </div>
+          </div>
+    </form>
   </div> <!-- Faucet form -->
 </template>
 
@@ -122,7 +126,7 @@
         if (this.validateForm()) {
           const to = this.destAddress.value;
           this.formDisabled = true;
-          this.welcomeChest.methods.request(to).send({from: this.wallet.address})
+          this.welcomeChest.methods.requestTokens(to).send({from: this.wallet.address})
             .on("transactionHash", () => {
               this.destAddress.value = null;
               this.setLoadingStatus("enable");
@@ -153,9 +157,27 @@
 </script>
 
 <style scoped>
-  .box {
-    width: 38rem;
-    border: 1px solid black;
-    background-color: #fff;
+  .input-address {
+    background-color: #343434;
+    border-radius: 12px;
+    border: none;
+    font-weight: bold;
+    padding-left: 27px;
+    text-align: center;
+  }
+
+  .btn-dark {
+    border: none;
+    background-color: #2e2d2c;
+    border-radius: 12px;
+    width: 100%;
+  }
+
+  .btn-wrap {
+    display: flex;
+    width: 100%;
+    padding: 1px;
+    border-radius: 12px;
+    background: linear-gradient(90deg,#5ac9e5,#7c5bff);
   }
 </style>
