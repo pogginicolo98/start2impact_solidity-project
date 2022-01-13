@@ -3,19 +3,26 @@
     <form novalidate
           @submit.prevent="handleRequest">
           <div class="row justify-content-center">
-            <!-- Input -->
-            <div class="col-10">
-              <label class="position-relative d-block">
-                <i class="fa-brands fa-ethereum position-absolute top-50 start-0 translate-middle ms-3"></i>
-                <input aria-describedby="faucetFormFeedback"
-                       class="form-control input-address"
-                       placeholder="Ropsten address"
-                       type="text"
-                       v-model="destAddress.value"
-                       :class="{'is-invalid': !destAddressValid}"
-                       :disabled="formDisabled">
-              </label>
-              <div class="invalid-feedback text-start d-block"
+            <!-- Field -->
+            <div class="col-12">
+              <!-- Input -->
+              <label class="d-block position-relative input-wrap"
+                     :class="{'input-wrap-disabled': isDisabled,
+                              'focus': isFocused}">
+                     <i class="fa-brands fa-ethereum position-absolute top-50 start-0 translate-middle ms-3"></i>
+                     <input aria-describedby="faucetFormFeedback"
+                            class="form-control input-address"
+                            placeholder="Ropsten address"
+                            type="text"
+                            v-model="destAddress.value"
+                            :class="{'is-invalid': !destAddressValid}"
+                            :disabled="isDisabled"
+                            @blur="setFocus(false)"
+                            @focus="setFocus(true)">
+              </label> <!-- Input -->
+
+              <!-- Feedback -->
+              <div class="d-block text-start invalid-feedback"
                    id="faucetFormFeedback">
                    <ul>
                      <li v-for="(error, index) in destAddress.errors"
@@ -24,21 +31,24 @@
                      </li>
                    </ul>
               </div> <!-- Feedback -->
-            </div>
+            </div> <!-- Field -->
 
             <!-- Submit -->
-            <div class="col-4">
-              <span class="btn-wrap">
-                <button class="btn btn-dark py-2"
-                        type="submit"
-                        :disabled="formDisabled"
-                        v-html="sendWispBtn">
-                </button>
+            <div class="col-4 d-grid">
+              <span class="d-grid btn-wrap"
+                    :class="{'btn-wrap-disabled': btnDisabled,
+                             'btn-wrap-pending': isPending}">
+                    <button class="btn btn-primary px-4 py-2"
+                            type="submit"
+                            v-html="btnText"
+                            :class="{'btn-pending': isPending}"
+                            :disabled="btnDisabled">
+                    </button>
               </span>
             </div>
-          </div>
+          </div> <!-- Submit -->
     </form>
-  </div> <!-- Faucet form -->
+  </div> <!-- faucet-form -->
 </template>
 
 <script>
@@ -49,9 +59,11 @@
 
     data() {
       return {
-        welcomeChest: null,
-        sendWispBtn: "Send WISP",
-        formDisabled: false,
+        isFocused: false,
+        isPending: false,
+        btnText: "Request",
+        btnDisabled: false,
+        wcContract: null,
         destAddress: {
           value: null,
           errors: [],
@@ -60,13 +72,11 @@
     },
 
     created() {
-      /*
-        Create WelcomeChest contract instance.
-      */
+      // Create WelcomeChest contract instance
 
-      let Interface = require("../../../smart-contracts/artifacts/contracts/WelcomeChest.sol/WelcomeChest.json");
-      let Address = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
-      this.welcomeChest = new this.web3.eth.Contract(Interface.abi, Address);
+      let wcInterface = require("../../../smart-contracts/artifacts/contracts/WelcomeChest.sol/WelcomeChest.json");
+      let wcAddress = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
+      this.wcContract = new this.web3.eth.Contract(wcInterface.abi, wcAddress);
     },
 
     computed: {
@@ -83,20 +93,29 @@
           ? true
           : false;
       },
+
+      isDisabled() {
+        return this.btnDisabled || this.isPending;
+      },
     },
 
     methods: {
-      setLoadingStatus(action) {
+      setFocus(payload) {
+        this.isFocused = payload;
+      },
+
+      setLoadingStatus(payload) {
+        // Set the button text and pending status
+
         let msg = "";
-
-        if (action.toString() === "enable")
-          msg = "<span aria-hidden='true' class='spinner-border spinner-border-sm me-2' role='status'></span>Sending WSIP...";
-        else if (action.toString() === "disable")
-          msg = "Send WISP";
-        else
-          console.error(`setLoadingStatus(): invalid argument (action="${action}") `);
-
-        this.sendWispBtn = msg;
+        if (payload == "enable") {
+          msg = "<span aria-hidden='true' class='spinner-border spinner-border-sm me-2' role='status'></span>Pending";
+          this.isPending = true;
+        } else if (payload == "disable") {
+          msg = "Request";
+          this.isPending = false;
+        }
+        this.btnText = msg;
       },
 
       validateForm() {
@@ -118,38 +137,55 @@
       },
 
       handleRequest() {
-        /*
-          Send a transaction to the method "request" of the WelcomeChest contract.
-          The contract will send WISP tokens to the address provided.
-        */
+        // Make a request to the WelcomeChest contract in order to receive the tokens at the specified address
 
         if (this.validateForm()) {
           const to = this.destAddress.value;
-          this.formDisabled = true;
-          this.welcomeChest.methods.requestTokens(to).send({from: this.wallet.address})
-            .on("transactionHash", () => {
-              this.destAddress.value = null;
-              this.setLoadingStatus("enable");
-            })
-            .on("receipt", receipt => {
-              console.log(receipt);
-              if (receipt.events.Sent.returnValues.to === to) {
+          this.destAddress.value = null;
+          this.btnDisabled = false;
+          this.setLoadingStatus("enable");
+
+          this.wcContract.methods.requestTokens(to).send({from: this.wallet.address})
+            .then(receipt => {
+              console.log("receipt");
+              if (receipt.events.TokensSent.returnValues.to === to) {
                 const amount = this.web3.utils.fromWei(receipt.events.Sent.returnValues.amount);
-                this.$toasted.show(`Sent ${amount} WISP`, {icon: "check" });
+                this.$toasted.show(`${amount} $WISP received`, {icon: "check" });
               } else {
-                this.$toasted.show(`Error`, {icon: "ban"});
+                this.$toasted.show(`Error occurred`, {icon: "ban"});
               }
-              this.formDisabled = false;
               this.setLoadingStatus("disable");
             })
-            .on("error", (error, receipt) => {
-              console.log("error + receipt");
+            .catch(error => {
+              console.error("error occurred executing WelcomeChest method 'requestTokens'");
               console.log(error);
-              console.log(receipt);
-              this.$toasted.show(`Error`, {icon: "ban"});
-              this.formDisabled = false;
+              this.$toasted.show(`Error occurred`, {icon: "ban"});
               this.setLoadingStatus("disable");
             });
+
+          // this.wcContract.methods.requestTokens(to).send({from: this.wallet.address})
+          //   .on("transactionHash", () => {
+          //     this.destAddress.value = null;
+          //     this.btnDisabled = false;
+          //     this.setLoadingStatus("enable");
+          //   })
+          //   .on("receipt", receipt => {
+          //     console.log("receipt");
+          //     if (receipt.events.TokensSent.returnValues.to === to) {
+          //       const amount = this.web3.utils.fromWei(receipt.events.Sent.returnValues.amount);
+          //       this.$toasted.show(`${amount} $WISP received`, {icon: "check" });
+          //     } else {
+          //       this.$toasted.show(`Error occurred`, {icon: "ban"});
+          //     }
+          //     this.setLoadingStatus("disable");
+          //   })
+          //   .on("error", (error, receipt) => {
+          //     console.error("error occurred executing WelcomeChest method 'requestTokens'");
+          //     console.log(error);
+          //     console.log(receipt);
+          //     this.$toasted.show(`Error occurred`, {icon: "ban"});
+          //     this.setLoadingStatus("disable");
+          //   });
         }
       },
     }
@@ -166,18 +202,44 @@
     text-align: center;
   }
 
-  .btn-dark {
-    border: none;
-    background-color: #2e2d2c;
+  .input-wrap {
+    padding: 1px;
     border-radius: 12px;
-    width: 100%;
   }
 
-  .btn-wrap {
-    display: flex;
-    width: 100%;
+  .focus {
     padding: 1px;
     border-radius: 12px;
     background: linear-gradient(90deg,#5ac9e5,#7c5bff);
+  }
+
+  .btn-wrap {
+    padding: 1px;
+    border-radius: 12px;
+    background: hsla(0,0%,100%,.2);
+  }
+
+  .btn-wrap:hover {
+    background: linear-gradient(90deg,#5ac9e5,#7c5bff);
+  }
+
+  .btn-wrap-disabled:hover  {
+    background: hsla(0,0%,100%,.2) !important;
+  }
+
+  .input-wrap-disabled {
+    background: hsla(0,0%,100%,.2);
+  }
+
+  .btn-wrap-pending {
+    background: linear-gradient(90deg,#5ac9e5,#7c5bff);
+  }
+
+  .btn-pending {
+    pointer-events: none;
+  }
+
+  input:disabled {
+    opacity: 0.3;
   }
 </style>
