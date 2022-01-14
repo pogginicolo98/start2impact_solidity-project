@@ -17,8 +17,8 @@
                             v-model="destAddress.value"
                             :class="{'is-invalid': !destAddressValid}"
                             :disabled="isDisabled"
-                            @blur="setFocus(false)"
-                            @focus="setFocus(true)">
+                            @blur="setFocused(false)"
+                            @focus="setFocused(true)">
               </label> <!-- Input -->
 
               <!-- Feedback -->
@@ -48,7 +48,7 @@
             </div>
           </div> <!-- Submit -->
     </form>
-  </div> <!-- faucet-form -->
+  </div> <!-- Faucet Form -->
 </template>
 
 <script>
@@ -100,7 +100,7 @@
     },
 
     methods: {
-      setFocus(payload) {
+      setFocused(payload) {
         this.isFocused = payload;
       },
 
@@ -136,20 +136,22 @@
         return true;
       },
 
-      handleRequest() {
+      async handleRequest() {
         // Make a request to the WelcomeChest contract in order to receive the tokens at the specified address
 
         if (this.validateForm()) {
           const to = this.destAddress.value;
-          this.destAddress.value = null;
-          this.btnDisabled = false;
-          this.setLoadingStatus("enable");
+          this.btnDisabled = true;
 
-          this.wcContract.methods.requestTokens(to).send({from: this.wallet.address})
+          await this.wcContract.methods.requestTokens(to).send({from: this.wallet.address})
+            .on("transactionHash", () => {
+              this.destAddress.value = null;
+              this.btnDisabled = false;
+              this.setLoadingStatus("enable");
+            })
             .then(receipt => {
-              console.log("receipt");
               if (receipt.events.TokensSent.returnValues.to === to) {
-                const amount = this.web3.utils.fromWei(receipt.events.Sent.returnValues.amount);
+                const amount = this.web3.utils.fromWei(receipt.events.TokensSent.returnValues.amount);
                 this.$toasted.show(`${amount} $WISP received`, {icon: "check" });
               } else {
                 this.$toasted.show(`Error occurred`, {icon: "ban"});
@@ -157,35 +159,14 @@
               this.setLoadingStatus("disable");
             })
             .catch(error => {
-              console.error("error occurred executing WelcomeChest method 'requestTokens'");
-              console.log(error);
-              this.$toasted.show(`Error occurred`, {icon: "ban"});
-              this.setLoadingStatus("disable");
+              if (error) {
+                console.error("error occurred executing WelcomeChest method 'requestTokens'");
+                console.log(error);
+                this.btnDisabled = false;
+                this.setLoadingStatus("disable");
+                this.$toasted.show(`Error occurred`, {icon: "ban"});
+              }
             });
-
-          // this.wcContract.methods.requestTokens(to).send({from: this.wallet.address})
-          //   .on("transactionHash", () => {
-          //     this.destAddress.value = null;
-          //     this.btnDisabled = false;
-          //     this.setLoadingStatus("enable");
-          //   })
-          //   .on("receipt", receipt => {
-          //     console.log("receipt");
-          //     if (receipt.events.TokensSent.returnValues.to === to) {
-          //       const amount = this.web3.utils.fromWei(receipt.events.Sent.returnValues.amount);
-          //       this.$toasted.show(`${amount} $WISP received`, {icon: "check" });
-          //     } else {
-          //       this.$toasted.show(`Error occurred`, {icon: "ban"});
-          //     }
-          //     this.setLoadingStatus("disable");
-          //   })
-          //   .on("error", (error, receipt) => {
-          //     console.error("error occurred executing WelcomeChest method 'requestTokens'");
-          //     console.log(error);
-          //     console.log(receipt);
-          //     this.$toasted.show(`Error occurred`, {icon: "ban"});
-          //     this.setLoadingStatus("disable");
-          //   });
         }
       },
     }

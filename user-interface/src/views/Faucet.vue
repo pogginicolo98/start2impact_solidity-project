@@ -14,12 +14,9 @@
             <FaucetFormComponent />
           </div>
         </div>
-      </div>
-
-
-
+      </div> <!-- Box -->
     </div>
-  </div>
+  </div> <!-- Faucet -->
 </template>
 
 <script>
