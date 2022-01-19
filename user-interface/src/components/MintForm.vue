@@ -1,95 +1,24 @@
 <template>
   <div class="mint-form">
-    <div class="box">
-      <form class="row justify-content-center mt-4"
-            novalidate
-            @submit.prevent="handleRequest">
-
-            <!-- Name -->
-            <div class="col-10">
-              <label class="form-label"
-                     for="name"
-                     >Name
-              </label>
-              <div class="input-group has-validation">
-                <input class="form-control"
-                       id="name"
-                       type="text"
-                       v-model="name.value"
-                       :class="{'is-invalid': !nameValid}"
-                       :disabled="formDisabled">
-                <div class="invalid-feedback">
-                  <ul>
-                    <li v-for="(error, index) in name.errors"
-                        :key="index"
-                        >{{ error }}Please enter the name of the NFT.
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            <!-- Description -->
-            <div class="col-10 mt-2">
-              <label class="form-label"
-                     for="description"
-                     >Description
-              </label>
-              <div class="input-group has-validation">
-                <textarea class="form-control"
-                       id="description"
-                       rows="5"
-                       type="text"
-                       v-model="description.value"
-                       :class="{'is-invalid': !descriptionValid}"
-                       :disabled="formDisabled">
-                </textarea>
-                <div class="invalid-feedback">
-                  <ul>
-                    <li v-for="(error, index) in description.errors"
-                        :key="index"
-                        >{{ error }}Please enter the description of the NFT.
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            <!-- Image -->
-            <div class="col-10 mt-2">
-              <label class="form-label"
-                     for="image"
-                     >Image
-              </label>
-              <div class="input-group has-validation">
-                <input accept="image/*"
-                       class="form-control"
-                       id="image"
-                       type="file"
-                       :class="{'is-invalid': !imageValid}"
-                       :disabled="formDisabled"
-                       @change="onImageSelected">
-                <div class="invalid-feedback">
-                  <ul>
-                    <li v-for="(error, index) in image.errors"
-                        :key="index"
-                        >{{ error }}Please enter the image of the NFT.
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            <!-- Mint -->
-            <div class="col-10 mt-4">
-              <button class="btn btn-primary"
-                      type="submit"
-                      :disabled="formDisabled"
-                      v-html="mintBtn">
-              </button>
-            </div>
-      </form>
-    </div> <!-- Box -->
+    <form novalidate
+          @submit.prevent="handleRequest">
+          <upload-image is="upload-image"
+             :url="forms.create.url"
+             :max_files="5"
+             name="files[]"
+             :resize_enabled="true"
+             :resize_max_width="640"
+             :button_html="forms.create.confirm"
+             :button_class="'button is-primary'"
+             v-on:upload-image-attemp="uploadImageAttempt"
+             v-on:upload-image-success="uploadImageSuccess"
+             v-on:upload-image-failure="uploadImageFailure"
+             v-on:upload-image-loaded="uploadImageLoaded"
+             v-on:upload-image-submit="uploadImageSubmit"
+             v-on:upload-image-clicked="uploadImageClicked"
+             v-on:upload-image-removed="uploadImageRemoved"
+          ></upload-image>
+    </form>
   </div> <!-- Mint form -->
 </template>
 
@@ -260,5 +189,15 @@
     background-color: #fff;
     margin-right: auto;
     margin-left: auto;
+  }
+
+  .box-image {
+    width: 350px;
+    height: 270px;
+    /* background-color: #fff; */
+    padding:4px;
+    cursor: pointer;
+    border: 3px dashed rgb(204, 204, 204);
+    border-radius: 12px;
   }
 </style>

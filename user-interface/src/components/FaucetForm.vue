@@ -224,3 +224,95 @@
     opacity: 0.3;
   }
 </style>
+
+
+
+
+<form class="row justify-content-center mt-4"
+      novalidate
+      @submit.prevent="handleRequest">
+
+      <!-- Name -->
+      <div class="col-10">
+        <label class="form-label"
+               for="name"
+               >Name
+        </label>
+        <div class="input-group has-validation">
+          <input class="form-control"
+                 id="name"
+                 type="text"
+                 v-model="name.value"
+                 :class="{'is-invalid': !nameValid}"
+                 :disabled="formDisabled">
+          <div class="invalid-feedback">
+            <ul>
+              <li v-for="(error, index) in name.errors"
+                  :key="index"
+                  >{{ error }}Please enter the name of the NFT.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="col-10 mt-2">
+        <label class="form-label"
+               for="description"
+               >Description
+        </label>
+        <div class="input-group has-validation">
+          <textarea class="form-control"
+                 id="description"
+                 rows="5"
+                 type="text"
+                 v-model="description.value"
+                 :class="{'is-invalid': !descriptionValid}"
+                 :disabled="formDisabled">
+          </textarea>
+          <div class="invalid-feedback">
+            <ul>
+              <li v-for="(error, index) in description.errors"
+                  :key="index"
+                  >{{ error }}Please enter the description of the NFT.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Image -->
+      <div class="col-10 mt-2">
+        <label class="form-label"
+               for="image"
+               >Image
+        </label>
+        <div class="input-group has-validation">
+          <input accept="image/*"
+                 class="form-control"
+                 id="image"
+                 type="file"
+                 :class="{'is-invalid': !imageValid}"
+                 :disabled="formDisabled"
+                 @change="onImageSelected">
+          <div class="invalid-feedback">
+            <ul>
+              <li v-for="(error, index) in image.errors"
+                  :key="index"
+                  >{{ error }}Please enter the image of the NFT.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mint -->
+      <div class="col-10 mt-4">
+        <button class="btn btn-primary"
+                type="submit"
+                :disabled="formDisabled"
+                v-html="mintBtn">
+        </button>
+      </div>
+</form>

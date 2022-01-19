@@ -1,20 +1,20 @@
 <template>
   <div class="mint">
     <div class="container mt-5">
-      <div class="row">
-        <!-- Title -->
-        <div class="col text-center">
-          <h1 class="mb-3">Create</h1>
-          <h5>Mint a new Treasure Chest NFT</h5>
-        </div>
-      </div>
+      <div class="box mx-auto">
+        <div class="row justify-content-center">
+          <!-- Title -->
+          <div class="col-11 text-center">
+            <h1 class="mt-5 mb-3">Create</h1>
+            <h6>Mint a brand new NFT</h6>
+          </div>
 
-      <div class="row mt-5">
-        <!-- Form -->
-        <div class="col ">
-          <MintFormComponent />
+          <!-- Form -->
+          <div class="col-10 my-5">
+            <MintFormComponent />
+          </div>
         </div>
-      </div>
+      </div> <!-- Box -->
 
       <!-- NFTs list -->
       <div class="row mt-5">
@@ -34,8 +34,6 @@
           </div>
         </div>
       </div>
-
-
     </div>
   </div>
 </template>
@@ -100,4 +98,9 @@
 </script>
 
 <style scoped>
+  .box {
+    width: 50rem;
+    border-radius: 12px;
+    background-color: #2c2c2c;
+  }
 </style>

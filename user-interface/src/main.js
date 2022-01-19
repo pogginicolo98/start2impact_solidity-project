@@ -7,6 +7,7 @@ import "bootstrap"
 import './app.scss'
 import connectWallet from "./plugins/connectWallet";
 import Toasted from "vue-toasted";
+import UploadImage from 'vue-upload-image';
 
 const Web3 = require("web3");
 const web3Instance = new Web3();
@@ -24,6 +25,7 @@ Vue.use(Toasted, {
   singleton: true
 });
 
+
 Vue.prototype.$web3 = web3Instance;
 
 Vue.config.productionTip = false;
@@ -37,6 +39,8 @@ Vue.mixin({
     }
   }
 })
+
+Vue.component('upload-image', UploadImage);
 
 new Vue({
   router,

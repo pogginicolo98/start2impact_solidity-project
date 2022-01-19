@@ -10,15 +10,15 @@
         <div class="mx-auto"
              v-show="metamaskConnected">
              <div class="navbar-nav pe-4">
-               <router-link class="nav-link"
+               <router-link class="nav-link text-secondary"
                             :to="{ name: 'Marketplace' }"
                             >Marketplace
                </router-link>
-               <router-link class="nav-link"
+               <router-link class="nav-link text-secondary"
                             :to="{ name: 'Mint' }"
                             >Create
                </router-link>
-               <router-link class="nav-link"
+               <router-link class="nav-link text-secondary"
                             :to="{ name: 'Faucet' }"
                             >Faucet
                </router-link>
@@ -68,7 +68,7 @@
 
 <style scoped>
   .navbar {
-    border-bottom: 1px solid #C7B1A9 !important;
+    border-bottom: 1px solid hsla(0,0%,100%,.2) !important;
     background: transparent !important;
   }
 
