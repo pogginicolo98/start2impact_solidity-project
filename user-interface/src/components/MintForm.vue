@@ -2,22 +2,30 @@
   <div class="mint-form">
     <form novalidate
           @submit.prevent="handleRequest">
-          <upload-image is="upload-image"
-             :url="forms.create.url"
-             :max_files="5"
-             name="files[]"
-             :resize_enabled="true"
-             :resize_max_width="640"
-             :button_html="forms.create.confirm"
-             :button_class="'button is-primary'"
-             v-on:upload-image-attemp="uploadImageAttempt"
-             v-on:upload-image-success="uploadImageSuccess"
-             v-on:upload-image-failure="uploadImageFailure"
-             v-on:upload-image-loaded="uploadImageLoaded"
-             v-on:upload-image-submit="uploadImageSubmit"
-             v-on:upload-image-clicked="uploadImageClicked"
-             v-on:upload-image-removed="uploadImageRemoved"
-          ></upload-image>
+          <div class="box-image position-relative">
+            <i class="fa-regular fa-image position-absolute top-50 start-50 translate-middle" style="font-size: 64px;" v-if="!imagePreview"></i>
+            <i class="fa-solid fa-x position-absolute top-0 end-0 mt-2 me-2 reset" v-else @click="resetImage"></i>
+            <img class="img-fluid"
+                 :src="imagePreview">
+          </div>
+          <input accept="image/*"
+                 aria-describedby="imageFormFeedback"
+                 class="form-control mt-4"
+                 ref="image"
+                 type="file"
+                 :class="{'is-invalid': !imageValid}"
+                 @change="onImageSelected">
+          <div class="invalid-feedback"
+               id="imageFormFeedback">
+               <ul>
+                 <li v-for="(error, index) in image.errors"
+                     :key="index"
+                     >{{ error }}
+                 </li>
+               </ul>
+          </div>
+
+
     </form>
   </div> <!-- Mint form -->
 </template>
@@ -46,6 +54,7 @@
           value: null,
           errors: [],
         },
+        imagePreview: null,
         ipfs: null,
       }
     },
@@ -88,10 +97,6 @@
     },
 
     methods: {
-      onImageSelected(event) {
-        this.image.value = event.target.files[0];
-      },
-
       setLoadingStatus(action) {
         let msg = "";
 
@@ -178,6 +183,17 @@
           }
         }
       },
+
+      onImageSelected(event) {
+        this.image.value = event.target.files[0];
+        this.imagePreview = URL.createObjectURL(event.target.files[0]);
+      },
+
+      resetImage() {
+        this.image.value = null;
+        this.imagePreview = null;
+        this.$refs["image"].value = null;
+      },
     }
   }
 </script>
@@ -194,10 +210,18 @@
   .box-image {
     width: 350px;
     height: 270px;
-    /* background-color: #fff; */
     padding:4px;
-    cursor: pointer;
     border: 3px dashed rgb(204, 204, 204);
     border-radius: 12px;
+  }
+
+  .reset {
+    font-size: 24px;
+    color: #a8a6a6;
+    cursor: pointer;
+  }
+
+  .reset:hover {
+    color: #fff;
   }
 </style>
