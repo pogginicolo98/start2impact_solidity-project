@@ -2,19 +2,36 @@
   <div class="mint-form">
     <form novalidate
           @submit.prevent="handleRequest">
-          <div class="box-image position-relative">
-            <i class="fa-regular fa-image position-absolute top-50 start-50 translate-middle" style="font-size: 64px;" v-if="!imagePreview"></i>
-            <i class="fa-solid fa-x position-absolute top-0 end-0 mt-2 me-2 reset" v-else @click="resetImage"></i>
-            <img class="img-fluid"
-                 :src="imagePreview">
+          <div class="position-relative" style="width: 350px; height: 270px;" @mouseover="setOverlay(true)" @mouseleave="setOverlay(false)">
+            <label for="imageInput">
+              <input accept="image/*"
+                     aria-describedby="imageFormFeedback"
+                     class="form-control mt-4"
+                     id="imageInput"
+                     style="display: none;"
+                     ref="image"
+                     type="file"
+                     :class="{'is-invalid': true}"
+                     @change="onImageSelected">
+              <div class="box-image-wrapper">
+                <div class="box-image" :class="{'overlay': isOverlay}">
+                  <div class="img-wrapper" v-show="imagePreview">
+                    <img class="img-display"
+                         :src="imagePreview">
+                  </div>
+                </div>
+                <transition name="fade">
+                  <i class="fa-regular fa-image position-absolute top-50 start-50 translate-middle img-icon" v-show="isOverlay"></i>
+                </transition>
+              </div>
+            </label>
+            <transition name="fade">
+            <div v-show="isOverlay">
+              <i class="fa-solid fa-xmark position-absolute top-0 end-0 reset-icon" v-show="imagePreview" @click="resetImage"></i>
+            </div>
+            </transition>
           </div>
-          <input accept="image/*"
-                 aria-describedby="imageFormFeedback"
-                 class="form-control mt-4"
-                 ref="image"
-                 type="file"
-                 :class="{'is-invalid': !imageValid}"
-                 @change="onImageSelected">
+
           <div class="invalid-feedback"
                id="imageFormFeedback">
                <ul>
@@ -24,9 +41,8 @@
                  </li>
                </ul>
           </div>
-
-
     </form>
+    <button class="mt-5 btn btn-primary" type="button" name="button" @click="setError()">show error</button>
   </div> <!-- Mint form -->
 </template>
 
@@ -56,6 +72,8 @@
         },
         imagePreview: null,
         ipfs: null,
+        overlay: false,
+        imgDisabled: false,
       }
     },
 
@@ -94,6 +112,12 @@
           ? true
           : false;
       },
+      isOverlay() {
+        return !this.imagePreview || this.overlay;
+      },
+      isDisabled() {
+        return this.imgDisabled && this.imagePreview;
+      }
     },
 
     methods: {
@@ -190,38 +214,82 @@
       },
 
       resetImage() {
-        this.image.value = null;
+
         this.imagePreview = null;
+        this.image.value = null;
         this.$refs["image"].value = null;
       },
+
+      setOverlay(payload) {
+        this.overlay = payload;
+      },
+
+      disableImage(payload) {
+        this.imgDisabled = payload;
+      },
+
+      setError() {
+        this.image.errors.push("Error test");
+      }
     }
   }
 </script>
 
 <style scoped>
-  .box {
-    width: 38rem;
-    border: 1px solid black;
-    background-color: #fff;
-    margin-right: auto;
-    margin-left: auto;
-  }
-
-  .box-image {
+  .box-image-wrapper {
     width: 350px;
     height: 270px;
-    padding:4px;
+    padding: 5px;
     border: 3px dashed rgb(204, 204, 204);
     border-radius: 12px;
-  }
-
-  .reset {
-    font-size: 24px;
-    color: #a8a6a6;
     cursor: pointer;
   }
 
-  .reset:hover {
+  .box-image {
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+  }
+
+  .img-wrapper {
+    width: 100%;
+    height: 100%;
+    border: 0px;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .img-display {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+
+  .overlay {
+    opacity: 0.5;
+  }
+
+  .reset-icon {
+    font-size: 26px;
+    color: #fff;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-right: 14px;
+  }
+
+  .img-icon {
+    font-size: 64px;
     color: #fff;
   }
+
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.2s ease;
+  }
+
+  .fade-enter-from,
+  .fade-leave-to {
+    opacity: 0;
+  }
+
 </style>
