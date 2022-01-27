@@ -28,8 +28,8 @@
           <div class="card mb-3" style="width: 18rem;">
             <img :src="nft.image" class="card-img-top" alt="nft-image">
             <div class="card-body">
-              <h5 class="card-title">{{ nft.name }}</h5>
-              <p class="card-text">{{ nft.description }}</p>
+              <h5 class="card-title text-primary">{{ nft.name }}</h5>
+              <p class="card-text text-primary">{{ nft.description }}</p>
             </div>
           </div>
         </div>
@@ -39,7 +39,7 @@
 </template>
 
 <script>
-  import MintFormComponent from "@/components/MintForm.vue";
+  import MintFormComponent from "@/components/mint/MintForm.vue";
   import { mapGetters } from "vuex";
   import { create } from 'ipfs-http-client';
   import { apiService } from "@/common/api.service.js";
@@ -63,7 +63,7 @@
       let Interface = require("../../../smart-contracts/artifacts/contracts/TreasureNFT.sol/TreasureNFT.json");
       let Address = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
       this.treasureNft = new this.web3.eth.Contract(Interface.abi, Address);
-      this.ipfs = create('http://192.168.1.142:5001/');
+      this.ipfs = create('http://192.168.1.143:5001/');
     },
 
     computed: {

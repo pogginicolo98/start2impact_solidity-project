@@ -2,12 +2,27 @@
   <div class="mint-form">
     <form class="needs-validation"
           novalidate
-          @submit.prevent="validateImage">
-          <div class="" style="width: 350px; height: 270px;">
-            <ImageUploaderComponent :errors="image.errors"
-                                    @imageSelected="onImageSelected($event)"/>
+          @submit.prevent="handleRequest">
+
+          <!-- Image -->
+          <div class="mb-4">
+            <ImageFieldComponent :errors="image.errors"
+                                 @imageSelected="onImageSelected($event)" />
           </div>
 
+          <!-- Name -->
+          <div class="mb-4">
+            <NameFieldComponent :errors="name.errors"
+                                :isDisabled="formDisabled"
+                                @nameSelected="onNameSelected($event)" />
+          </div>
+
+          <!-- Description -->
+          <div class="mb-4">
+            <DescriptionFieldComponent :errors="description.errors"
+                                       :isDisabled="formDisabled"
+                                       @descriptionSelected="onDescriptionSelected($event)" />
+          </div>
 
       <button class="mt-5 btn btn-primary" type="submit" name="button">show error</button>
     </form>
@@ -17,7 +32,9 @@
 <script>
   import { mapGetters } from "vuex";
   import { create } from 'ipfs-http-client';
-  import ImageUploaderComponent from "@/components/ImageUploader.vue";
+  import ImageFieldComponent from "@/components/mint/fields/ImageField.vue";
+  import NameFieldComponent from "@/components/mint/fields/NameField.vue";
+  import DescriptionFieldComponent from "@/components/mint/fields/DescriptionField.vue";
 
   export default {
     name: "MintFormComponent",
@@ -25,25 +42,24 @@
     data() {
       return {
         treasureNft: null,
-        mintBtn: "Mint",
+        ipfs: null,
         formDisabled: false,
+        mintBtn: "Mint",
+        image: {
+          focus: false,
+          value: null,
+          errors: [],
+        },
         name: {
+          focus: false,
           value: null,
           errors: [],
         },
         description: {
+          focus: false,
           value: null,
           errors: [],
         },
-        image: {
-          value: null,
-          errors: [],
-        },
-        imagePreview: null,
-        ipfs: null,
-        overlay: false,
-        imgDisabled: false,
-        validated: false,
       }
     },
 
@@ -52,10 +68,10 @@
         Create TreasureNFT contract instance.
       */
 
-      let Interface = require("../../../smart-contracts/artifacts/contracts/TreasureNFT.sol/TreasureNFT.json");
+      let Interface = require("../../../../smart-contracts/artifacts/contracts/TreasureNFT.sol/TreasureNFT.json");
       let Address = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
       this.treasureNft = new this.web3.eth.Contract(Interface.abi, Address);
-      this.ipfs = create('http://192.168.1.142:5001/');
+      this.ipfs = create('http://192.168.1.143:5001/');
     },
 
     computed: {
@@ -66,20 +82,6 @@
       // metamaskConnected() {
       //   return this.wallet && this.wallet.address;
       // },
-
-      nameValid() {
-        return this.name.errors.length == 0
-          ? true
-          : false;
-      },
-      descriptionValid() {
-        return this.description.errors.length == 0
-          ? true
-          : false;
-      },
-      isDisabled() {
-        return this.imgDisabled && this.imagePreview;
-      }
     },
 
     methods: {
@@ -87,20 +89,50 @@
         this.image.value = payload;
       },
 
-      validateImage() {
+      onNameSelected(payload) {
+        this.name.value = payload;
+      },
+
+      onDescriptionSelected(payload) {
+        this.description.value = payload;
+      },
+
+      validateForm() {
+        /*
+            Validation form fields.
+
+            :fields
+            - Image:
+                1) Allowed formats: "jpeg", "jpg", "png", "svg".
+            - Name:
+                1) The field cannot be empty.
+        */
+        let formValid = true;
+
         this.image.errors = [];
         if (this.image.value != null) {
-          let allowedExtension = ["jpeg", "jpg", "png"];
-          let fileExtension = this.image.value.name.split(".").pop().toLowerCase();          
-          for(let index in allowedExtension) {
+          let allowedExtension = ["jpeg", "jpg", "png", "svg"];
+          let fileExtension = this.image.value.name.split(".").pop().toLowerCase();
+          let imageValid = false;
+          for (let index in allowedExtension) {
             if(fileExtension === allowedExtension[index]) {
-              return true;
+              imageValid = true;
+              break;
             }
           }
-          this.image.errors.push("Allowed formats: *." + allowedExtension.join(", *."));
-          return false;
+          if (!imageValid) {
+            this.image.errors.push("Allowed formats: *." + allowedExtension.join(", *."));
+            formValid = false;
+          }
         }
-        return true;
+
+        this.name.errors = [];
+        if (this.name.value == null) {
+          this.name.errors.push("The name cannot be empty");
+          formValid = false;
+        }
+
+        return formValid;
       },
 
       setLoadingStatus(action) {
@@ -116,28 +148,6 @@
         this.mintBtn = msg;
       },
 
-      validateForm() {
-        /*
-            Validation form fields.
-
-            :fields
-            - Name:
-                1) The field cannot be empty.
-                2) The field cannot exceed 24 characters.
-            - Description:
-                1) The field cannot exceed 256 characters.
-            - Image:
-                1) Allowed formats: "jpeg", "jpg", "png".
-        */
-
-        // this.destAddress.errors = [];
-        // if (!this.web3.utils.isAddress(this.destAddress.value)) {
-        //   this.destAddress.errors.push("Please enter a valid Ropsten address");
-        //   return false;
-        // }
-        return true;
-      },
-
       async handleRequest() {
         /*
           Send a transaction to the method "request" of the WelcomeChest contract.
@@ -146,15 +156,18 @@
 
         if (this.validateForm()) {
           try {
-            const imageCid = await this.ipfs.add(this.image.value);
-            const imageUri = `http://192.168.1.142/ipfs/${imageCid.path}`;
+            let imageUri = null;
+            if (this.image.value != null) {
+              const imageCid = await this.ipfs.add(this.image.value);
+              imageUri = `http://192.168.1.143/ipfs/${imageCid.path}`;
+            }
             const metadata = {
               "name": this.name.value,
               "description": this.description.value,
               "image": imageUri
             }
             const metadataCid = await this.ipfs.add(JSON.stringify(metadata));
-            const metadataUri = `http://192.168.1.142/ipfs/${metadataCid.path}`;
+            const metadataUri = `http://192.168.1.143/ipfs/${metadataCid.path}`;
 
             this.formDisabled = true;
             this.treasureNft.methods.mint(this.wallet.address, metadataUri).send({from: this.wallet.address})
@@ -189,15 +202,12 @@
           }
         }
       },
-
-      setError() {
-        this.image.errors.push("Error test");
-        this.validated = true;
-      }
     },
 
     components: {
-      ImageUploaderComponent,
+      ImageFieldComponent,
+      NameFieldComponent,
+      DescriptionFieldComponent,
     }
   }
 </script>
