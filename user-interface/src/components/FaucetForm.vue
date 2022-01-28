@@ -7,8 +7,7 @@
             <div class="col-12">
               <!-- Input -->
               <label class="d-block position-relative input-wrap"
-                     :class="{'input-wrap-disabled': isDisabled,
-                              'focusOn': isFocused,
+                     :class="{'focusOn': isFocused,
                               'focusOff': !isFocused}">
                      <i class="fa-brands fa-ethereum position-absolute top-50 start-0 translate-middle ms-3"></i>
                      <input aria-describedby="faucetFormFeedback"
@@ -17,7 +16,6 @@
                             type="text"
                             v-model="destAddress.value"
                             :class="{'is-invalid': !destAddressValid}"
-                            :disabled="isDisabled"
                             @blur="setFocused(false)"
                             @focus="setFocused(true)">
               </label> <!-- Input -->
@@ -37,13 +35,13 @@
             <!-- Submit -->
             <div class="col-4 d-grid">
               <span class="d-grid btn-wrap"
-                    :class="{'btn-wrap-disabled': btnDisabled,
+                    :class="{'btn-wrap-disabled': isDisabled,
                              'btn-wrap-pending': isPending}">
                     <button class="btn btn-primary px-4 py-2"
                             type="submit"
                             v-html="btnText"
                             :class="{'btn-pending': isPending}"
-                            :disabled="btnDisabled">
+                            :disabled="isDisabled">
                     </button>
               </span>
             </div>
@@ -63,7 +61,7 @@
         isFocused: false,
         isPending: false,
         btnText: "Request",
-        btnDisabled: false,
+        isDisabled: false,
         wcContract: null,
         destAddress: {
           value: null,
@@ -93,10 +91,6 @@
         return this.destAddress.errors.length == 0
           ? true
           : false;
-      },
-
-      isDisabled() {
-        return this.btnDisabled || this.isPending;
       },
     },
 
@@ -141,17 +135,17 @@
         // Make a request to the WelcomeChest contract in order to receive the tokens at the specified address
 
         if (this.validateForm()) {
-          const to = this.destAddress.value;
-          this.btnDisabled = true;
+          const to = this.destAddress.value.toLowerCase();
+          this.isDisabled = true;
 
           await this.wcContract.methods.requestTokens(to).send({from: this.wallet.address})
             .on("transactionHash", () => {
               this.destAddress.value = null;
-              this.btnDisabled = false;
+              this.isDisabled = false;
               this.setLoadingStatus("enable");
             })
             .then(receipt => {
-              if (receipt.events.TokensSent.returnValues.to === to) {
+              if (receipt.events.TokensSent.returnValues.to.toLowerCase() === to) {
                 const amount = this.web3.utils.fromWei(receipt.events.TokensSent.returnValues.amount);
                 this.$toasted.show(`${amount} $WISP received`, {icon: "check" });
               } else {
@@ -163,7 +157,7 @@
               if (error) {
                 console.error("error occurred executing WelcomeChest method 'requestTokens'");
                 console.log(error);
-                this.btnDisabled = false;
+                this.isDisabled = false;
                 this.setLoadingStatus("disable");
                 this.$toasted.show(`Error occurred`, {icon: "ban"});
               }
@@ -191,7 +185,6 @@
     padding: 1px;
     border-radius: 12px;
     background: hsla(0,0%,100%,.2);
-;
   }
 
   .focusOn {
@@ -210,23 +203,11 @@
     background: linear-gradient(90deg,#5ac9e5,#7c5bff);
   }
 
-  .btn-wrap-disabled:hover  {
-    background: hsla(0,0%,100%,.2) !important;
-  }
-
-  .input-wrap-disabled {
-    background: hsla(0,0%,100%,.2);
-  }
-
   .btn-wrap-pending {
     background: linear-gradient(90deg,#5ac9e5,#7c5bff);
   }
 
   .btn-pending {
     pointer-events: none;
-  }
-
-  input:disabled {
-    opacity: 0.3;
   }
 </style>

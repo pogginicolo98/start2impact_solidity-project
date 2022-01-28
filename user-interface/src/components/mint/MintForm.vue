@@ -2,36 +2,42 @@
   <div class="mint-form">
     <form class="needs-validation"
           novalidate
+          ref="form"
           @submit.prevent="handleRequest">
 
           <!-- Image -->
           <div class="mb-4">
-            <ImageFieldComponent :errors="image.errors"
-                                 @imageSelected="onImageSelected($event)" />
+            <ImageFieldComponent :errors="image.errors" />
           </div>
 
           <!-- Name -->
           <div class="mb-4">
-            <NameFieldComponent :errors="name.errors"
-                                :isDisabled="formDisabled"
-                                @nameSelected="onNameSelected($event)" />
+            <NameFieldComponent :errors="name.errors" />
           </div>
 
           <!-- Description -->
           <div class="mb-4">
-            <DescriptionFieldComponent :errors="description.errors"
-                                       :isDisabled="formDisabled"
-                                       @descriptionSelected="onDescriptionSelected($event)" />
+            <DescriptionFieldComponent :errors="description.errors" />
           </div>
 
-      <button class="mt-5 btn btn-primary" type="submit" name="button">show error</button>
+          <!-- Mint -->
+          <span class="d-grid btn-wrap"
+                :class="{'btn-wrap-disabled': isDisabled,
+                         'btn-wrap-pending': isPending}">
+                <button class="btn btn-primary px-4 py-2"
+                        type="submit"
+                        v-html="btnText"
+                        :class="{'btn-pending': isPending}"
+                        :disabled="isDisabled">
+                </button>
+          </span>
     </form>
   </div> <!-- Mint form -->
 </template>
 
 <script>
   import { mapGetters } from "vuex";
-  import { create } from 'ipfs-http-client';
+  import store from "@/store";
   import ImageFieldComponent from "@/components/mint/fields/ImageField.vue";
   import NameFieldComponent from "@/components/mint/fields/NameField.vue";
   import DescriptionFieldComponent from "@/components/mint/fields/DescriptionField.vue";
@@ -42,22 +48,19 @@
     data() {
       return {
         treasureNft: null,
-        ipfs: null,
-        formDisabled: false,
-        mintBtn: "Mint",
+        btnText: "Mint",
+        isPending: false,
+        isDisabled: false,
         image: {
           focus: false,
-          value: null,
           errors: [],
         },
         name: {
           focus: false,
-          value: null,
           errors: [],
         },
         description: {
           focus: false,
-          value: null,
           errors: [],
         },
       }
@@ -71,12 +74,15 @@
       let Interface = require("../../../../smart-contracts/artifacts/contracts/TreasureNFT.sol/TreasureNFT.json");
       let Address = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
       this.treasureNft = new this.web3.eth.Contract(Interface.abi, Address);
-      this.ipfs = create('http://192.168.1.143:5001/');
+
+      store.commit("SET_MINTFORM", {image: null, preview: "", name: null, description: null});
     },
 
     computed: {
       ...mapGetters({
         wallet: "getWallet",
+        form: "getMintForm",
+        ipfs: "getIpfs",
       }),
 
       // metamaskConnected() {
@@ -85,18 +91,6 @@
     },
 
     methods: {
-      onImageSelected(payload) {
-        this.image.value = payload;
-      },
-
-      onNameSelected(payload) {
-        this.name.value = payload;
-      },
-
-      onDescriptionSelected(payload) {
-        this.description.value = payload;
-      },
-
       validateForm() {
         /*
             Validation form fields.
@@ -110,9 +104,9 @@
         let formValid = true;
 
         this.image.errors = [];
-        if (this.image.value != null) {
+        if (this.form.image != null) {
           let allowedExtension = ["jpeg", "jpg", "png", "svg"];
-          let fileExtension = this.image.value.name.split(".").pop().toLowerCase();
+          let fileExtension = this.form.image.name.split(".").pop().toLowerCase();
           let imageValid = false;
           for (let index in allowedExtension) {
             if(fileExtension === allowedExtension[index]) {
@@ -127,7 +121,7 @@
         }
 
         this.name.errors = [];
-        if (this.name.value == null) {
+        if (this.form.name == null) {
           this.name.errors.push("The name cannot be empty");
           formValid = false;
         }
@@ -135,70 +129,70 @@
         return formValid;
       },
 
-      setLoadingStatus(action) {
+      setLoadingStatus(payload) {
+        // Set the button text and pending status
+
         let msg = "";
-
-        if (action.toString() === "enable")
-          msg = "<span aria-hidden='true' class='spinner-border spinner-border-sm me-2' role='status'></span>Minting...";
-        else if (action.toString() === "disable")
+        if (payload == "enable") {
+          msg = "<span aria-hidden='true' class='spinner-border spinner-border-sm me-2' role='status'></span>Minting";
+          this.isPending = true;
+        } else if (payload == "disable") {
           msg = "Mint";
-        else
-          console.error(`setLoadingStatus(): invalid argument (action="${action}") `);
-
-        this.mintBtn = msg;
+          this.isPending = false;
+        }
+        this.btnText = msg;
       },
 
       async handleRequest() {
         /*
-          Send a transaction to the method "request" of the WelcomeChest contract.
-          The contract will send WISP tokens to the address provided.
+          Send a transaction to the method "mint" of the TreasureNFT contract.
+          The contract will mint a new token with provided metadata and transfer it to the user's address.
         */
 
         if (this.validateForm()) {
           try {
+            const image = this.form.image;
+            const name = this.form.name;
+            const description = this.form.description;
             let imageUri = null;
-            if (this.image.value != null) {
-              const imageCid = await this.ipfs.add(this.image.value);
+            this.isDisabled = true;
+
+            if (image != null) {
+              const imageCid = await this.ipfs.add(image);
               imageUri = `http://192.168.1.143/ipfs/${imageCid.path}`;
             }
             const metadata = {
-              "name": this.name.value,
-              "description": this.description.value,
+              "name": name,
+              "description": description,
               "image": imageUri
             }
             const metadataCid = await this.ipfs.add(JSON.stringify(metadata));
             const metadataUri = `http://192.168.1.143/ipfs/${metadataCid.path}`;
 
-            this.formDisabled = true;
             this.treasureNft.methods.mint(this.wallet.address, metadataUri).send({from: this.wallet.address})
               .on("transactionHash", () => {
-                this.name.value = null;
-                this.description.value = null;
-                this.image.value = null;
+                this.$refs.form.reset();
+                store.commit("SET_MINTFORM", {image: null, preview: null, name: null, description: null});
+                this.isDisabled = false;
                 this.setLoadingStatus("enable");
               })
-              .on("receipt", receipt => {
-                console.log(receipt);
-                // if (receipt.events.Minted.returnValues.to === "to") {
-                //   const amount = this.web3.utils.fromWei(receipt.events.Sent.returnValues.amount);
-                //   this.$toasted.show(`Sent ${amount} WISP`, {icon: "check" });
-                // } else {
-                //   this.$toasted.show(`Error`, {icon: "ban"});
-                // }
-                this.$toasted.show(`Minted`, {icon: "check"});
-                this.formDisabled = false;
+              .then(receipt => {
+                if (receipt.events.Transfer.returnValues.to.toLowerCase() == this.wallet.address.toLowerCase()) {
+                  this.$toasted.show(`Successfully minted`, {icon: "check"});
+                } else {
+                  this.$toasted.show(`Error occurred`, {icon: "ban"});
+                }
                 this.setLoadingStatus("disable");
               })
-              .on("error", (error, receipt) => {
-                console.log("error + receipt");
+              .catch(error => {
+                console.error("error occurred executing TreasureNFT method 'mint'");
                 console.log(error);
-                console.log(receipt);
-                this.$toasted.show(`Error`, {icon: "ban"});
-                this.formDisabled = false;
+                this.isDisabled = false;
                 this.setLoadingStatus("disable");
+                this.$toasted.show(`Error occurred`, {icon: "ban"});
               });
           } catch (error) {
-            console.log('Error uploading file: ', error);
+            console.error(error);
           }
         }
       },
@@ -213,4 +207,25 @@
 </script>
 
 <style scoped>
+  .btn-wrap {
+    padding: 1px;
+    border-radius: 12px;
+    background: hsla(0,0%,100%,.2);
+  }
+
+  .btn-wrap:hover {
+    background: linear-gradient(90deg,#5ac9e5,#7c5bff);
+  }
+
+  .btn-wrap-disabled:hover  {
+    background: hsla(0,0%,100%,.2) !important;
+  }
+
+  .btn-wrap-pending {
+    background: linear-gradient(90deg,#5ac9e5,#7c5bff);
+  }
+
+  .btn-pending {
+    pointer-events: none;
+  }
 </style>

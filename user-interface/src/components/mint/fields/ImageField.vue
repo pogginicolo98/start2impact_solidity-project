@@ -4,8 +4,9 @@
            for="imageUploader"
            >Image
     </label>
-    <ImageUploaderComponent style="width: 350px; height: 270px;"
+    <ImageUploaderComponent style="width: 18rem; height: 18rem;"
                             id="imageUploader"
+                            :preview="preview"
                             @imageUpdated="onInput($event)" />
     <div class="invalid-feedback d-block mt-2"
          id="imageFormFeedback">
@@ -20,6 +21,8 @@
 </template>
 
 <script>
+  import { mapGetters } from "vuex";
+  import store from "@/store";
   import ImageUploaderComponent from "@/components/mint/fields/ImageUploader.vue";
 
   export default {
@@ -32,15 +35,19 @@
       },
     },
 
-    data() {
-      return {
-        isFocus: false,
-      }
+    computed: {
+      ...mapGetters({
+        preview: "getPreview",
+      }),
     },
 
     methods: {
       onInput(payload) {
-        this.$emit('imageSelected', payload);
+        store.commit("SET_PREVIEW", payload != null
+          ? URL.createObjectURL(payload)
+          : null
+        );
+        store.commit("SET_IMAGE", payload);
       },
     },
 

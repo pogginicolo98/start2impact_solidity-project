@@ -14,7 +14,7 @@ module.exports = {
     hardhat: {
       chainId: 1337,  // Adaptation for development with Metamask
       mining: {
-        auto: true,
+        auto: false,
         interval: 3000
       }
     },

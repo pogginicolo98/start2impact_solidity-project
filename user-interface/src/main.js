@@ -6,6 +6,7 @@ import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap"
 import './app.scss'
 import connectWallet from "./plugins/connectWallet";
+import connectIpfs from "./plugins/connectIpfs";
 import Toasted from "vue-toasted";
 
 const Web3 = require("web3");
@@ -16,6 +17,7 @@ if (window.ethereum) {
 }
 
 Vue.use(connectWallet);
+Vue.use(connectIpfs);
 Vue.use(Toasted, {
   position: "bottom-right",
   duration: 8000,

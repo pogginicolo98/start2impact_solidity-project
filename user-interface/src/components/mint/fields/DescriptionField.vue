@@ -5,16 +5,14 @@
            >Description
     </label>
     <div class="input-wrap"
-         :class="{'input-wrap-disabled': isDisabled,
-                  'focusOff': !isFocus,
+         :class="{'focusOff': !isFocus,
                   'focusOn': isFocus}">
          <textarea aria-describedby="descriptionFormFeedback"
                    class="form-control input-field"
                    id="descriptionInput"
-                   rows="5"
+                   rows="4"
                    placeholder="Provide a detailed description of your item."
                    :class="{'is-invalid': !isValid}"
-                   :disabled="isDisabled"
                    @blur="setFocus(false)"
                    @change="onInput"
                    @focus="setFocus(true)">
@@ -33,18 +31,16 @@
 </template>
 
 <script>
+  import store from "@/store";
+
   export default {
     name: "DescriptionFieldComponent",
 
     props: {
-      isDisabled: {
-        type: Boolean,
-        required: true,
-      },
       errors: {
         type: Array,
         required: true,
-      }
+      },
     },
 
     data() {
@@ -67,7 +63,7 @@
       },
 
       onInput(event) {
-        this.$emit('descriptionSelected', event.target.value);
+        store.commit("SET_DESCRIPTION", event.target.value);
       },
     },
   }

@@ -52,9 +52,15 @@
   export default {
     name: "ImageUploaderComponent",
 
+    props: {
+      preview: {
+        type: String,
+        required: false,
+      }
+    },
+
     data() {
       return {
-        preview: null,
         overlay: false,
       }
     },
@@ -67,12 +73,10 @@
 
     methods: {
       onImageSelected(event) {
-        this.preview = URL.createObjectURL(event.target.files[0]);
         this.$emit('imageUpdated', event.target.files[0]);
       },
 
       resetImage() {
-        this.preview = null;
         this.$refs["image"].value = null;
         this.$emit('imageUpdated', null);
       },
@@ -117,12 +121,19 @@
     border: 0px;
     border-radius: 12px;
     overflow: hidden;
+    position: relative;
+    aspect-ratio: 1 / 1;
   }
 
   .image-display {
-    object-fit: cover;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
     width: 100%;
-    height: 100%;
+    height: auto;
   }
 
   .overlay {

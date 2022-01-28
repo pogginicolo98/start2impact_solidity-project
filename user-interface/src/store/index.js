@@ -1,6 +1,8 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import wallet from "@/store/modules/wallet";
+import ipfs from "@/store/modules/ipfs";
+import mintForm from "@/store/modules/mintForm";
 
 Vue.use(Vuex);
 
@@ -18,6 +20,8 @@ export default new Vuex.Store({
     getWeb3Instance: (state) => state.web3Instance,
   },
   modules: {
-    wallet
+    wallet,
+    ipfs,
+    mintForm,
   },
 });
