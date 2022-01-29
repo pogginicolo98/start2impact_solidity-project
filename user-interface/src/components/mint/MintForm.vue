@@ -179,6 +179,7 @@
               .then(receipt => {
                 if (receipt.events.Transfer.returnValues.to.toLowerCase() == this.wallet.address.toLowerCase()) {
                   this.$toasted.show(`Successfully minted`, {icon: "check"});
+                  this.$emit('nftMinted', receipt.events.Transfer.returnValues.tokenId);
                 } else {
                   this.$toasted.show(`Error occurred`, {icon: "ban"});
                 }

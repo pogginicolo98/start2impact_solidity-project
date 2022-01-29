@@ -149,7 +149,7 @@
   }
 
   .image-icon {
-    font-size: 64px;
+    font-size: 88px;
     color: #fff;
   }
 
