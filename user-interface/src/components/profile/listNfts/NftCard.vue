@@ -22,13 +22,13 @@
           <div class="card-nft-img-wrap">
             <img alt="product image"
                  class="card-nft-img"
-                 v-if="nft.image"
-                 :src="nft.image">
+                 v-if="metadata.image"
+                 :src="metadata.image">
             <i class="fa-regular fa-image card-nft-icon position-absolute top-50 start-50 translate-middle"
                v-else>
             </i>
           </div>
-          <p class="text-truncate text-center fw-bold mx-3 mt-3">{{ nft.name }}</p>
+          <p class="text-truncate text-center fw-bold mx-3 mt-3">{{ metadata.name }}</p>
         </div>
       </div>
     </template>
@@ -45,7 +45,7 @@
         type: Boolean,
         required: true,
       },
-      nft: {
+      metadata: {
         type: Object,
         required: false,
       },

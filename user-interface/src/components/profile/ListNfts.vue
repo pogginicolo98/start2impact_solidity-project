@@ -16,8 +16,12 @@
         <div class="col-auto col-nft mb-3"
              v-for="(nft, index) in nfts"
              :key="index">
-             <NftCardComponent :isLoading="isLoading"
-                           :nft="nft" />
+             <router-link class="nav-link text-secondary"
+                          :disabled="isLoading"
+                          :to="{ name: 'NftDetails', params: { tokenId: nft.tokenId } }">
+                          <NftCardComponent :isLoading="isLoading"
+                                            :metadata="nft.metadata" />
+             </router-link>
         </div>
       </template>
 
@@ -92,7 +96,11 @@
           let tokenUri = await this.treasureNFT.methods.tokenURI(tokenId).call();
           await apiService(tokenUri)
             .then(response => {
-              this.nfts.push(response);
+              let nft = {
+                tokenId: tokenId,
+                metadata: response
+              };
+              this.nfts.push(nft);
             })
             .catch(error => {
               console.log(error);
@@ -106,7 +114,11 @@
         let tokenUri = await this.treasureNFT.methods.tokenURI(tokenId).call();
         await apiService(tokenUri)
           .then(response => {
-            this.nfts.push(response);
+            let nft = {
+              tokenId: tokenId,
+              metadata: response
+            };
+            this.nfts.push(nft);
           })
           .catch(error => {
             console.log(error);

@@ -28,6 +28,7 @@
 
 <script>
   import treasureNFTMixin from "@/mixins/TreasureNFT";
+  import { apiService } from "@/common/api.service.js";
 
   export default {
     name: "NftDetails",
@@ -42,14 +43,15 @@
     data() {
       return {
         isLoading: true,
+        metadata: null,
       };
     },
 
-    created () {
+    async created () {
       let tokenUri = await this.treasureNFT.methods.tokenURI(this.tokenId).call();
       await apiService(tokenUri)
         .then(response => {
-          this.nft = response;
+          this.metadata = response;
         })
         .catch(error => {
           console.log(error);
