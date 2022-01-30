@@ -1,5 +1,5 @@
 <template>
-  <div class="mint-form">
+  <div class="mint">
     <form class="needs-validation"
           novalidate
           ref="form"
@@ -20,7 +20,7 @@
             <DescriptionFieldComponent :errors="description.errors" />
           </div>
 
-          <!-- Mint -->
+          <!-- Mint button -->
           <span class="d-grid btn-wrap"
                 :class="{'btn-wrap-disabled': isDisabled,
                          'btn-wrap-pending': isPending}">
@@ -31,19 +31,20 @@
                         :disabled="isDisabled">
                 </button>
           </span>
+
     </form>
-  </div> <!-- Mint form -->
+  </div> <!-- Mint -->
 </template>
 
 <script>
   import { mapGetters } from "vuex";
   import store from "@/store";
-  import ImageFieldComponent from "@/components/mint/fields/ImageField.vue";
-  import NameFieldComponent from "@/components/mint/fields/NameField.vue";
-  import DescriptionFieldComponent from "@/components/mint/fields/DescriptionField.vue";
+  import ImageFieldComponent from "@/components/profile/mint/ImageField.vue";
+  import NameFieldComponent from "@/components/profile/mint/NameField.vue";
+  import DescriptionFieldComponent from "@/components/profile/mint/DescriptionField.vue";
 
   export default {
-    name: "MintFormComponent",
+    name: "MintComponent",
 
     data() {
       return {
@@ -190,10 +191,12 @@
                 console.log(error);
                 this.isDisabled = false;
                 this.setLoadingStatus("disable");
-                this.$toasted.show(`Error occurred`, {icon: "ban"});
+                this.$toasted.show(`Transaction error`, {icon: "ban"});
               });
           } catch (error) {
             console.error(error);
+            this.$toasted.show(`IPFS error`, {icon: "ban"});
+            this.isDisabled = false;
           }
         }
       },

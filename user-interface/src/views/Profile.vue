@@ -1,6 +1,6 @@
 <template>
-  <div class="mint">
-      <div class="row justify-content-evenly my-5 mx-0">
+  <div class="profile">
+      <div class="row justify-content-between m-5">
 
         <!-- Mint -->
         <div class="col-4">
@@ -9,26 +9,29 @@
               <h2 class="mb-2">Mint</h2>
               <h6>Create a new Treasure ($TRS) NFT</h6>
             </div>
-            <MintFormComponent class="mt-4"
+            <MintComponent class="mt-4"
                                @nftMinted="onNftMinted($event)"/>
           </div>
         </div>
 
         <!-- User NFTs -->
-        <div class="col-7 box px-5 py-4">
-          <h2 class="text-center">Available NFTs</h2>
-          <ListNftsComponent :tokenId="tokenId"/>
+        <div class="col-7">
+          <div class="box px-5 pt-4 pb-5">
+            <h2 class="text-center">Available Treasure NFTs</h2>
+            <ListNftsComponent :tokenId="tokenId"/>
+          </div>
         </div>
       </div>
-  </div>
+
+  </div> <!-- Profile -->
 </template>
 
 <script>
-  import ListNftsComponent from "@/components/mint/ListNfts.vue";
-  import MintFormComponent from "@/components/mint/MintForm.vue";
+  import ListNftsComponent from "@/components/profile/ListNfts.vue";
+  import MintComponent from "@/components/profile/Mint.vue";
 
   export default {
-    name: "Mint",
+    name: "Profile",
 
     data() {
       return {
@@ -43,7 +46,7 @@
     },
 
     components: {
-      MintFormComponent,
+      MintComponent,
       ListNftsComponent,
     },
   };

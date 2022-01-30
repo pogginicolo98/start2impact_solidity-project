@@ -1,5 +1,5 @@
 <template>
-  <div class="nft">
+  <div class="nft-card">
 
     <!-- Placeholder -->
     <template v-if="isLoading">
@@ -32,12 +32,13 @@
         </div>
       </div>
     </template>
-  </div> <!-- NFT -->
+
+  </div> <!-- NFT card -->
 </template>
 
 <script>
   export default {
-    name: "NftComponent",
+    name: "NftCardComponent",
 
     props: {
       isLoading: {

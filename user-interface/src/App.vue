@@ -17,7 +17,7 @@
 
     data() {
       return {
-        path: ["Home", "Marketplace", "Mint", "Faucet"],
+        path: ["Home", "Marketplace", "Profile", "Faucet"],
         fixedFooter: ["Home", "Marketplace", "Faucet"],
       };
     },

@@ -1,9 +1,9 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Home from "../views/Home.vue";
-import Marketplace from "../views/Marketplace.vue";
-import Faucet from "../views/Faucet.vue";
-import Mint from "../views/Mint.vue";
+import Home from "@/views/Home.vue";
+import Marketplace from "@/views/Marketplace.vue";
+import Faucet from "@/views/Faucet.vue";
+import Profile from "@/views/Profile.vue";
 
 Vue.use(VueRouter);
 
@@ -24,9 +24,9 @@ const routes = [
     component: Faucet,
   },
   {
-    path: "/mint",
-    name: "Mint",
-    component: Mint,
+    path: "/profile",
+    name: "Profile",
+    component: Profile,
   },
 ];
 

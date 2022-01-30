@@ -15,8 +15,8 @@
                             >Marketplace
                </router-link>
                <router-link class="nav-link text-secondary"
-                            :to="{ name: 'Mint' }"
-                            >Create
+                            :to="{ name: 'Profile' }"
+                            >Profile
                </router-link>
                <router-link class="nav-link text-secondary"
                             :to="{ name: 'Faucet' }"

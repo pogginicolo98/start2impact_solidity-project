@@ -7,25 +7,31 @@
         <div class="col-auto col-nft mb-3"
              v-for="index in balanceOfUser"
              :key="index">
-             <NftComponent :isLoading="isLoading" />
+             <NftCardComponent :isLoading="isLoading" />
         </div>
       </template>
 
-      <!-- NFTs -->
-      <template v-else>
+      <!-- Items -->
+      <template v-else-if="nfts.length > 0">
         <div class="col-auto col-nft mb-3"
              v-for="(nft, index) in nfts"
              :key="index">
-             <NftComponent :isLoading="isLoading"
+             <NftCardComponent :isLoading="isLoading"
                            :nft="nft" />
         </div>
       </template>
+
+      <!-- No items -->
+      <template v-else>
+        <p class="text-center fs-3 my-5">No items to display</p>
+      </template>
+
     </div>
   </div> <!-- List NFTs -->
 </template>
 
 <script>
-  import NftComponent from "@/components/mint/card/Nft.vue";
+  import NftCardComponent from "@/components/profile/listNfts/NftCard.vue";
   import { apiService } from "@/common/api.service.js";
   import { mapGetters } from "vuex";
 
@@ -118,7 +124,7 @@
     },
 
     components: {
-      NftComponent,
+      NftCardComponent,
     },
   }
 </script>

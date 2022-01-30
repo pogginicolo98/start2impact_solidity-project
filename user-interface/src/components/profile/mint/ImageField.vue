@@ -17,13 +17,13 @@
            </li>
          </ul>
     </div>
-  </div> <!-- Name field -->
+  </div> <!-- Image field -->
 </template>
 
 <script>
   import { mapGetters } from "vuex";
   import store from "@/store";
-  import ImageUploaderComponent from "@/components/mint/fields/ImageUploader.vue";
+  import ImageUploaderComponent from "@/components/profile/mint/ImageUploader.vue";
 
   export default {
     name: "ImageFieldComponent",
