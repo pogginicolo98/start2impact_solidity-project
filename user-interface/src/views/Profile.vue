@@ -36,7 +36,7 @@
     data() {
       return {
         tokenId: null,
-      }
+      };
     },
 
     methods: {

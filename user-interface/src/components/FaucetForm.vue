@@ -52,6 +52,7 @@
 
 <script>
   import { mapGetters } from "vuex";
+  import welcomeChestMixin from "@/mixins/WelcomeChest";
 
   export default {
     name: "FaucetFormComponent",
@@ -62,20 +63,11 @@
         isPending: false,
         btnText: "Request",
         isDisabled: false,
-        wcContract: null,
         destAddress: {
           value: null,
           errors: [],
         },
       }
-    },
-
-    created() {
-      // Create WelcomeChest contract instance
-
-      let wcInterface = require("../../../smart-contracts/artifacts/contracts/WelcomeChest.sol/WelcomeChest.json");
-      let wcAddress = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
-      this.wcContract = new this.web3.eth.Contract(wcInterface.abi, wcAddress);
     },
 
     computed: {
@@ -138,7 +130,7 @@
           const to = this.destAddress.value.toLowerCase();
           this.isDisabled = true;
 
-          await this.wcContract.methods.requestTokens(to).send({from: this.wallet.address})
+          await this.welcomeChest.methods.requestTokens(to).send({from: this.wallet.address})
             .on("transactionHash", () => {
               this.destAddress.value = null;
               this.isDisabled = false;
@@ -164,7 +156,11 @@
             });
         }
       },
-    }
+    },
+
+    mixins: [
+      welcomeChestMixin,
+    ],
   }
 </script>
 

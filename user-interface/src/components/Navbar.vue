@@ -38,10 +38,12 @@
 
   export default {
     name: "NavbarComponent",
+
     computed: {
       ...mapGetters({
         wallet: "getWallet"
       }),
+      
       connectBtnText() {
         const address =
           this.wallet && this.wallet.address
@@ -54,10 +56,12 @@
         }
         return "Connect Metamask";
       },
+
       metamaskConnected() {
         return this.wallet && this.wallet.address;
-      }
+      },
     },
+
     methods: {
       handleConnect() {
         this.$connectWallet();

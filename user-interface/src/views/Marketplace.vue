@@ -73,42 +73,27 @@
 
 <script>
   import { apiService } from "@/common/api.service.js";
-  import { create } from 'ipfs-http-client';
   import { mapGetters } from "vuex";
+  import treasureNFTMixin from "@/mixins/TreasureNFT";
+  import merchantMixin from "@/mixins/Merchant";
 
   export default {
     name: "Marketplace",
 
     data() {
       return {
-        treasureNft: null,
-        merchant: null,
-        ipfs: null,
         nfts: [],
         loadingNfts: true,
         firstLoading: true,
         approved: false,
         btnMsg: "Approve",
-      }
+      };
     },
 
     async created() {
-      /*
-        Create TreasureNFT contract instance.
-      */
-
-      let treasureNftInterface = require("../../../smart-contracts/artifacts/contracts/TreasureNFT.sol/TreasureNFT.json");
-      let treasureNftAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
-      this.treasureNft = new this.web3.eth.Contract(treasureNftInterface.abi, treasureNftAddress);
-
-      let merchantInterface = require("../../../smart-contracts/artifacts/contracts/Merchant.sol/Merchant.json");
-      let merchantAddress = "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9";
-      this.merchant = new this.web3.eth.Contract(merchantInterface.abi, merchantAddress);
-
-      this.ipfs = create('http://192.168.1.142:5001/');
-
-      const receipt = await this.treasureNft.methods.isApprovedForAll(this.wallet.address, this.merchant._address).call();
-      if (receipt == true) {
+      // find solution for wait this.wallet initialization when reloading the page. Seems that "creted" is executed before this.wallet.
+      const contractApproved = await this.treasureNFT.methods.isApprovedForAll(this.wallet.address, this.merchant._address).call();
+      if (contractApproved) {
         console.log("Already approved");
         this.approved = true;
         this.btnMsg = "Sell";
@@ -118,12 +103,13 @@
         this.btnMsg = "Approve";
       }
 
-      this.getNfts();
+      await this.getNfts();
     },
 
     computed: {
       ...mapGetters({
         wallet: "getWallet",
+        ipfs: "getIpfs",
       }),
     },
 
@@ -151,7 +137,7 @@
               price: this.web3.utils.fromWei(tokenSale.price),
               shortAddr: this.getShortAddress(sellerAddress),
             });
-            let tokenUri = await this.treasureNft.methods.tokenURI(tokenSale.tokenId.toString()).call();
+            let tokenUri = await this.treasureNFT.methods.tokenURI(tokenSale.tokenId.toString()).call();
 
             await apiService(tokenUri)
               .then(metadata => {
@@ -173,7 +159,7 @@
       },
 
       async approve() {
-        this.treasureNft.methods.setApprovalForAll(this.merchant._address, true).send({from: this.wallet.address})
+        this.treasureNFT.methods.setApprovalForAll(this.merchant._address, true).send({from: this.wallet.address})
           .on("receipt", () => {
             console.log("Approved");
             this.approved = true;
@@ -193,7 +179,7 @@
           await this.approve();
         } else {
           const index = 0;
-          let tokenId = await this.treasureNft.methods.tokenOfOwnerByIndex(this.wallet.address, index).call();
+          let tokenId = await this.treasureNFT.methods.tokenOfOwnerByIndex(this.wallet.address, index).call();
           const price = 50;
           this.merchant.methods.sellItem(tokenId, this.web3.utils.toWei(price.toString())).send({from: this.wallet.address})
             .on("receipt", () => {
@@ -208,7 +194,12 @@
             });
         }
       },
-    }
+    },
+
+    mixins: [
+      treasureNFTMixin,
+      merchantMixin,
+    ],
   };
 </script>
 

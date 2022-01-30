@@ -34,6 +34,7 @@
   import NftCardComponent from "@/components/profile/listNfts/NftCard.vue";
   import { apiService } from "@/common/api.service.js";
   import { mapGetters } from "vuex";
+  import treasureNFTMixin from "@/mixins/TreasureNFT";
 
   export default {
     name: "ListNftsComponent",
@@ -42,34 +43,25 @@
       tokenId: {
         type: String,
         required: false,
-      }
+      },
     },
 
     watch: {
       tokenId() {
         this.onNftMinted(this.tokenId);
-      }
+      },
     },
 
     data() {
       return {
-        treasureNft: null,
         firstLoading: true,
         loadingNfts: false,
         balanceOfUser: null,
         nfts: [],
-      }
+      };
     },
 
     created() {
-      /*
-        Create TreasureNFT contract instance.
-      */
-
-      let Interface = require("../../../../smart-contracts/artifacts/contracts/TreasureNFT.sol/TreasureNFT.json");
-      let Address = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
-      this.treasureNft = new this.web3.eth.Contract(Interface.abi, Address);
-
       setTimeout(async () => {
         await this.countNfts();
         await this.getNfts();
@@ -89,15 +81,15 @@
 
     methods: {
       async countNfts() {
-        const balance = await this.treasureNft.methods.balanceOf(this.wallet.address).call();
+        const balance = await this.treasureNFT.methods.balanceOf(this.wallet.address).call();
         this.balanceOfUser = parseInt(balance);
       },
 
       async getNfts() {
         this.loadingNfts = true;
         for (let i = 0; i < this.balanceOfUser; i ++) {
-          let tokenId = await this.treasureNft.methods.tokenOfOwnerByIndex(this.wallet.address, i).call();
-          let tokenUri = await this.treasureNft.methods.tokenURI(tokenId).call();
+          let tokenId = await this.treasureNFT.methods.tokenOfOwnerByIndex(this.wallet.address, i).call();
+          let tokenUri = await this.treasureNFT.methods.tokenURI(tokenId).call();
           await apiService(tokenUri)
             .then(response => {
               this.nfts.push(response);
@@ -111,7 +103,7 @@
 
       async onNftMinted(tokenId) {
         this.loadingNfts = true;
-        let tokenUri = await this.treasureNft.methods.tokenURI(tokenId).call();
+        let tokenUri = await this.treasureNFT.methods.tokenURI(tokenId).call();
         await apiService(tokenUri)
           .then(response => {
             this.nfts.push(response);
@@ -122,6 +114,10 @@
         this.loadingNfts = false;
       },
     },
+
+    mixins: [
+      treasureNFTMixin,
+    ],
 
     components: {
       NftCardComponent,

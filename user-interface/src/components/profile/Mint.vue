@@ -42,13 +42,13 @@
   import ImageFieldComponent from "@/components/profile/mint/ImageField.vue";
   import NameFieldComponent from "@/components/profile/mint/NameField.vue";
   import DescriptionFieldComponent from "@/components/profile/mint/DescriptionField.vue";
+  import treasureNFTMixin from "@/mixins/TreasureNFT";
 
   export default {
     name: "MintComponent",
 
     data() {
       return {
-        treasureNft: null,
         btnText: "Mint",
         isPending: false,
         isDisabled: false,
@@ -64,18 +64,10 @@
           focus: false,
           errors: [],
         },
-      }
+      };
     },
 
     created() {
-      /*
-        Create TreasureNFT contract instance.
-      */
-
-      let Interface = require("../../../../smart-contracts/artifacts/contracts/TreasureNFT.sol/TreasureNFT.json");
-      let Address = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
-      this.treasureNft = new this.web3.eth.Contract(Interface.abi, Address);
-
       store.commit("SET_MINTFORM", {image: null, preview: "", name: null, description: null});
     },
 
@@ -170,7 +162,7 @@
             const metadataCid = await this.ipfs.add(JSON.stringify(metadata));
             const metadataUri = `http://192.168.1.143/ipfs/${metadataCid.path}`;
 
-            this.treasureNft.methods.mint(this.wallet.address, metadataUri).send({from: this.wallet.address})
+            this.treasureNFT.methods.mint(this.wallet.address, metadataUri).send({from: this.wallet.address})
               .on("transactionHash", () => {
                 this.$refs.form.reset();
                 store.commit("SET_MINTFORM", {image: null, preview: null, name: null, description: null});
@@ -201,6 +193,10 @@
         }
       },
     },
+
+    mixins: [
+      treasureNFTMixin,
+    ],
 
     components: {
       ImageFieldComponent,

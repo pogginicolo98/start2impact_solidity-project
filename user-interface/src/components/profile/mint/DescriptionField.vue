@@ -46,7 +46,7 @@
     data() {
       return {
         isFocus: false,
-      }
+      };
     },
 
     computed: {

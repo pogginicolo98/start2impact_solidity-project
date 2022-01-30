@@ -56,13 +56,13 @@
       preview: {
         type: String,
         required: false,
-      }
+      },
     },
 
     data() {
       return {
         overlay: false,
-      }
+      };
     },
 
     computed: {
