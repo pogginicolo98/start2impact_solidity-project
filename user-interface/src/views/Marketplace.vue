@@ -91,19 +91,21 @@
     },
 
     async created() {
-      // find solution for wait this.wallet initialization when reloading the page. Seems that "creted" is executed before this.wallet.
-      const contractApproved = await this.treasureNFT.methods.isApprovedForAll(this.wallet.address, this.merchant._address).call();
-      if (contractApproved) {
-        console.log("Already approved");
-        this.approved = true;
-        this.btnMsg = "Sell";
-      } else {
-        console.log("Not approved");
-        this.approved = false;
-        this.btnMsg = "Approve";
-      }
+      setTimeout(async () => {
+        // find solution for wait this.wallet initialization when reloading the page. Seems that "creted" is executed before this.wallet.
+        const contractApproved = await this.treasureNFT.methods.isApprovedForAll(this.wallet.address, this.merchant._address).call();
+        if (contractApproved) {
+          console.log("Already approved");
+          this.approved = true;
+          this.btnMsg = "Sell";
+        } else {
+          console.log("Not approved");
+          this.approved = false;
+          this.btnMsg = "Approve";
+        }
 
-      await this.getNfts();
+        await this.getNfts();
+      }, 500);
     },
 
     computed: {
