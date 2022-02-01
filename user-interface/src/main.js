@@ -9,6 +9,7 @@ import connectWallet from "./plugins/connectWallet";
 import connectIpfs from "./plugins/connectIpfs";
 import Toasted from "vue-toasted";
 
+
 const Web3 = require("web3");
 const web3Instance = new Web3();
 

@@ -31,4 +31,18 @@ $input-focus-bg: #343434;
 $input-disabled-bg: #2e2d2c;
 $input-disabled-border-color: #2e2d2c;
 
+
+$border-color:                hsla(0,0%,100%,.2);
+$border-radius:               12px;
+
+$accordion-border-color:                  $border-color;
+$accordion-color:                         $body-color;
+$accordion-bg:                            $body-bg;
+$accordion-button-color:                  $accordion-color;
+$accordion-button-bg:                     $accordion-bg;
+$accordion-button-active-bg:              $body-bg;
+$accordion-button-active-color:           $accordion-color;
+$accordion-button-focus-border-color:     null;
+$accordion-button-focus-box-shadow:       null;
+
 @import 'node_modules/bootstrap/scss/bootstrap.scss';

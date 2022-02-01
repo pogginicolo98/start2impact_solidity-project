@@ -17,7 +17,7 @@
 
     data() {
       return {
-        path: ["Home", "Marketplace", "Profile", "Faucet"],
+        path: ["Home", "Marketplace", "Profile", "Faucet", "NftDetails"],
         fixedFooter: ["Home", "Marketplace", "Faucet"],
       };
     },
