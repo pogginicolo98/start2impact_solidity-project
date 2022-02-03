@@ -2,12 +2,12 @@
   <div class="list-nfts">
     <div class="row justify-content-start px-0 mt-5">
 
-      <!-- Placeholder -->
-      <template v-if="isLoading">
+      <!-- Loading -->
+      <template v-if="firstLoading">
         <div class="col-auto col-nft mb-3"
              v-for="index in balanceOfUser"
              :key="index">
-             <NftCardComponent :isLoading="isLoading" />
+             <NftCardComponent />
         </div>
       </template>
 
@@ -16,11 +16,11 @@
         <div class="col-auto col-nft mb-3"
              v-for="(nft, index) in nfts"
              :key="index">
+             <NftCardComponent v-if="!nft.metadata" />
              <router-link class="nav-link text-secondary"
-                          :disabled="isLoading"
+                          v-else
                           :to="{ name: 'NftDetails', params: { tokenId: nft.tokenId } }">
-                          <NftCardComponent :isLoading="isLoading"
-                                            :metadata="nft.metadata" />
+                          <NftCardComponent :nft="nft" />
              </router-link>
         </div>
       </template>
@@ -59,7 +59,6 @@
     data() {
       return {
         firstLoading: true,
-        loadingNfts: false,
         balanceOfUser: null,
         nfts: [],
       };
@@ -77,10 +76,6 @@
       ...mapGetters({
         wallet: "getWallet",
       }),
-
-      isLoading() {
-        return this.firstLoading == true && this.balanceOfUser > 0;
-      },
     },
 
     methods: {
@@ -90,40 +85,39 @@
       },
 
       async getNfts() {
-        this.loadingNfts = true;
         for (let i = 0; i < this.balanceOfUser; i ++) {
+          let nft = {
+            tokenId: null,
+            metadata: null,
+          };
           let tokenId = await this.treasureNFT.methods.tokenOfOwnerByIndex(this.wallet.address, i).call();
+          nft.tokenId = tokenId;
           let tokenUri = await this.treasureNFT.methods.tokenURI(tokenId).call();
           await apiService(tokenUri)
             .then(response => {
-              let nft = {
-                tokenId: tokenId,
-                metadata: response
-              };
-              this.nfts.push(nft);
+              nft.metadata = response;
             })
             .catch(error => {
               console.log(error);
             });
+          this.nfts.push(nft);
         }
-        this.loadingNfts = false;
       },
 
       async onNftMinted(tokenId) {
-        this.loadingNfts = true;
+        let nft = {
+          tokenId: tokenId,
+          metadata: null,
+        };
         let tokenUri = await this.treasureNFT.methods.tokenURI(tokenId).call();
         await apiService(tokenUri)
           .then(response => {
-            let nft = {
-              tokenId: tokenId,
-              metadata: response
-            };
-            this.nfts.push(nft);
+            nft.metadata = response;
           })
           .catch(error => {
             console.log(error);
           });
-        this.loadingNfts = false;
+        this.nfts.push(nft);
       },
     },
 

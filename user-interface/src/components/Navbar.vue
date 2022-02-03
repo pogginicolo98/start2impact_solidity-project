@@ -43,7 +43,7 @@
       ...mapGetters({
         wallet: "getWallet"
       }),
-      
+
       connectBtnText() {
         const address =
           this.wallet && this.wallet.address

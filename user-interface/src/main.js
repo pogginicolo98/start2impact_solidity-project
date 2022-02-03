@@ -2,13 +2,13 @@ import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
-import "bootstrap/dist/css/bootstrap.min.css"
-import "bootstrap"
-import './app.scss'
+import 'bootstrap';
+import './app.scss';
 import connectWallet from "./plugins/connectWallet";
 import connectIpfs from "./plugins/connectIpfs";
 import Toasted from "vue-toasted";
-
+import Clipboard from "v-clipboard";
+import VueCustomTooltip from '@adamdehaven/vue-custom-tooltip'
 
 const Web3 = require("web3");
 const web3Instance = new Web3();
@@ -26,7 +26,14 @@ Vue.use(Toasted, {
   iconPack: "fontawesome",
   singleton: true
 });
-
+Vue.use(Clipboard);
+Vue.use(VueCustomTooltip, {
+  name: 'VueCustomTooltip',
+  color: '#fff',
+  background: '#000',
+  borderRadius: 12,
+  fontWeight: 400,
+})
 
 Vue.prototype.$web3 = web3Instance;
 

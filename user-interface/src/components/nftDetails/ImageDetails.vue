@@ -1,5 +1,5 @@
 <template>
-  <div class="nft-card">
+  <div class="image-details">
     <div class="card card-nft">
       <div class="card-body p-0">
         <div class="card-nft-img-wrap">
@@ -19,39 +19,25 @@
           <i class="fa-regular fa-image card-nft-icon position-absolute top-50 start-50 translate-middle"
              v-else>
           </i>
+
         </div>
-
-        <!-- Name placeholder -->
-        <div class="placeholder-glow text-center mx-3 mt-3"
-             v-if="isLoading">
-             <span class="placeholder col-5"></span>
-        </div>
-
-        <!-- Name -->
-        <p class="text-truncate text-center fw-bold mx-3 mt-3"
-           v-else
-           >{{ nft.metadata.name }}
-        </p>
-
       </div>
     </div>
-  </div> <!-- NFT card -->
+  </div> <!-- Image details -->
 </template>
 
 <script>
   export default {
-    name: "NftCardComponent",
+    name: "ImageDetailsComponent",
 
     props: {
+      isLoading: {
+        type: Boolean,
+        required: true
+      },
       nft: {
         type: Object,
-        required: false,
-      },
-    },
-
-    computed: {
-      isLoading() {
-        return this.nft == null || this.nft.metadata == null;
+        required: false
       }
     },
   }
@@ -59,18 +45,13 @@
 
 <style scoped>
   .card-nft {
-    width: 14rem;
-    height: 17.5rem;
+    width: 100%;
+    height: auto;
     border-radius: 12px;
     border: 1px solid hsla(0,0%,100%,.2);
     background-color: #2e2d2c;
     overflow: hidden;
     transition: transform 0.2s ease;
-  }
-
-  .card-nft:hover {
-    box-shadow: 0px 0px 7px 1px rgba(255, 255, 255, 0.1);
-    transform: translateY(-2px);
   }
 
   .card-nft-img-wrap {
@@ -91,7 +72,7 @@
   }
 
   .card-nft-icon {
-    font-size: 64px;
+    font-size: 128px;
     color: #fff;
   }
 </style>

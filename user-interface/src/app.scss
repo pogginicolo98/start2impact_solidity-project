@@ -1,13 +1,15 @@
 $body-bg: #252423;
 $body-color: #fff;
 $primary: #2e2d2c;
-$secondary: #fff;
-$info: #F5E1C0;
+$secondary: #adb5bd;
+$info: #5ac9e5;
+$light: #fff;
 
 $theme-colors: (
   primary: $primary,
   secondary: $secondary,
   info: $info,
+  light: $light
 );
 
 $border-radius: 12px;
