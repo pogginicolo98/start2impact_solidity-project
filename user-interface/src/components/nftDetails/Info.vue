@@ -180,13 +180,4 @@
     cursor: pointer;
     width: auto;
   }
-
-  a {
-    color: #5ac9e5;
-    text-decoration: none;
-  }
-
-  a:hover {
-    color: #5ac9e5;
-  }
 </style>
