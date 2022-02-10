@@ -4,11 +4,11 @@ import router from "./router";
 import store from "./store";
 import 'bootstrap';
 import '@/assets/css/main.scss';
+import Clipboard from "v-clipboard";
+import Toasted from "vue-toasted";
+import VueCustomTooltip from '@adamdehaven/vue-custom-tooltip';
 import connectWallet from "./plugins/connectWallet";
 import connectIpfs from "./plugins/connectIpfs";
-import Toasted from "vue-toasted";
-import Clipboard from "v-clipboard";
-import VueCustomTooltip from '@adamdehaven/vue-custom-tooltip'
 
 const Web3 = require("web3");
 const web3Instance = new Web3();

@@ -73,9 +73,9 @@
 
 <script>
   import { apiService } from "@/common/api.service.js";
-  import { mapGetters } from "vuex";
-  import treasureNFTMixin from "@/mixins/TreasureNFT";
   import merchantMixin from "@/mixins/Merchant";
+  import treasureNFTMixin from "@/mixins/TreasureNFT";
+  import { mapGetters } from "vuex";
 
   export default {
     name: "Marketplace",

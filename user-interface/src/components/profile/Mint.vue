@@ -37,12 +37,12 @@
 </template>
 
 <script>
-  import { mapGetters } from "vuex";
-  import store from "@/store";
+  import DescriptionFieldComponent from "@/components/profile/mint/DescriptionField.vue";
   import ImageFieldComponent from "@/components/profile/mint/ImageField.vue";
   import NameFieldComponent from "@/components/profile/mint/NameField.vue";
-  import DescriptionFieldComponent from "@/components/profile/mint/DescriptionField.vue";
+  import store from "@/store";
   import treasureNFTMixin from "@/mixins/TreasureNFT";
+  import { mapGetters } from "vuex";
 
   export default {
     name: "MintComponent",

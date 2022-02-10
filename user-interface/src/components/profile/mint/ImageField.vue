@@ -21,10 +21,10 @@
 </template>
 
 <script>
-  import { mapGetters } from "vuex";
-  import store from "@/store";
   import ImageUploaderComponent from "@/components/profile/mint/ImageUploader.vue";
-
+  import store from "@/store";
+  import { mapGetters } from "vuex";
+  
   export default {
     name: "ImageFieldComponent",
 

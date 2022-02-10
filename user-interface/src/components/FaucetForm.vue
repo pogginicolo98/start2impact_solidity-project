@@ -51,8 +51,8 @@
 </template>
 
 <script>
-  import { mapGetters } from "vuex";
   import welcomeChestMixin from "@/mixins/WelcomeChest";
+  import { mapGetters } from "vuex";
 
   export default {
     name: "FaucetFormComponent",

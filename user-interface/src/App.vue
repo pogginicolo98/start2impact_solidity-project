@@ -9,8 +9,8 @@
 
 <script>
   import "@/assets/css/app.css";
-  import NavbarComponent from "@/components/Navbar.vue";
   import FooterComponent from "@/components/Footer.vue";
+  import NavbarComponent from "@/components/Navbar.vue";
 
   export default {
     name: "App",

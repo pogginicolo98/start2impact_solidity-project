@@ -35,10 +35,10 @@
 </template>
 
 <script>
-  import NftCardComponent from "@/components/profile/listNfts/NftCard.vue";
   import { apiService } from "@/common/api.service.js";
-  import { mapGetters } from "vuex";
+  import NftCardComponent from "@/components/profile/listNfts/NftCard.vue";
   import treasureNFTMixin from "@/mixins/TreasureNFT";
+  import { mapGetters } from "vuex";
 
   export default {
     name: "ListNftsComponent",

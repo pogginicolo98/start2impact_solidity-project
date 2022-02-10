@@ -36,12 +36,12 @@
 </template>
 
 <script>
-  import treasureNFTMixin from "@/mixins/TreasureNFT";
   import { apiService } from "@/common/api.service.js";
   import ImageDetailsComponent from "@/components/nftDetails/ImageDetails.vue";
-  import OperationsComponent from "@/components/nftDetails/Operations.vue";
   import InfoComponent from "@/components/nftDetails/Info.vue";
+  import OperationsComponent from "@/components/nftDetails/Operations.vue";
   import TitleComponent from "@/components/nftDetails/Title.vue";
+  import treasureNFTMixin from "@/mixins/TreasureNFT";
 
   export default {
     name: "NftDetails",
