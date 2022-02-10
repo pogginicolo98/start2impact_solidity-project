@@ -5,7 +5,7 @@
         <router-link class="navbar-brand me-auto"
                      :to="{ name: 'Home' }"
                      ><img alt="logo"
-                           src="../assets/logo.png">
+                           src="../assets/images/logo.png">
         </router-link>
         <div class="mx-auto"
              v-show="metamaskConnected">
@@ -24,7 +24,7 @@
                </router-link>
              </div>
         </div>
-        <button class="btn btn-primary btn-nav px-4 ms-auto"
+        <button class="btn btn-primary px-4 ms-auto"
                 @click="handleConnect"
                 >{{ connectBtnText }}
         </button>
@@ -74,9 +74,5 @@
   .navbar {
     border-bottom: 1px solid hsla(0,0%,100%,.2) !important;
     background: transparent !important;
-  }
-
-  .btn-nav {
-    border-radius: 1rem !important;
   }
 </style>

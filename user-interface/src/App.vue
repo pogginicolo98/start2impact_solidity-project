@@ -8,7 +8,7 @@
 </template>
 
 <script>
-  // @ is an alias to /src
+  import "@/assets/css/app.css";
   import NavbarComponent from "@/components/Navbar.vue";
   import FooterComponent from "@/components/Footer.vue";
 
@@ -19,7 +19,7 @@
       return {
         path: ["Home", "Marketplace", "Profile", "Faucet", "NftDetails"],
         fixedFooter: ["Home", "Marketplace", "Faucet"],
-      };
+      }
     },
 
     computed: {
@@ -46,16 +46,4 @@
 </script>
 
 <style>
-  html, body, #app {
-    height: 100%;
-  }
-
-  a {
-    color: #5ac9e5;
-    text-decoration: none;
-  }
-
-  a:hover {
-    color: #5ac9e5;
-  }
 </style>

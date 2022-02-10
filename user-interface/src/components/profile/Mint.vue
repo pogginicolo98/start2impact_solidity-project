@@ -54,17 +54,17 @@
         isDisabled: false,
         image: {
           focus: false,
-          errors: [],
+          errors: []
         },
         name: {
           focus: false,
-          errors: [],
+          errors: []
         },
         description: {
           focus: false,
-          errors: [],
+          errors: []
         },
-      };
+      }
     },
 
     created() {
@@ -77,10 +77,6 @@
         form: "getMintForm",
         ipfs: "getIpfs",
       }),
-
-      // metamaskConnected() {
-      //   return this.wallet && this.wallet.address;
-      // },
     },
 
     methods: {
@@ -202,30 +198,9 @@
       ImageFieldComponent,
       NameFieldComponent,
       DescriptionFieldComponent,
-    }
+    },
   }
 </script>
 
 <style scoped>
-  .btn-wrap {
-    padding: 1px;
-    border-radius: 12px;
-    background: hsla(0,0%,100%,.2);
-  }
-
-  .btn-wrap:hover {
-    background: linear-gradient(90deg,#5ac9e5,#7c5bff);
-  }
-
-  .btn-wrap-disabled:hover  {
-    background: hsla(0,0%,100%,.2) !important;
-  }
-
-  .btn-wrap-pending {
-    background: linear-gradient(90deg,#5ac9e5,#7c5bff);
-  }
-
-  .btn-pending {
-    pointer-events: none;
-  }
 </style>

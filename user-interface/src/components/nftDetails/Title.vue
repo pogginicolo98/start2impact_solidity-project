@@ -13,7 +13,7 @@
       <!-- Name area -->
       <div class="col-12">
 
-        <!-- Name placeholder -->
+        <!-- placeholder -->
         <template v-if="isLoading">
           <h2 class="placeholder-glow">
             <span class="placeholder col-2"></span>
@@ -25,7 +25,7 @@
 
         <!-- Name -->
         <template v-else>
-          <h2>{{ nft.metadata.name }}</h2>
+          <h2 class="text-truncate">{{ nft.metadata.name }}</h2>
           <p class="text-secondary">Owned by <a href="#">OWNER</a></p>
         </template>
 
@@ -47,7 +47,7 @@
       nft: {
         type: Object,
         required: false
-      }
+      },
     },
   }
 </script>

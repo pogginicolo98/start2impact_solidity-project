@@ -31,7 +31,7 @@
     props: {
       errors: {
         type: Array,
-        required: true,
+        required: true
       },
     },
 
@@ -53,7 +53,7 @@
 
     components: {
       ImageUploaderComponent,
-    }
+    },
   }
 </script>
 

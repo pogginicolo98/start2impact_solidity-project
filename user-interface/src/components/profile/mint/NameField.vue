@@ -38,14 +38,14 @@
     props: {
       errors: {
         type: Array,
-        required: true,
+        required: true
       },
     },
 
     data() {
       return {
         isFocus: false,
-      };
+      }
     },
 
     computed: {
@@ -69,25 +69,4 @@
 </script>
 
 <style scoped>
-  .input-field {
-    border-radius: 12px;
-    border: none;
-  }
-
-  .input-wrap {
-    padding: 1px;
-    border-radius: 12px;
-  }
-
-  .focusOff {
-    padding: 1px;
-    border-radius: 12px;
-    background: hsla(0,0%,100%,.2);
-  }
-
-  .focusOn {
-    padding: 1px;
-    border-radius: 12px;
-    background: linear-gradient(90deg,#5ac9e5,#7c5bff);
-  }
 </style>

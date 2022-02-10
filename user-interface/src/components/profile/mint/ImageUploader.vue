@@ -25,7 +25,8 @@
                   </i>
                 </transition>
               </div>
-       </label>
+
+       </label> <!-- Box image -->
 
        <!-- Hidden input image -->
        <input accept="image/*"
@@ -45,6 +46,7 @@
            </i>
          </div>
        </transition>
+
   </div> <!-- Image uploader -->
 </template>
 
@@ -55,14 +57,14 @@
     props: {
       preview: {
         type: String,
-        required: false,
+        required: false
       },
     },
 
     data() {
       return {
         overlay: false,
-      };
+      }
     },
 
     computed: {

@@ -3,24 +3,31 @@
        :class="{ 'footer-fixed': isFixedFooter }">
        <nav class="navbar navbar-light">
          <div class="row justify-content-center">
+
+           <!-- GitHub link -->
            <div class="col">
-             <a class="link-icon fs-24px"
+             <a class="link-icon"
                 href="https://github.com/pogginicolo98/start2impact_solidity-project"
                 ><i class="fa-brands fa-github"></i>
              </a>
            </div>
+
+           <!-- Linkedin link -->
            <div class="col">
-             <a class="link-icon fs-24px mx-5"
+             <a class="link-icon mx-5"
                 href="https://www.linkedin.com/in/nicol%C3%B2-poggi-481227157/"
                 ><i class="fa-brands fa-linkedin-in"></i>
              </a>
            </div>
+
+           <!-- Start2Impact link -->
            <div class="col">
-             <a class="link-icon fs-24px"
+             <a class="link-icon"
                 href="https://talent.start2impact.it/profile/nicolo-poggi"
                 ><i class="fa-solid fa-rocket"></i>
              </a>
            </div>
+           
          </div>
        </nav>
   </div>
@@ -33,17 +40,13 @@
     props: {
       isFixedFooter: {
         type: Boolean,
-        default: false,
+        default: false
       },
     },
   }
 </script>
 
 <style scoped>
-  .fs-24px {
-    font-size: 24px;
-  }
-
   .footerComponent {
     display: flex;
     justify-content: center;
@@ -60,6 +63,7 @@
   }
 
   .link-icon {
+    font-size: 24px;
     color: #FFF;
     opacity: 0.6;
   }

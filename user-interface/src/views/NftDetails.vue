@@ -49,7 +49,7 @@
     props: {
       tokenId: {
         type: String,
-        required: true,
+        required: true
       },
     },
 
@@ -60,7 +60,7 @@
           tokenId: this.tokenId,
           metadata: null
         },
-      };
+      }
     },
 
     created() {
@@ -92,7 +92,7 @@
       OperationsComponent,
       InfoComponent,
       TitleComponent,
-    }
+    },
   };
 </script>
 

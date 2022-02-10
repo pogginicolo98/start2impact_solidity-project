@@ -27,7 +27,7 @@
                </p>
                <template v-else>
                  <p class="text-secondary">Created by <a href="#">CREATOR</a></p>
-                 <p class="mb-0"
+                 <p class="text-break mb-0"
                     v-if="nft.metadata.description"
                     >{{ nft.metadata.description }}
                  </p>
@@ -38,7 +38,7 @@
                </template>
              </div>
         </div>
-      </div>
+      </div> <!-- Description -->
 
       <!-- Details -->
       <div class="accordion-item">
@@ -118,13 +118,13 @@
       nft: {
         type: Object,
         required: false
-      }
+      },
     },
 
     data() {
       return {
         tokenIdLabel: "Copy",
-      };
+      }
     },
 
     computed: {

@@ -87,7 +87,7 @@
         firstLoading: true,
         approved: false,
         btnMsg: "Approve",
-      };
+      }
     },
 
     async created() {
@@ -206,8 +206,4 @@
 </script>
 
 <style scoped>
-  .box {
-    width: 22rem;
-    text-align: center;
-  }
 </style>

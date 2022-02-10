@@ -3,7 +3,7 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import 'bootstrap';
-import './app.scss';
+import '@/assets/css/main.scss';
 import connectWallet from "./plugins/connectWallet";
 import connectIpfs from "./plugins/connectIpfs";
 import Toasted from "vue-toasted";

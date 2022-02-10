@@ -36,7 +36,7 @@
     data() {
       return {
         tokenId: null,
-      };
+      }
     },
 
     methods: {
@@ -53,8 +53,4 @@
 </script>
 
 <style scoped>
-  .box {
-    border-radius: 12px;
-    background-color: #2c2c2c;
-  }
 </style>

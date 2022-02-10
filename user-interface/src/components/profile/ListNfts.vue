@@ -17,7 +17,7 @@
              v-for="(nft, index) in nfts"
              :key="index">
              <NftCardComponent v-if="!nft.metadata" />
-             <router-link class="nav-link text-secondary"
+             <router-link class="text-secondary"
                           v-else
                           :to="{ name: 'NftDetails', params: { tokenId: nft.tokenId } }">
                           <NftCardComponent :nft="nft" />
@@ -46,7 +46,7 @@
     props: {
       tokenId: {
         type: String,
-        required: false,
+        required: false
       },
     },
 
@@ -61,7 +61,7 @@
         firstLoading: true,
         balanceOfUser: null,
         nfts: [],
-      };
+      }
     },
 
     created() {

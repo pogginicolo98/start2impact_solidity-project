@@ -1,51 +1,51 @@
 <template>
   <div class="faucet-form">
-    <form novalidate
+    <form class="needs-validation"
+          novalidate
           @submit.prevent="handleRequest">
-          <div class="row justify-content-center">
-            <!-- Field -->
-            <div class="col-12">
-              <!-- Input -->
-              <label class="d-block position-relative input-wrap"
-                     :class="{'focusOn': isFocused,
-                              'focusOff': !isFocused}">
-                     <i class="fa-brands fa-ethereum position-absolute top-50 start-0 translate-middle ms-3"></i>
-                     <input aria-describedby="faucetFormFeedback"
-                            class="form-control input-address"
-                            placeholder="Ropsten address"
-                            type="text"
-                            v-model="destAddress.value"
-                            :class="{'is-invalid': !destAddressValid}"
-                            @blur="setFocused(false)"
-                            @focus="setFocused(true)">
-              </label> <!-- Input -->
 
-              <!-- Feedback -->
-              <div class="d-block text-start invalid-feedback"
-                   id="faucetFormFeedback">
-                   <ul>
-                     <li v-for="(error, index) in destAddress.errors"
-                         :key="index"
-                         >{{ error }}
-                     </li>
-                   </ul>
-              </div> <!-- Feedback -->
-            </div> <!-- Field -->
+          <!-- Field -->
+          <div class="mb-4">
 
-            <!-- Submit -->
-            <div class="col-4 d-grid">
-              <span class="d-grid btn-wrap"
-                    :class="{'btn-wrap-disabled': isDisabled,
-                             'btn-wrap-pending': isPending}">
-                    <button class="btn btn-primary px-4 py-2"
-                            type="submit"
-                            v-html="btnText"
-                            :class="{'btn-pending': isPending}"
-                            :disabled="isDisabled">
-                    </button>
-              </span>
+            <!-- Input -->
+            <label class="d-block position-relative input-wrap"
+                   :class="{'focusOn': isFocused,
+                            'focusOff': !isFocused}">
+                   <i class="fa-brands fa-ethereum position-absolute top-50 start-0 translate-middle ms-3"></i>
+                   <input aria-describedby="faucetFormFeedback"
+                          class="form-control input-address"
+                          placeholder="Ropsten address"
+                          type="text"
+                          v-model="destAddress.value"
+                          :class="{'is-invalid': !destAddressValid}"
+                          @blur="setFocused(false)"
+                          @focus="setFocused(true)">
+            </label> <!-- Input -->
+
+            <!-- Feedback -->
+            <div class="d-block text-start invalid-feedback"
+                 id="faucetFormFeedback">
+                 <ul>
+                   <li v-for="(error, index) in destAddress.errors"
+                       :key="index"
+                       >{{ error }}
+                   </li>
+                 </ul>
             </div>
-          </div> <!-- Submit -->
+
+          </div> <!-- Field -->
+
+          <!-- Request button -->
+          <span class="d-grid btn-wrap"
+                :class="{'btn-wrap-disabled': isDisabled,
+                         'btn-wrap-pending': isPending}">
+                <button class="btn btn-primary px-4 py-2"
+                        type="submit"
+                        v-html="btnText"
+                        :class="{'btn-pending': isPending}"
+                        :disabled="isDisabled">
+                </button>
+          </span>
     </form>
   </div> <!-- Faucet Form -->
 </template>
@@ -65,7 +65,7 @@
         isDisabled: false,
         destAddress: {
           value: null,
-          errors: [],
+          errors: []
         },
       }
     },
@@ -74,10 +74,6 @@
       ...mapGetters({
         wallet: "getWallet",
       }),
-
-      // metamaskConnected() {
-      //   return this.wallet && this.wallet.address;
-      // },
 
       destAddressValid() {
         return this.destAddress.errors.length == 0
@@ -167,43 +163,8 @@
 <style scoped>
   .input-address {
     border-radius: 12px;
-    border: none;
+    border: none !important;
     padding-left: 27px;
     text-align: center;
-  }
-
-  .input-wrap {
-    padding: 1px;
-    border-radius: 12px;
-  }
-
-  .focusOff {
-    padding: 1px;
-    border-radius: 12px;
-    background: hsla(0,0%,100%,.2);
-  }
-
-  .focusOn {
-    padding: 1px;
-    border-radius: 12px;
-    background: linear-gradient(90deg,#5ac9e5,#7c5bff);
-  }
-
-  .btn-wrap {
-    padding: 1px;
-    border-radius: 12px;
-    background: hsla(0,0%,100%,.2);
-  }
-
-  .btn-wrap:hover {
-    background: linear-gradient(90deg,#5ac9e5,#7c5bff);
-  }
-
-  .btn-wrap-pending {
-    background: linear-gradient(90deg,#5ac9e5,#7c5bff);
-  }
-
-  .btn-pending {
-    pointer-events: none;
   }
 </style>
