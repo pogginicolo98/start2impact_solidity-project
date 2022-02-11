@@ -26,7 +26,7 @@
         <!-- Name -->
         <template v-else>
           <h2 class="text-truncate">{{ nft.metadata.name }}</h2>
-          <p class="text-secondary">Owned by <a href="#">OWNER</a></p>
+          <p class="text-secondary">Owned by <a class="link-info" href="#">OWNER</a></p>
         </template>
 
       </div> <!-- Name area -->

@@ -1,7 +1,7 @@
 <template>
   <div class="nft-card">
     <div class="card card-nft"
-         style="width: 14rem; height: 17.5rem;">
+         style="width: 100%;">
          <div class="card-body p-0">
            <div class="card-nft-img-wrap">
 
@@ -24,7 +24,7 @@
            </div>
 
            <!-- Name placeholder -->
-           <div class="placeholder-glow text-center mx-3 mt-3"
+           <div class="placeholder-glow text-center mx-3 my-3"
                 v-if="isLoading">
                 <span class="placeholder col-5"></span>
            </div>

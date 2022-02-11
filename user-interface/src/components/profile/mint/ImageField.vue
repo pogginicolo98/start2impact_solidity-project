@@ -4,8 +4,9 @@
            for="imageUploader"
            >Image
     </label>
-    <ImageUploaderComponent style="width: 18rem; height: 18rem;"
+    <ImageUploaderComponent class="col-12 col-sm-6 col-md-5 col-xl-12 col-xxl-9"
                             id="imageUploader"
+                            style="aspect-ratio: 1/1;"
                             :preview="preview"
                             @imageUpdated="onInput($event)" />
     <div class="invalid-feedback d-block mt-2"
@@ -24,7 +25,7 @@
   import ImageUploaderComponent from "@/components/profile/mint/ImageUploader.vue";
   import store from "@/store";
   import { mapGetters } from "vuex";
-  
+
   export default {
     name: "ImageFieldComponent",
 

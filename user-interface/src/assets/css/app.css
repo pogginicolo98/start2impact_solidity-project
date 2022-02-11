@@ -27,6 +27,7 @@ a {
   position: relative !important;
   width: 100% !important;
   aspect-ratio: 1 / 1 !important;
+  overflow: hidden;
 }
 
 .card-nft-img {

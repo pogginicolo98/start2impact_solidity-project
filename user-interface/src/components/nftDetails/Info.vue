@@ -26,7 +26,7 @@
                   <span class="placeholder col-12"></span>
                </p>
                <template v-else>
-                 <p class="text-secondary">Created by <a href="#">CREATOR</a></p>
+                 <p class="text-secondary">Created by <a class="link-info" href="#">CREATOR</a></p>
                  <p class="text-break mb-0"
                     v-if="nft.metadata.description"
                     >{{ nft.metadata.description }}
@@ -63,7 +63,8 @@
                    <p>Contract Address</p>
                  </div>
                  <div class="col-8 text-end">
-                   <a target="_blank"
+                   <a class="link-info"
+                      target="_blank"
                       :href="contractLink"
                       >{{ contractAddress }}
                    </a>

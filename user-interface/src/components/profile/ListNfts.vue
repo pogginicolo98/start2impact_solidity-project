@@ -4,7 +4,7 @@
 
       <!-- Loading -->
       <template v-if="firstLoading">
-        <div class="col-auto col-nft mb-3"
+        <div class="col-12 col-sm-6 col-lg-4 col-xxl-3 col-nft mb-3"
              v-for="index in balanceOfUser"
              :key="index">
              <NftCardComponent />
@@ -13,11 +13,11 @@
 
       <!-- Items -->
       <template v-else-if="nfts.length > 0">
-        <div class="col-auto col-nft mb-3"
+        <div class="col-12 col-sm-6 col-lg-4 col-xxl-3 col-nft mb-3"
              v-for="(nft, index) in nfts"
              :key="index">
              <NftCardComponent v-if="!nft.metadata" />
-             <router-link class="text-secondary"
+             <router-link class="text-light"
                           v-else
                           :to="{ name: 'NftDetails', params: { tokenId: nft.tokenId } }">
                           <NftCardComponent :nft="nft" />
