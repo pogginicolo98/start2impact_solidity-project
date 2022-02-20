@@ -4,10 +4,16 @@
 
       <!-- Buttons area -->
       <div class="col-12 text-end mb-4 mb-lg-2">
-        <div class="btn-group" role="group" aria-label="Basic outlined example">
-          <button type="button" class="btn btn-primary">Left</button>
-          <button type="button" class="btn btn-primary">Middle</button>
-        </div>
+        <VueCustomTooltip label="Refresh metadata">
+          <button type="button" class="btn btn-outline-secondary" @click="emitRefresh">
+            <i class="fa-solid fa-arrow-rotate-right"></i>
+          </button>
+        </VueCustomTooltip>
+        <VueCustomTooltip label="Share">
+          <button type="button" class="btn btn-outline-secondary ms-1" @click="copyToClipboard">
+            <i class="fa-solid fa-share-nodes"></i>
+          </button>
+        </VueCustomTooltip>
       </div>
 
       <!-- Name area -->
@@ -47,6 +53,17 @@
       nft: {
         type: Object,
         required: false
+      },
+    },
+
+    methods: {
+      emitRefresh() {
+        this.$emit('refresh');
+      },
+
+      copyToClipboard() {
+        this.$clipboard(window.location.href);
+        this.$toasted.show(`Link copied`, {icon: "check"});
       },
     },
   }

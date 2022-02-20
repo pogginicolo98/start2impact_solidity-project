@@ -6,7 +6,8 @@
         <!-- Title mobile formats -->
         <div class="col-12 d-lg-none mb-1">
           <TitleComponent :isLoading="isLoading"
-                          :nft="nft" />
+                          :nft="nft"
+                          @refresh="handleRefrsh" />
         </div>
 
         <!-- Image -->
@@ -19,7 +20,8 @@
         <div class="col-12 col-lg-7 pe-lg-4 mb-4">
           <TitleComponent class="d-none d-lg-block mb-5"
                           :isLoading="isLoading"
-                          :nft="nft" />
+                          :nft="nft"
+                          @refresh="handleRefrsh" />
           <OperationsComponent :isLoading="isLoading"
                                :nft="nft" />
         </div> <!-- Title -->
@@ -65,12 +67,12 @@
 
     created() {
       setTimeout(async () => {
-        await this.getNft();
+        await this.getNftMetadata();
       }, 500);
     },
 
     methods: {
-      async getNft() {
+      async getNftMetadata() {
         let tokenUri = await this.treasureNFT.methods.tokenURI(this.nft.tokenId).call();
         await apiService(tokenUri)
           .then(response => {
@@ -80,6 +82,13 @@
             console.log(error);
           });
         this.isLoading = false;
+      },
+
+      handleRefrsh() {
+        this.isLoading = true;
+        setTimeout(async () => {
+          await this.getNftMetadata();
+        }, 500);
       },
     },
 

@@ -53,15 +53,12 @@
         isPending: false,
         isDisabled: false,
         image: {
-          focus: false,
           errors: []
         },
         name: {
-          focus: false,
           errors: []
         },
         description: {
-          focus: false,
           errors: []
         },
       }
@@ -153,7 +150,8 @@
             const metadata = {
               "name": name,
               "description": description,
-              "image": imageUri
+              "image": imageUri,
+              "creator": this.wallet.address
             }
             const metadataCid = await this.ipfs.add(JSON.stringify(metadata));
             const metadataUri = `http://192.168.1.143/ipfs/${metadataCid.path}`;

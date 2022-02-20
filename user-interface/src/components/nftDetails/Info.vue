@@ -26,7 +26,7 @@
                   <span class="placeholder col-12"></span>
                </p>
                <template v-else>
-                 <p class="text-secondary">Created by <a class="link-info" href="#">CREATOR</a></p>
+                 <p class="text-secondary">Created by <a class="link-info" href="#">{{ creatorAddress }}</a></p>
                  <p class="text-break mb-0"
                     v-if="nft.metadata.description"
                     >{{ nft.metadata.description }}
@@ -147,6 +147,13 @@
 
       contractLink() {
         return `https://ropsten.etherscan.io/tx/${this.treasureNFT._address}`;
+      },
+
+      creatorAddress() {
+        const address = this.nft.metadata.creator.toString();
+        const str1 = String(address).slice(0, 6);
+        const str2 = String(address).slice(address.length - 4, address.length);
+        return `${str1}...${str2}`;
       },
     },
 
