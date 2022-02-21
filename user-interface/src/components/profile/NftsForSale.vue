@@ -1,5 +1,5 @@
 <template>
-  <div class="list-nfts">
+  <div class="nfts-for-sale">
     <div class="row justify-content-start px-0 mt-5">
 
       <!-- Loading -->
@@ -31,30 +31,18 @@
       </template>
 
     </div>
-  </div> <!-- List NFTs -->
+  </div> <!-- NFTs for sale -->
 </template>
 
 <script>
   import { apiService } from "@/common/api.service.js";
   import NftCardComponent from "@/components/profile/listNfts/NftCard.vue";
+  import merchantMixin from "@/mixins/Merchant";
   import treasureNFTMixin from "@/mixins/TreasureNFT";
   import { mapGetters } from "vuex";
 
   export default {
-    name: "ListNftsComponent",
-
-    props: {
-      tokenId: {
-        type: String,
-        required: false
-      },
-    },
-
-    watch: {
-      tokenId() {
-        this.onNftMinted(this.tokenId);
-      },
-    },
+    name: "NftsForSaleComponent",
 
     data() {
       return {
@@ -80,7 +68,7 @@
 
     methods: {
       async countNfts() {
-        const balance = await this.treasureNFT.methods.balanceOf(this.wallet.address).call();
+        const balance = await this.merchant.methods.salesOf(this.wallet.address).call();
         this.balanceOfUser = parseInt(balance);
       },
 
@@ -90,9 +78,9 @@
             tokenId: null,
             metadata: null,
           };
-          let tokenId = await this.treasureNFT.methods.tokenOfOwnerByIndex(this.wallet.address, i).call();
-          nft.tokenId = tokenId;
-          let tokenUri = await this.treasureNFT.methods.tokenURI(tokenId).call();
+          let sale = await this.merchant.methods.saleOfOwnerByIndex(this.wallet.address, i).call();
+          nft.tokenId = sale.tokenId;
+          let tokenUri = await this.treasureNFT.methods.tokenURI(sale.tokenId).call();
           await apiService(tokenUri)
             .then(response => {
               nft.metadata = response;
@@ -103,25 +91,10 @@
           this.nfts.push(nft);
         }
       },
-
-      async onNftMinted(tokenId) {
-        let nft = {
-          tokenId: tokenId,
-          metadata: null,
-        };
-        let tokenUri = await this.treasureNFT.methods.tokenURI(tokenId).call();
-        await apiService(tokenUri)
-          .then(response => {
-            nft.metadata = response;
-          })
-          .catch(error => {
-            console.log(error);
-          });
-        this.nfts.push(nft);
-      },
     },
 
     mixins: [
+      merchantMixin,
       treasureNFTMixin,
     ],
 

@@ -16,18 +16,27 @@
 
         <!-- User NFTs -->
         <div class="col-12 col-xl-8 col-xxl-8 mb-4">
+
+          <!-- Available NFTs -->
           <div class="box px-4 px-md-5 pt-4 pb-2">
             <h2 class="text-center">Available Treasure NFTs</h2>
             <ListNftsComponent :tokenId="tokenId"/>
           </div>
-        </div>
-      </div>
 
+          <!-- NFTs for sale -->
+          <div class="box px-4 px-md-5 pt-4 pb-2 mt-4">
+            <h2 class="text-center">Treasure NFTs for sale</h2>
+            <NftsForSaleComponent />
+          </div>
+        </div>
+
+      </div>
   </div> <!-- Profile -->
 </template>
 
 <script>
   import ListNftsComponent from "@/components/profile/ListNfts.vue";
+  import NftsForSaleComponent from "@/components/profile/NftsForSale.vue";
   import MintComponent from "@/components/profile/Mint.vue";
 
   export default {
@@ -47,6 +56,7 @@
 
     components: {
       MintComponent,
+      NftsForSaleComponent,
       ListNftsComponent,
     },
   };

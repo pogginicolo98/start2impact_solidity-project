@@ -4,11 +4,14 @@
           novalidate
           @submit.prevent="handleSell">
 
+          <!-- Price -->
           <label class="mb-2"
                  for="priceInput"
+                 v-if="isApproved"
                  >Price
           </label>
           <div class="input-wrap"
+               v-if="isApproved"
                :class="{'focusOff': !price.isFocus,
                         'focusOn': price.isFocus}">
                <input aria-describedby="priceFormFeedback"
@@ -22,7 +25,8 @@
                       @focus="setFocus(true)">
           </div>
           <div class="invalid-feedback d-block mt-2"
-               id="priceFormFeedback">
+               id="priceFormFeedback"
+               v-if="isApproved">
                <ul>
                  <li v-for="(error, index) in price.errors"
                      :key="index"
@@ -31,7 +35,7 @@
                </ul>
           </div>
 
-          <!-- Sell button -->
+          <!-- Approve/Sell button -->
           <span class="d-grid btn-wrap"
                 :class="{'btn-wrap-disabled': isDisabled,
                          'btn-wrap-pending': isPending}">
@@ -56,17 +60,37 @@
   export default {
     name: "SellFormComponent",
 
+    props: {
+      tokenId: {
+        type: String,
+        required: true
+      },
+    },
+
     data() {
       return {
-        btnText: "Sell",
+        btnText: "Approve",
         isPending: false,
         isDisabled: false,
+        isApproved: false,
         price: {
           isFocus: false,
           value: null,
           errors: []
         },
       }
+    },
+
+    created() {
+      setTimeout(async () => {
+        const contractApproved = await this.treasureNFT.methods.isApprovedForAll(this.wallet.address, this.merchant._address).call();
+        if (contractApproved) {
+          this.isApproved = true;
+          this.btnText = "Sell";
+        } else {
+          this.isApproved = false;
+        }
+      }, 500);
     },
 
     computed: {
@@ -91,11 +115,15 @@
 
         let msg = "";
         if (payload == "enable") {
-          msg = "<span aria-hidden='true' class='spinner-border spinner-border-sm me-2' role='status'></span>Pending";
           this.isPending = true;
+          msg = this.isApproved == true
+            ? "<span aria-hidden='true' class='spinner-border spinner-border-sm me-2' role='status'></span>Pending"
+            : "<span aria-hidden='true' class='spinner-border spinner-border-sm me-2' role='status'></span>Approving";
         } else if (payload == "disable") {
-          msg = "Sell";
           this.isPending = false;
+          msg = this.isApproved == true
+            ? "Sell"
+            : "Approve";
         }
         this.btnText = msg;
       },
@@ -134,56 +162,60 @@
         return formValid;
       },
 
-      async handleSell() {
-        if (this.validateForm()) {
-          // try {
-          //   const image = this.form.image;
-          //   const name = this.form.name;
-          //   const description = this.form.description;
-          //   let imageUri = null;
-          //   this.isDisabled = true;
-          //
-          //   if (image != null) {
-          //     const imageCid = await this.ipfs.add(image);
-          //     imageUri = `http://192.168.1.143/ipfs/${imageCid.path}`;
-          //   }
-          //   const metadata = {
-          //     "name": name,
-          //     "description": description,
-          //     "image": imageUri,
-          //     "creator": this.wallet.address
-          //   }
-          //   const metadataCid = await this.ipfs.add(JSON.stringify(metadata));
-          //   const metadataUri = `http://192.168.1.143/ipfs/${metadataCid.path}`;
-          //
-          //   this.treasureNFT.methods.mint(this.wallet.address, metadataUri).send({from: this.wallet.address})
-          //     .on("transactionHash", () => {
-          //       this.$refs.form.reset();
-          //       store.commit("SET_MINTFORM", {image: null, preview: null, name: null, description: null});
-          //       this.isDisabled = false;
-          //       this.setLoadingStatus("enable");
-          //     })
-          //     .then(receipt => {
-          //       if (receipt.events.Transfer.returnValues.to.toLowerCase() == this.wallet.address.toLowerCase()) {
-          //         this.$toasted.show(`Successfully minted`, {icon: "check"});
-          //         this.$emit('nftMinted', receipt.events.Transfer.returnValues.tokenId);
-          //       } else {
-          //         this.$toasted.show(`Error occurred`, {icon: "ban"});
-          //       }
-          //       this.setLoadingStatus("disable");
-          //     })
-          //     .catch(error => {
-          //       console.error("error occurred executing TreasureNFT method 'mint'");
-          //       console.log(error);
-          //       this.isDisabled = false;
-          //       this.setLoadingStatus("disable");
-          //       this.$toasted.show(`Transaction error`, {icon: "ban"});
-          //     });
-          // } catch (error) {
-          //   console.error(error);
-          //   this.$toasted.show(`IPFS error`, {icon: "ban"});
-          //   this.isDisabled = false;
-          // }
+      approve() {
+        this.isDisabled = true;
+        this.treasureNFT.methods.setApprovalForAll(this.merchant._address, true).send({from: this.wallet.address})
+          .on("transactionHash", () => {
+            this.isDisabled = false;
+            this.setLoadingStatus("enable");
+          })
+          .then(receipt => {
+            if (receipt.events.ApprovalForAll.returnValues.approved == true) {
+              this.isApproved = true;
+              this.$toasted.show(`Approved`, {icon: "check"});
+            } else {
+              this.$toasted.show(`Approval error`, {icon: "ban"});
+            }
+            this.setLoadingStatus("disable");
+          })
+          .catch(error => {
+            console.error("error occurred executing TreasureNFT method 'setApprovalForAll'");
+            console.log(error);
+            this.isDisabled = false;
+            this.isApproved = false;
+            this.setLoadingStatus("disable");
+            this.$toasted.show(`Approval error`, {icon: "ban"});
+          });
+      },
+
+      handleSell() {
+        if (this.isApproved) {
+          if (this.validateForm()) {
+            this.isDisabled = true;
+            this.merchant.methods.sellItem(this.tokenId, this.web3.utils.toWei(this.price.value.toString())).send({from: this.wallet.address})
+              .on("transactionHash", () => {
+                this.price.value = null;
+                this.isDisabled = false;
+                this.setLoadingStatus("enable");
+              })
+              .then(receipt => {
+                if (receipt.events.SaleCreated.returnValues.tokenId == this.tokenId) {
+                  this.$toasted.show(`Sale created`, {icon: "check"});
+                } else {
+                  this.$toasted.show(`Transaction error 1`, {icon: "ban"});
+                }
+                this.setLoadingStatus("disable");
+              })
+              .catch(error => {
+                console.error("error occurred executing Merchant method 'sellItem'");
+                console.log(error);
+                this.isDisabled = false;
+                this.setLoadingStatus("disable");
+                this.$toasted.show(`Transaction error`, {icon: "ban"});
+              });
+          }
+        } else {
+          this.approve();
         }
       },
     },

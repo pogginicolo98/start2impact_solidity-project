@@ -43,7 +43,9 @@
   import InfoComponent from "@/components/nftDetails/Info.vue";
   import OperationsComponent from "@/components/nftDetails/Operations.vue";
   import TitleComponent from "@/components/nftDetails/Title.vue";
+  import merchantMixin from "@/mixins/Merchant";
   import treasureNFTMixin from "@/mixins/TreasureNFT";
+  import { mapGetters } from "vuex";
 
   export default {
     name: "NftDetails",
@@ -58,20 +60,43 @@
     data() {
       return {
         isLoading: true,
+        owner: null,
         nft: {
           tokenId: this.tokenId,
-          metadata: null
+          metadata: null,
+          price: null
         },
       }
     },
 
     created() {
       setTimeout(async () => {
+        await this.init();
         await this.getNftMetadata();
       }, 500);
     },
 
+    computed: {
+      ...mapGetters({
+        wallet: "getWallet",
+      }),
+    },
+
     methods: {
+      async init() {
+        this.owner = await this.treasureNFT.methods.ownerOf(this.nft.tokenId).call();
+        if (this.owner.toLowerCase() == this.merchant._address.toLowerCase()) {
+          const sales = await this.merchant.methods.salesOf(this.wallet.address).call();
+          for (let i = 0; i < sales; i ++) {
+            let sale = await this.merchant.methods.saleOfOwnerByIndex(this.wallet.address, i).call();
+            if (sale.tokenId == this.nft.tokenId) {
+              this.nft.price = this.web3.utils.fromWei(sale.price);
+              break;
+            }
+          } 
+        }
+      },
+
       async getNftMetadata() {
         let tokenUri = await this.treasureNFT.methods.tokenURI(this.nft.tokenId).call();
         await apiService(tokenUri)
@@ -93,6 +118,7 @@
     },
 
     mixins: [
+      merchantMixin,
       treasureNFTMixin,
     ],
 
