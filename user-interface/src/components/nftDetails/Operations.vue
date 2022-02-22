@@ -2,13 +2,30 @@
   <div class="operations">
     <div class="row">
 
+      <div class="col-12" v-if="isLoading">
+        <div class="card card-nft"
+             style="width: 100%; height: auto;">
+             <div class="placeholder-glow" style="width:100%; height:100%" aria-hidden="true">
+               <span class="placeholder col-12" style="height:112px"></span>
+             </div>
+        </div>
+      </div>
+
       <!-- Price area -->
-      <div class="col-12">
+      <div class="col-12" v-else>
         <div class="card card-nft"
              style="width: 100%; height: auto;">
              <div class="card-body p-4">
 
-               <div class="row justify-content-between">
+               <div class="row justify-content-center" v-if="!nft.price">
+                 <div class="col-12 col-lg-5 col-xl-4 d-grid">
+                   <button type="button" class="btn btn-lg btn-secondary my-2" v-if="!sellEnabled" @click="toggleSell">
+                     <i class="fa-solid fa-scale-balanced me-1"></i>Sell
+                   </button>
+                 </div>
+               </div>
+
+               <div class="row justify-content-between" v-else>
                  <div class="col-12 col-lg-auto">
                    <p class="text-secondary mb-2">Selling price</p>
                    <VueCustomTooltip label="$WISP">
@@ -20,22 +37,21 @@
                    <span class="fw-bold fs-3 align-middle">{{ nft.price }}</span>
                  </div>
                  <div class="col-12 col-lg-auto mt-4 mt-lg-0">
-                   <button type="button" class="btn btn-secondary" v-if="!sellEnabled" @click="toggleSell">
+                   <button type="button" class="btn btn-secondary" v-show="!sellEnabled" @click="toggleSell">
                      <i class="fa-solid fa-scale-balanced me-1"></i>Sell
                    </button>
                  </div>
                </div>
 
-               <div class="card card-nft mt-4" v-if="sellEnabled">
-                 <div class="row m-0">
-                   <div class="col-12 p-0 pt-1 text-end">
-                     <button type="button" class="btn btn-primary" @click="toggleSell">
-                       <i class="fa-solid fa-x"></i>
-                     </button>
-                   </div>
-                   <div class="col-12 px-4 pt-0 pb-4">
-                     <SellFormComponent :tokenId="nft.tokenId" />
-                   </div>
+               <div class="row m-0" v-show="sellEnabled">
+                 <div class="col-12 p-0 pt-1 text-end">
+                   <button type="button" class="btn btn-primary" @click="toggleSell">
+                     <i class="fa-solid fa-x"></i>
+                   </button>
+                 </div>
+                 <div class="col-12 px-4 pt-0 pb-4">
+                   <SellFormComponent :tokenId="nft.tokenId"
+                                      @saleCreated="handleSaleCreated($event)" />
                  </div>
                </div>
 
@@ -73,6 +89,10 @@
     methods: {
       toggleSell() {
         this.sellEnabled = !this.sellEnabled;
+      },
+
+      handleSaleCreated(price) {
+        th
       },
     },
 

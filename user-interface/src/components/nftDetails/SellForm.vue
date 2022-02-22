@@ -5,24 +5,26 @@
           @submit.prevent="handleSell">
 
           <!-- Price -->
-          <label class="mb-2"
-                 for="priceInput"
-                 v-if="isApproved"
-                 >Price
-          </label>
+          <h4 class="text-center mb-4">Set the price and put the NFT up for sale</h4>
           <div class="input-wrap"
                v-if="isApproved"
                :class="{'focusOff': !price.isFocus,
                         'focusOn': price.isFocus}">
-               <input aria-describedby="priceFormFeedback"
-                      class="form-control input-field"
-                      id="priceInput"
-                      placeholder="Amount in $WISP"
-                      type="number"
-                      v-model="price.value"
-                      :class="{'is-invalid': !isValid}"
-                      @blur="setFocus(false)"
-                      @focus="setFocus(true)">
+               <label class="position-relative d-block">
+                 <img alt="$WISP"
+                      class="position-absolute top-50 start-0 translate-middle ms-4"
+                      src="@/assets/images/token-logo-32x32.png">
+                 <input aria-describedby="priceFormFeedback"
+                        class="form-control input-field"
+                        id="priceInput"
+                        placeholder="Price in $WISP"
+                        style="padding-left: 42px;"
+                        type="number"
+                        v-model="price.value"
+                        :class="{'is-invalid': !isValid}"
+                        @blur="setFocus(false)"
+                        @focus="setFocus(true)">
+               </label>
           </div>
           <div class="invalid-feedback d-block mt-2"
                id="priceFormFeedback"
@@ -191,8 +193,9 @@
       handleSell() {
         if (this.isApproved) {
           if (this.validateForm()) {
+            const price = this.web3.utils.toWei(this.price.value);
             this.isDisabled = true;
-            this.merchant.methods.sellItem(this.tokenId, this.web3.utils.toWei(this.price.value.toString())).send({from: this.wallet.address})
+            this.merchant.methods.sellItem(this.tokenId, price).send({from: this.wallet.address})
               .on("transactionHash", () => {
                 this.price.value = null;
                 this.isDisabled = false;
@@ -201,6 +204,7 @@
               .then(receipt => {
                 if (receipt.events.SaleCreated.returnValues.tokenId == this.tokenId) {
                   this.$toasted.show(`Sale created`, {icon: "check"});
+                  this.$emit('saleCreated', price);
                 } else {
                   this.$toasted.show(`Transaction error 1`, {icon: "ban"});
                 }
