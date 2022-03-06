@@ -5,7 +5,7 @@
           @submit.prevent="handleSell">
 
           <!-- Price -->
-          <h4 class="text-center mb-4">Set the price and put the NFT up for sale</h4>
+          <h4 class="text-center mb-4">Choose the price and put the NFT up for sale</h4>
           <div class="input-wrap"
                v-if="isApproved"
                :class="{'focusOff': !price.isFocus,
@@ -204,7 +204,7 @@
               .then(receipt => {
                 if (receipt.events.SaleCreated.returnValues.tokenId == this.tokenId) {
                   this.$toasted.show(`Sale created`, {icon: "check"});
-                  this.$emit('saleCreated', price);
+                  this.$emit('saleCreated');
                 } else {
                   this.$toasted.show(`Transaction error 1`, {icon: "ban"});
                 }

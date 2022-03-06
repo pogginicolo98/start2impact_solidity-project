@@ -7,7 +7,7 @@
         <div class="col-12 d-lg-none mb-1">
           <TitleComponent :isLoading="isLoading"
                           :nft="nft"
-                          @refresh="handleRefrsh" />
+                          @refresh="handelRefresh" />
         </div>
 
         <!-- Image -->
@@ -21,9 +21,10 @@
           <TitleComponent class="d-none d-lg-block mb-5"
                           :isLoading="isLoading"
                           :nft="nft"
-                          @refresh="handleRefrsh" />
+                          @refresh="handelRefresh" />
           <OperationsComponent :isLoading="isLoading"
-                               :nft="nft" />
+                               :nft="nft"
+                               @refresh="handelRefresh" />
         </div> <!-- Title -->
 
         <!-- Info -->
@@ -60,7 +61,6 @@
     data() {
       return {
         isLoading: true,
-        owner: null,
         nft: {
           tokenId: this.tokenId,
           metadata: null,
@@ -84,8 +84,8 @@
 
     methods: {
       async init() {
-        this.owner = await this.treasureNFT.methods.ownerOf(this.nft.tokenId).call();
-        if (this.owner.toLowerCase() == this.merchant._address.toLowerCase()) {
+        const owner = await this.treasureNFT.methods.ownerOf(this.nft.tokenId).call();
+        if (owner.toLowerCase() == this.merchant._address.toLowerCase()) {
           const sales = await this.merchant.methods.salesOf(this.wallet.address).call();
           for (let i = 0; i < sales; i ++) {
             let sale = await this.merchant.methods.saleOfOwnerByIndex(this.wallet.address, i).call();
@@ -93,7 +93,7 @@
               this.nft.price = this.web3.utils.fromWei(sale.price);
               break;
             }
-          } 
+          }
         }
       },
 
@@ -109,9 +109,10 @@
         this.isLoading = false;
       },
 
-      handleRefrsh() {
+      handelRefresh() {
         this.isLoading = true;
         setTimeout(async () => {
+          await this.init();
           await this.getNftMetadata();
         }, 500);
       },

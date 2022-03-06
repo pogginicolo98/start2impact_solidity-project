@@ -37,8 +37,8 @@
                    <span class="fw-bold fs-3 align-middle">{{ nft.price }}</span>
                  </div>
                  <div class="col-12 col-lg-auto mt-4 mt-lg-0">
-                   <button type="button" class="btn btn-secondary" v-show="!sellEnabled" @click="toggleSell">
-                     <i class="fa-solid fa-scale-balanced me-1"></i>Sell
+                   <button type="button" class="btn btn-danger" v-show="!sellEnabled" @click="cancelSell">
+                     <i class="fa-solid fa-scale-balanced me-1"></i>Cancel
                    </button>
                  </div>
                </div>
@@ -51,7 +51,7 @@
                  </div>
                  <div class="col-12 px-4 pt-0 pb-4">
                    <SellFormComponent :tokenId="nft.tokenId"
-                                      @saleCreated="handleSaleCreated($event)" />
+                                      @saleCreated="handleSaleCreated()" />
                  </div>
                </div>
 
@@ -64,7 +64,10 @@
 </template>
 
 <script>
+  import merchantMixin from "@/mixins/Merchant";
+  import treasureNFTMixin from "@/mixins/TreasureNFT";
   import SellFormComponent from "@/components/nftDetails/SellForm.vue";
+  import { mapGetters } from "vuex";
 
   export default {
     name: "OperationsComponent",
@@ -86,15 +89,55 @@
       }
     },
 
+    computed: {
+      ...mapGetters({
+        wallet: "getWallet",
+      }),
+    },
+
     methods: {
       toggleSell() {
         this.sellEnabled = !this.sellEnabled;
       },
 
-      handleSaleCreated(price) {
-        th
+      handleSaleCreated() {
+        this.sellEnabled = false;
+        this.$emit('refresh');
+      },
+
+      async cancelSell() {
+        const owner = await this.treasureNFT.methods.ownerOf(this.nft.tokenId).call();
+        if (owner.toLowerCase() == this.merchant._address.toLowerCase()) {
+          const sales = await this.merchant.methods.salesOf(this.wallet.address).call();
+          for (let i = 0; i < sales; i ++) {
+            let sale = await this.merchant.methods.saleOfOwnerByIndex(this.wallet.address, i).call();
+            if (sale.tokenId == this.nft.tokenId) {
+              this.merchant.methods.cancelSaleByIndex(i).send({from: this.wallet.address})
+                .on("transactionHash", () => {
+                  // this.price.value = null;
+                  // this.isDisabled = false;
+                  // this.setLoadingStatus("enable");
+                  console.log("transactionHash");
+                })
+                .then(receipt => {
+                  console.log(receipt);
+                  console.log("cancel succesfull");
+                })
+                .catch(error => {
+                  console.log(error);
+                  console.log("error canceling");
+                });
+              break;
+            }
+          }
+        }
       },
     },
+
+    mixins: [
+      merchantMixin,
+      treasureNFTMixin,
+    ],
 
     components: {
       SellFormComponent,

@@ -4,12 +4,14 @@ $primary: #2e2d2c;
 $secondary: #adb5bd;
 $info: #5ac9e5;
 $light: #fff;
+$danger: #dc3545;
 
 $theme-colors: (
   primary: $primary,
   secondary: $secondary,
   info: $info,
-  light: $light
+  light: $light,
+  danger: $danger
 );
 
 $border-radius: 12px;
