@@ -94,6 +94,8 @@
               break;
             }
           }
+        } else {
+          this.nft.price = null;
         }
       },
 

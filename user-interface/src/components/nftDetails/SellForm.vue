@@ -206,7 +206,7 @@
                   this.$toasted.show(`Sale created`, {icon: "check"});
                   this.$emit('saleCreated');
                 } else {
-                  this.$toasted.show(`Transaction error 1`, {icon: "ban"});
+                  this.$toasted.show(`Transaction error`, {icon: "ban"});
                 }
                 this.setLoadingStatus("disable");
               })
