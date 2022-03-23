@@ -1,10 +1,10 @@
 <template>
   <div class="nfts-for-sale">
-    <div class="row justify-content-start px-0 mt-5">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-3 mt-5 mb-4">
 
       <!-- Loading -->
       <template v-if="isLoading">
-        <div class="col-12 col-sm-6 col-lg-4 col-xxl-3 col-nft mb-3"
+        <div class="col"
              v-for="index in balanceOfUser"
              :key="index">
              <NftCardComponent />
@@ -13,7 +13,7 @@
 
       <!-- Items -->
       <template v-else-if="nfts.length > 0">
-        <div class="col-12 col-sm-6 col-lg-4 col-xxl-3 col-nft mb-3"
+        <div class="col"
              v-for="(nft, index) in nfts"
              :key="index">
              <NftCardComponent v-if="!nft.metadata" />
@@ -76,10 +76,12 @@
         for (let i = 0; i < this.balanceOfUser; i ++) {
           let nft = {
             tokenId: null,
+            price: null,
             metadata: null,
           };
           let sale = await this.merchant.methods.saleOfOwnerByIndex(this.wallet.address, i).call();
           nft.tokenId = sale.tokenId;
+          nft.price = this.web3.utils.fromWei(sale.price);
           let tokenUri = await this.treasureNFT.methods.tokenURI(sale.tokenId).call();
           await apiService(tokenUri)
             .then(response => {

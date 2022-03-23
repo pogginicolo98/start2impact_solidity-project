@@ -1,6 +1,6 @@
 <template>
   <div class="nft-details">
-    <div class="container mt-4 px-3 px-lg-0">
+    <div class="container my-4 px-3 px-lg-0">
       <div class="row">
 
         <!-- Title mobile formats -->

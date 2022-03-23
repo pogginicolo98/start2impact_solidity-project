@@ -24,16 +24,50 @@
            </div>
 
            <!-- Name placeholder -->
-           <div class="placeholder-glow text-center mx-3 my-3"
+           <div class="placeholder-glow mb-3"
                 v-if="isLoading">
-                <span class="placeholder col-5"></span>
+                <div class="row justify-content-between mt-3 px-2">
+                  <div class="col-6">
+                    <div>
+                      <span class="placeholder col-4 fs-12px"></span>
+                    </div>
+                    <div>
+                      <span class="placeholder col-7"></span>
+                    </div>
+                  </div>
+                  <div class="col-6 text-end">
+                    <div>
+                      <span class="placeholder col-4 fs-12px"></span>
+                    </div>
+                    <div>
+                      <span class="placeholder col-10"></span>
+                    </div>
+                  </div>
+                </div>
            </div>
 
            <!-- Name -->
-           <p class="text-truncate text-center fw-bold mx-3 mt-3"
-              v-else
-              >{{ nft.metadata.name }}
-           </p>
+           <div class="row justify-content-between mt-3 px-2" v-else>
+             <div class="col-6">
+               <p class="text-secondary fs-12px mb-0" style="">Name</p>
+               <p class="text-truncate">{{ nft.metadata.name }}</p>
+             </div>
+             <div class="col-6 text-end">
+               <p class="text-secondary fs-12px mb-0">Price</p>
+               <div v-if="nft.price">
+                 <p class="text-truncate">
+                   <span>
+                     <div class="position-relative d-inline-block">
+                       <img alt="$WISP"
+                            src="@/assets/images/token-logo-24x24.png">
+                     </div>
+                   </span>
+                   <span class="align-middle">{{ nft.price }}</span>
+                 </p>
+               </div>
+               <p class="text-muted" v-else>Not for sale</p>
+             </div>
+           </div>
 
          </div>
     </div>
@@ -60,6 +94,10 @@
 </script>
 
 <style scoped>
+  .card-nft-img-wrap {
+    border-bottom: 1px solid hsla(0,0%,100%,.1);
+  }
+
   .card-nft:hover {
     box-shadow: 0px 0px 7px 1px rgba(255, 255, 255, 0.1);
     transform: translateY(-2px);

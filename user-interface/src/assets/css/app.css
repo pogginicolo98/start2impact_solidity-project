@@ -1,6 +1,16 @@
 html, body, #app {
   height: 100%;
 }
+body, #app {
+  display: flex;
+  flex-direction: column;
+}
+.content {
+  flex: 1 0 auto;
+}
+.footer {
+  flex-shrink: 0;
+}
 
 a {
   text-decoration: none !important;
@@ -87,4 +97,8 @@ a {
 
 .btn-pending {
   pointer-events: none;
+}
+
+.fs-12px {
+  font-size: 12px;
 }
