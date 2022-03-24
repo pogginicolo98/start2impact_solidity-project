@@ -42,6 +42,8 @@
 </template>
 
 <script>
+  import { mapGetters } from "vuex";
+
   export default {
     name: "TitleComponent",
 
@@ -56,15 +58,20 @@
       },
     },
 
-    data() {
-      return {
-        owner: null,
-      }
-    },
-
     computed: {
+      ...mapGetters({
+        wallet: "getWallet",
+      }),
+
       getOwner() {
-        return this.owner;
+        const address = this.nft.owner.toString();
+        if (this.wallet.address.toLowerCase() == address.toLowerCase()) {
+          return "YOU";
+        } else {
+          const str1 = String(address).slice(0, 6);
+          const str2 = String(address).slice(address.length - 4, address.length);
+          return `${str1}...${str2}`;
+        }
       },
     },
 

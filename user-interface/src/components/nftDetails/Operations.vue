@@ -2,6 +2,8 @@
   <div class="operations">
     <div class="row">
 
+      <button type="button" name="button" @click="transfer">transfer to Addr1</button>
+
       <div class="col-12" v-if="isLoading">
         <div class="card card-nft"
              style="width: 100%; height: auto;">
@@ -99,6 +101,19 @@
       refresh() {
         this.sellEnabled = false;
         this.$emit('refresh');
+      },
+
+      transfer() {
+        this.treasureNFT.methods.transferFrom(this.wallet.address, "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", this.nft.tokenId).send({from: this.wallet.address})
+          .then(receipt => {
+            console.log(receipt);
+            this.$toasted.show(`Successfully transfered`, {icon: "check"});
+          })
+          .catch(error => {
+            console.error("error occurred executing TreasureNFT method 'transferFrom'");
+            console.log(error);
+            this.$toasted.show(`Transaction error`, {icon: "ban"});
+          });
       },
     },
 

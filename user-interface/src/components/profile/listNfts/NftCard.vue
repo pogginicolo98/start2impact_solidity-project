@@ -49,11 +49,11 @@
            <!-- Name -->
            <div class="row justify-content-between mt-3 px-2" v-else>
              <div class="col-6">
-               <p class="text-secondary fs-12px mb-0" style="">Name</p>
+               <p class="text-muted fs-12px mb-0" style="">Name</p>
                <p class="text-truncate">{{ nft.metadata.name }}</p>
              </div>
              <div class="col-6 text-end">
-               <p class="text-secondary fs-12px mb-0">Price</p>
+               <p class="text-muted fs-12px mb-0">Price</p>
                <div v-if="nft.price">
                  <p class="text-truncate">
                    <span>
@@ -65,7 +65,7 @@
                    <span class="align-middle">{{ nft.price }}</span>
                  </p>
                </div>
-               <p class="text-muted" v-else>Not for sale</p>
+               <p class="text-secondary" v-else>Not for sale</p>
              </div>
            </div>
 

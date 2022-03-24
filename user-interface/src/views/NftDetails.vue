@@ -64,15 +64,15 @@
         nft: {
           tokenId: this.tokenId,
           metadata: null,
-          price: null
+          price: null,
+          owner: null
         },
       }
     },
 
     created() {
       setTimeout(async () => {
-        await this.init();
-        await this.getNftMetadata();
+        await this.initNft();
       }, 500);
     },
 
@@ -83,23 +83,9 @@
     },
 
     methods: {
-      async init() {
-        const owner = await this.treasureNFT.methods.ownerOf(this.nft.tokenId).call();
-        if (owner.toLowerCase() == this.merchant._address.toLowerCase()) {
-          const sales = await this.merchant.methods.salesOf(this.wallet.address).call();
-          for (let i = 0; i < sales; i ++) {
-            let sale = await this.merchant.methods.saleOfOwnerByIndex(this.wallet.address, i).call();
-            if (sale.tokenId == this.nft.tokenId) {
-              this.nft.price = this.web3.utils.fromWei(sale.price);
-              break;
-            }
-          }
-        } else {
-          this.nft.price = null;
-        }
-      },
-
       async getNftMetadata() {
+        let owner = await this.treasureNFT.methods.ownerOf(this.nft.tokenId).call();
+        this.nft.owner = owner;
         let tokenUri = await this.treasureNFT.methods.tokenURI(this.nft.tokenId).call();
         await apiService(tokenUri)
           .then(response => {
@@ -108,14 +94,35 @@
           .catch(error => {
             console.log(error);
           });
+      },
+
+      async getNftSale() {
+        let sellers = await this.merchant.methods.totalSellers().call();
+        for (let sellerIndex = 0; sellerIndex < sellers; sellerIndex++) {
+          let sellerAddress = await this.merchant.methods.sellerByIndex(sellerIndex).call();
+          let sellerSales = await this.merchant.methods.salesOf(sellerAddress).call();
+          for (let saleIndex = 0; saleIndex < sellerSales; saleIndex++) {
+            let sale = await this.merchant.methods.saleOfOwnerByIndex(sellerAddress, saleIndex).call();
+            if (sale.tokenId == this.nft.tokenId) {
+              this.nft.price = this.web3.utils.fromWei(sale.price);
+              this.nft.owner = sellerAddress;
+              break;
+            }
+          }
+        }
+      },
+
+      async initNft() {
+        this.isLoading = true;
+        await this.getNftMetadata();
+        await this.getNftSale();
         this.isLoading = false;
       },
 
       handelRefresh() {
         this.isLoading = true;
         setTimeout(async () => {
-          await this.init();
-          await this.getNftMetadata();
+          await this.initNft();
         }, 500);
       },
     },
