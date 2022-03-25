@@ -39,10 +39,6 @@
     },
 
     methods: {
-      setFocus(payload) {
-        this.price.isFocus = payload;
-      },
-
       setLoadingStatus(payload) {
         // Set the button text and pending status
 

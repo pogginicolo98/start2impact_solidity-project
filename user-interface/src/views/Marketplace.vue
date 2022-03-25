@@ -15,7 +15,10 @@
                 <NftCardComponent v-if="!nft.metadata" />
                 <router-link class="text-light"
                              v-else
-                             :to="{ name: 'NftDetails', params: { tokenId: nft.tokenId } }">
+                             :to="{ name: 'NftDetails', params: { tokenId: nft.tokenId,
+                                                                  metadata: nft.metadata,
+                                                                  price: nft.price,
+                                                                  owner: nft.owner } }">
                              <NftCardComponent :nft="nft" :marketplace="true" />
                 </router-link>
            </div>
@@ -80,12 +83,14 @@
           for (let saleIndex = 0; saleIndex < sellerSales; saleIndex++) {
             let nft = {
               tokenId: null,
+              metadata: null,
               price: null,
-              metadata: null
+              owner: null
             };
             let sale = await this.merchant.methods.saleOfOwnerByIndex(sellerAddress, saleIndex).call();
             nft.tokenId = sale.tokenId;
             nft.price = this.web3.utils.fromWei(sale.price);
+            nft.owner = sellerAddress;
             let tokenUri = await this.treasureNFT.methods.tokenURI(sale.tokenId).call();
             await apiService(tokenUri)
               .then(response => {

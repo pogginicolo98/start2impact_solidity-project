@@ -56,6 +56,18 @@
         type: String,
         required: true
       },
+      metadata: {
+        type: Object,
+        required: false
+      },
+      price: {
+        type: String,
+        required: false
+      },
+      owner: {
+        type: String,
+        required: false
+      },
     },
 
     data() {
@@ -63,9 +75,9 @@
         isLoading: true,
         nft: {
           tokenId: this.tokenId,
-          metadata: null,
-          price: null,
-          owner: null
+          metadata: this.metadata != null ? this.metadata : null,
+          price: this.price != null ? this.price : null,
+          owner: this.owner != null ? this.owner : null,
         },
       }
     },
@@ -84,8 +96,7 @@
 
     methods: {
       async getNftMetadata() {
-        let owner = await this.treasureNFT.methods.ownerOf(this.nft.tokenId).call();
-        this.nft.owner = owner;
+        console.log("get metadata");
         let tokenUri = await this.treasureNFT.methods.tokenURI(this.nft.tokenId).call();
         await apiService(tokenUri)
           .then(response => {
@@ -97,6 +108,7 @@
       },
 
       async getNftSale() {
+        console.log("get sale");
         let sellers = await this.merchant.methods.totalSellers().call();
         for (let sellerIndex = 0; sellerIndex < sellers; sellerIndex++) {
           let sellerAddress = await this.merchant.methods.sellerByIndex(sellerIndex).call();
@@ -112,11 +124,24 @@
         }
       },
 
+      async getNftOwner() {
+        let owner = await this.treasureNFT.methods.ownerOf(this.nft.tokenId).call();
+        if (owner.toLowerCase() == this.merchant._address.toLowerCase()) {
+          await this.getNftSale();
+        } else {
+          this.nft.owner = owner;
+          console.log("not for sale");
+        }
+      },
+
       async initNft() {
+        console.log("init nfts");
         this.isLoading = true;
-        await this.getNftMetadata();
-        await this.getNftSale();
-        this.isLoading = false;
+        if (this.nft.owner == null) {
+          await this.getNftOwner();
+          await this.getNftMetadata();
+        }
+        this.isLoading = false;        
       },
 
       handelRefresh() {

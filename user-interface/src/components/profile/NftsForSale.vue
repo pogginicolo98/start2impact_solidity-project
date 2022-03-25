@@ -19,7 +19,10 @@
              <NftCardComponent v-if="!nft.metadata" />
              <router-link class="text-light"
                           v-else
-                          :to="{ name: 'NftDetails', params: { tokenId: nft.tokenId } }">
+                          :to="{ name: 'NftDetails', params: { tokenId: nft.tokenId,
+                                                               metadata: nft.metadata,
+                                                               price: nft.price,
+                                                               owner: nft.owner } }">
                           <NftCardComponent :nft="nft" />
              </router-link>
         </div>
@@ -76,8 +79,9 @@
         for (let i = 0; i < this.balanceOfUser; i ++) {
           let nft = {
             tokenId: null,
-            price: null,
             metadata: null,
+            price: null,
+            owner: this.wallet.address
           };
           let sale = await this.merchant.methods.saleOfOwnerByIndex(this.wallet.address, i).call();
           nft.tokenId = sale.tokenId;

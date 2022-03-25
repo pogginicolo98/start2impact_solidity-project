@@ -66,7 +66,7 @@
                    <a class="link-info"
                       target="_blank"
                       :href="contractLink"
-                      >{{ contractAddress }}
+                      >{{ getContractAddr }}
                    </a>
                  </div>
                </div>
@@ -81,7 +81,7 @@
                                      :label="tokenIdLabel">
                                      <span class="btn-copy"
                                            @click="copyToClipboard(nft.tokenId)"
-                                           >{{ tokenIdText }}
+                                           >{{ getTokenId }}
                                      </span>
                    </VueCustomTooltip>
                  </div>
@@ -107,6 +107,7 @@
 
 <script>
   import treasureNFTMixin from "@/mixins/TreasureNFT";
+  import { mapGetters } from "vuex";
 
   export default {
     name: "InfoComponent",
@@ -129,14 +130,18 @@
     },
 
     computed: {
-      contractAddress() {
+      ...mapGetters({
+        wallet: "getWallet",
+      }),
+
+      getContractAddr() {
         const address = this.treasureNFT._address.toString();
         const str1 = String(address).slice(0, 6);
         const str2 = String(address).slice(address.length - 4, address.length);
         return `${str1}...${str2}`;
       },
 
-      tokenIdText() {
+      getTokenId() {
         const tokenId = this.nft.tokenId;
         if (tokenId.length > 8) {
           const str = String(tokenId).slice(0, 8);
@@ -151,9 +156,13 @@
 
       getCreator() {
         const address = this.nft.metadata.creator.toString();
-        const str1 = String(address).slice(0, 6);
-        const str2 = String(address).slice(address.length - 4, address.length);
-        return `${str1}...${str2}`;
+        if (this.wallet.address.toLowerCase() == address.toLowerCase()) {
+          return "you";
+        } else {
+          const str1 = String(address).slice(0, 6);
+          const str2 = String(address).slice(address.length - 4, address.length);
+          return `${str1}...${str2}`;
+        }
       },
     },
 

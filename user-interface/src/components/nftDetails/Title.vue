@@ -66,7 +66,7 @@
       getOwner() {
         const address = this.nft.owner.toString();
         if (this.wallet.address.toLowerCase() == address.toLowerCase()) {
-          return "YOU";
+          return "you";
         } else {
           const str1 = String(address).slice(0, 6);
           const str2 = String(address).slice(address.length - 4, address.length);
