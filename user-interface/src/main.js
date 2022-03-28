@@ -7,6 +7,8 @@ import '@/assets/css/main.scss';
 import Clipboard from "v-clipboard";
 import Toasted from "vue-toasted";
 import VueCustomTooltip from '@adamdehaven/vue-custom-tooltip';
+import AOS from 'aos'
+import 'aos/dist/aos.css'
 import connectWallet from "./plugins/connectWallet";
 import connectIpfs from "./plugins/connectIpfs";
 
@@ -40,13 +42,16 @@ Vue.prototype.$web3 = web3Instance;
 Vue.config.productionTip = false;
 
 Vue.mixin({
+  created () {
+    AOS.init()
+  },
   computed: {
     web3() {
       if(this.$store.getters.getWeb3Instance) return this.$store.getters.getWeb3Instance
       console.log("here")
       return this.$web3
     }
-  }
+  },
 })
 
 new Vue({

@@ -1,5 +1,6 @@
 html, body, #app {
   height: 100%;
+  font-family: 'Nunito', sans-serif;
 }
 body, #app {
   display: flex;
@@ -14,6 +15,10 @@ body, #app {
 
 a {
   text-decoration: none !important;
+}
+
+.font-fantasy {
+  font-family: 'Inspiration', cursive;
 }
 
 .box {
@@ -101,4 +106,12 @@ a {
 
 .fs-12px {
   font-size: 12px;
+}
+
+.fs-70px {
+  font-size: 70px;
+}
+
+.fs-32px {
+  font-size: 32px;
 }

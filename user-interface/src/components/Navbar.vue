@@ -1,35 +1,85 @@
 <template>
   <div class="navbarComponent">
-    <nav class="navbar navbar-light navbar-expand">
+    <nav class="navbar navbar-light navbar-expand-lg">
       <div class="container">
+
+        <!-- Brand -->
         <router-link class="navbar-brand me-auto"
                      :to="{ name: 'Home' }"
                      ><img alt="logo"
                            src="../assets/images/logo.png">
         </router-link>
-        <div class="mx-auto"
-             v-show="metamaskConnected">
-             <div class="navbar-nav pe-4">
-               <router-link class="nav-link text-secondary"
-                            :to="{ name: 'Marketplace' }"
-                            >Marketplace
-               </router-link>
-               <router-link class="nav-link text-secondary"
-                            :to="{ name: 'Profile' }"
-                            >Profile
-               </router-link>
-               <router-link class="nav-link text-secondary"
-                            :to="{ name: 'Faucet' }"
-                            >Faucet
-               </router-link>
-             </div>
-        </div>
-        <button class="btn btn-primary px-4 ms-auto"
-                @click="handleConnect"
-                >{{ connectBtnText }}
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
         </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <div class="mx-auto"
+               v-show="metamaskConnected">
+               <div class="navbar-nav pe-4">
+                 <router-link class="nav-link text-secondary"
+                              :to="{ name: 'Marketplace' }"
+                              >Marketplace
+                 </router-link>
+                 <router-link class="nav-link text-secondary"
+                              :to="{ name: 'Profile' }"
+                              >Profile
+                 </router-link>
+                 <router-link class="nav-link text-secondary"
+                              :to="{ name: 'Faucet' }"
+                              >Faucet
+                 </router-link>
+               </div>
+          </div>
+          <button class="btn btn-primary px-4 ms-auto"
+                  @click="handleConnect"
+                  >{{ connectBtnText }}
+          </button>
+        </div>
       </div>
     </nav>
+
+    <!-- <nav class="navbar navbar-light navbar-expand">
+      <div class="container">
+
+        <router-link class="navbar-brand me-auto"
+                     :to="{ name: 'Home' }"
+                     ><img alt="logo"
+                           src="../assets/images/logo.png">
+        </router-link>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" style="width: 100%" id="navbarNav">
+          <div class="mx-auto"
+               v-show="metamaskConnected">
+               <div class="navbar-nav pe-4">
+                 <router-link class="nav-link text-secondary"
+                              :to="{ name: 'Marketplace' }"
+                              >Marketplace
+                 </router-link>
+                 <router-link class="nav-link text-secondary"
+                              :to="{ name: 'Profile' }"
+                              >Profile
+                 </router-link>
+                 <router-link class="nav-link text-secondary"
+                              :to="{ name: 'Faucet' }"
+                              >Faucet
+                 </router-link>
+               </div>
+          </div>
+          <button class="btn btn-primary px-4 ms-auto"
+                  @click="handleConnect"
+                  >{{ connectBtnText }}
+          </button>
+        </div>
+
+
+      </div>
+    </nav> -->
   </div>
 </template>
 

@@ -1,12 +1,28 @@
 <template>
   <div class="home">
     <div class="position-absolute top-50 start-50 translate-middle">
-      <div class="text-center" style="width: 22rem;">
-        <h1 class="mb-3">Welcome to Echoes of the past</h1>
-        <h5 class="mb-3">Echoes of the past is a sample of a fantasy themed NFT marketplace</h5>
-        <button class="btn btn-primary btn-lg"
-                >Launch app
-        </button>
+      <div class="text-center">
+        <div data-aos="fade-zoom-in"
+             data-aos-easing="ease-in-out-cubic"
+             data-aos-delay="400"
+             data-aos-duration="2700">
+             <p class="font-fantasy fs-70px mb-0">Welcome to Echoes of the past</p>
+        </div>
+        <div data-aos="fade-zoom-in"
+             data-aos-easing="ease-in-out-cubic"
+             data-aos-delay="600"
+             data-aos-duration="2800">
+             <p class="font-fantasy fs-32px text-secondary">Echoes of the past is an NFT marketplace with no back-end</p>
+        </div>
+        <div data-aos="fade-zoom-in"
+             data-aos-easing="ease-in-back"
+             data-aos-delay="2300"
+             data-aos-duration="800">
+             <router-link class="btn btn-primary btn-lg mt-3"
+                          :to="{ name: 'Marketplace' }"
+                          >Launch app
+             </router-link>
+        </div>
       </div>
     </div>
   </div>
