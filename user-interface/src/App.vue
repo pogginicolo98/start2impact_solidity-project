@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <NavbarComponent v-if="isValidPath" />
+    <NavbarComponent class="sticky-top" v-if="isValidPath" />
     <div class="content">
       <router-view />
     </div>

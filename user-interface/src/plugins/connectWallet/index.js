@@ -11,6 +11,8 @@ setTimeout(async () => {
   if(window.ethereum?.isMetaMask) {
     console.log("setTimeout");
     const provider = await detectEthereumProvider();
+    console.log("provider");
+    console.log(provider);
     const ethersProvider = new ethers.providers.Web3Provider(provider);
     const accounts = await window.ethereum.request({ method: "eth_accounts" });
     const web3Instance = new Web3(provider);
@@ -48,7 +50,7 @@ setTimeout(async () => {
 export default {
   async install(Vue) {
     Vue.prototype.$connectWallet = async () => {
-      console.log("install");
+      console.log("Connect wallet");
       try {
         let address = "";
         const provider = await detectEthereumProvider();
@@ -91,7 +93,7 @@ export default {
           signer: signer,
         });
       } catch (error) {
-        console.log("Error in connect modal");
+        console.log("Error connecting wallet");
         console.log(error);
       }
     };

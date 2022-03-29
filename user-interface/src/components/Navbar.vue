@@ -1,9 +1,8 @@
 <template>
   <div class="navbarComponent">
-    <nav class="navbar navbar-light navbar-expand-lg">
+    <nav class="navbar navbar-dark navbar-expand-lg sticky-top">
       <div class="container">
 
-        <!-- Brand -->
         <router-link class="navbar-brand me-auto"
                      :to="{ name: 'Home' }"
                      ><img alt="logo"
@@ -15,71 +14,43 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
-          <div class="mx-auto"
+
+          <div class="mx-auto my-4 my-lg-0"
                v-show="metamaskConnected">
+               <hr class="d-block d-lg-none">
                <div class="navbar-nav pe-4">
-                 <router-link class="nav-link text-secondary"
+                 <router-link class="nav-link me-lg-3"
                               :to="{ name: 'Marketplace' }"
                               >Marketplace
                  </router-link>
-                 <router-link class="nav-link text-secondary"
+                 <router-link class="nav-link me-lg-3"
                               :to="{ name: 'Profile' }"
                               >Profile
                  </router-link>
-                 <router-link class="nav-link text-secondary"
+                 <router-link class="nav-link"
                               :to="{ name: 'Faucet' }"
                               >Faucet
                  </router-link>
                </div>
+               <hr class="d-block d-lg-none">
           </div>
-          <button class="btn btn-primary px-4 ms-auto"
+          <button class="btn btn-primary ms-auto mt-3 mb-4 my-lg-0"
+                  v-if="!metamaskConnected"
                   @click="handleConnect"
-                  >{{ connectBtnText }}
+                  >Connect Metamask
           </button>
+          <VueCustomTooltip position="is-left"
+                            v-else
+                            :label="tokenIdLabel">
+                            <button class="btn btn-primary ms-auto mt-3 mb-4 my-lg-0"
+                                    style="width: 156px;"
+                                    @click="handleConnect"
+                                    >{{ getAddress }}
+                            </button>
+          </VueCustomTooltip>
         </div>
       </div>
     </nav>
-
-    <!-- <nav class="navbar navbar-light navbar-expand">
-      <div class="container">
-
-        <router-link class="navbar-brand me-auto"
-                     :to="{ name: 'Home' }"
-                     ><img alt="logo"
-                           src="../assets/images/logo.png">
-        </router-link>
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" style="width: 100%" id="navbarNav">
-          <div class="mx-auto"
-               v-show="metamaskConnected">
-               <div class="navbar-nav pe-4">
-                 <router-link class="nav-link text-secondary"
-                              :to="{ name: 'Marketplace' }"
-                              >Marketplace
-                 </router-link>
-                 <router-link class="nav-link text-secondary"
-                              :to="{ name: 'Profile' }"
-                              >Profile
-                 </router-link>
-                 <router-link class="nav-link text-secondary"
-                              :to="{ name: 'Faucet' }"
-                              >Faucet
-                 </router-link>
-               </div>
-          </div>
-          <button class="btn btn-primary px-4 ms-auto"
-                  @click="handleConnect"
-                  >{{ connectBtnText }}
-          </button>
-        </div>
-
-
-      </div>
-    </nav> -->
   </div>
 </template>
 
@@ -89,12 +60,18 @@
   export default {
     name: "NavbarComponent",
 
+    data() {
+      return {
+        tokenIdLabel: "Copy",
+      }
+    },
+
     computed: {
       ...mapGetters({
         wallet: "getWallet"
       }),
 
-      connectBtnText() {
+      getAddress() {
         const address =
           this.wallet && this.wallet.address
             ? this.wallet.address.toString()
@@ -104,7 +81,7 @@
           const str2 = String(address).slice(address.length - 4, address.length);
           return `${str1}...${str2}`;
         }
-        return "Connect Metamask";
+        return "Error";
       },
 
       metamaskConnected() {
@@ -113,8 +90,22 @@
     },
 
     methods: {
+      copyToClipboard(payload) {
+        this.$clipboard(payload);
+        if (this.tokenIdLabel === "Copy") {
+          this.tokenIdLabel = "Copied!";
+          setTimeout(() => {
+            this.tokenIdLabel = "Copy";
+          }, 5000);
+        }
+      },
+
       handleConnect() {
-        this.$connectWallet();
+        if (this.wallet && this.wallet.address) {
+          this.copyToClipboard(this.wallet.address);
+        } else {
+          this.$connectWallet();
+        }
       },
     },
   }
@@ -123,6 +114,19 @@
 <style scoped>
   .navbar {
     border-bottom: 1px solid hsla(0,0%,100%,.2) !important;
-    background: transparent !important;
+    background: #252423 !important;
+  }
+
+  .nav-link {
+    font-size: 18px !important;
+    color: #adb5bd !important;
+  }
+
+  .nav-link:hover {
+    color: #FFF !important;
+  }
+
+  .router-link-active {
+    color: #FFF !important;
   }
 </style>
