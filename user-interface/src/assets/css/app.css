@@ -119,6 +119,10 @@ a {
   font-size: 32px;
 }
 
+.fs-45px {
+  font-size: 45px;
+}
+
 .height-100 {
   height: 100%;
 }

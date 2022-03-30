@@ -21,5 +21,5 @@ interface IERC20Faucet {
    *
    * @param beneficiary The address to send the tokens to
    */
-  function requestTokens(address beneficiary) external;
+  function redeemTokens(address beneficiary) external;
 }

@@ -54,7 +54,7 @@ export default {
             "type": "address"
           }
         ],
-        "name": "requestTokens",
+        "name": "redeemTokens",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"

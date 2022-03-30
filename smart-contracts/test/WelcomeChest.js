@@ -42,9 +42,9 @@ describe("WelcomeChest contract", function () {
   });
 
   describe("Transactions", function () {
-    it("Should send 1000 WISP to the requested address", async function () {
-      // Request WISP for addr1
-      await welcomeChest.requestTokens(addr1.address);
+    it("Should send 1000 WISP to the address provided", async function () {
+      // Redeem WISP for addr1
+      await welcomeChest.redeemTokens(addr1.address);
 
       // Check the results
       const addr1Balance = await wispToken.balanceOf(addr1.address);
@@ -55,17 +55,17 @@ describe("WelcomeChest contract", function () {
 
     it("Should fail if doesn’t have enough WISP", async function () {
       // Emptying the faucet
-      await welcomeChest.requestTokens(owner.address);
+      await welcomeChest.redeemTokens(owner.address);
 
       // Check the results
-      await expect(welcomeChest.requestTokens(addr1.address))
+      await expect(welcomeChest.redeemTokens(addr1.address))
         .to.be.revertedWith("Insufficient funds");
       const addr1Balance = await wispToken.balanceOf(addr1.address);
       await expect(addr1Balance).to.equal(0);
     });
 
     it("Should emit an event after successfully sending 1000 WISP", async function () {
-      await expect(welcomeChest.requestTokens(addr1.address))
+      await expect(welcomeChest.redeemTokens(addr1.address))
         .to.emit(welcomeChest, "TokensSent")
         .withArgs(addr1.address, expectedAmount);
     });

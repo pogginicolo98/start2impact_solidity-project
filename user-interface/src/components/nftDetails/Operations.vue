@@ -49,7 +49,7 @@
                  <div class="col-12 col-lg-3 mt-4 mt-lg-0" v-else>
                    <div class="d-grid">
                      <button type="button" class="btn btn-secondary my-2" v-if="!formEnabled" @click="formEnabled = !formEnabled">
-                       <i class='fa-solid fa-wallet me-2'></i>Buy
+                       <i class='fa-solid fa-sack-dollar me-2'></i>Buy
                      </button>
                    </div>
                  </div>

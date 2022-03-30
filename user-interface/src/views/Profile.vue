@@ -6,8 +6,8 @@
         <div class="col-12 col-xl-4 col-xxl-4 mb-4">
           <div class="box px-4 px-md-5 py-4">
             <div class="text-center">
-              <h2 class="mb-2">Mint</h2>
-              <h6>Create a new Treasure ($TRS) NFT</h6>
+              <h2 class="mb-2"><i class="fa-solid fa-gavel me-2"></i>Craft new items</h2>
+              <!-- <h6 class="text-secondary">Mint your own NFTs</h6> -->
             </div>
             <MintComponent class="mt-4"
                                @nftMinted="onNftMinted($event)"/>
@@ -19,13 +19,13 @@
 
           <!-- Available NFTs -->
           <div class="box px-4 px-md-5 pt-4 pb-2">
-            <h2 class="text-center">Available Treasure NFTs</h2>
+            <h2 class="text-center"><i class="fa-solid fa-vault me-2"></i>Your items available</h2>
             <ListNftsComponent :tokenId="tokenId"/>
           </div>
 
           <!-- NFTs for sale -->
           <div class="box px-4 px-md-5 pt-4 pb-2 mt-4">
-            <h2 class="text-center">Treasure NFTs for sale</h2>
+            <h2 class="text-center"><i class="fa-solid fa-scale-balanced me-2"></i>Your items for sale</h2>
             <NftsForSaleComponent />
           </div>
         </div>

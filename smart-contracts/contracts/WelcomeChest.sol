@@ -23,11 +23,11 @@ contract SupportedTokens {
  * @notice Faucet that sends ERC20 tokens for free to the sender of the request
  */
 abstract contract ERC20Faucet is IERC20Faucet, SupportedTokens {
-  /// @dev Amout to transfer per request: 1000 WISP
+  /// @dev Amout to transfer per redeem: 1000 WISP
   uint256 public amount = 1000 * 10**18;
 
   /// @inheritdoc IERC20Faucet
-  function requestTokens(address beneficiary)
+  function redeemTokens(address beneficiary)
     external
     override
     onlyAvailableFunds(amount)

@@ -1,10 +1,10 @@
 <template>
   <div class="marketplace">
-    <div class="container mt-4">
+    <div class="container height-100 mt-4">
 
          <!-- Title -->
-         <div class="text-center">
-           <h1 class="mt-5 mb-3">Explore Treasure NFTs</h1>
+         <div class="text-center" v-if="nfts.length > 0 && !loadingNfts">
+           <h1 class="mt-5 mb-3">Treasures for sale</h1>
          </div>
 
          <!-- Items -->
@@ -24,18 +24,20 @@
            </div>
          </div>
 
-         <!-- No live auctions -->
-         <div class="text-center mt-5"
+         <!-- No live auctions ******************** -->
+         <div class="d-flex justify-content-center align-items-center height-100"
               v-else-if="!loadingNfts">
-              <p class="fs-20px fw-blod text-muted">We are sorry but there are no NFT in sale at the moment...</p>
+              <div class="text-center">
+                <i class="fa-solid fa-face-frown fs-45px mb-4"></i>
+                <h5 class="text-secondary">Sorry, I have no treasures for sale at the moment...</h5>
+              </div>
          </div>
 
          <!-- Spinner -->
-         <div class="position-absolute top-50 start-50 translate-middle"
+         <div class="d-flex justify-content-center align-items-center height-100"
               v-show="loadingNfts">
-              <div class="spinner-grow text-violet"
-                   role="status"
-                   style="width: 3rem; height: 3rem;">
+              <div class="spinner-border text-secondary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="visually-hidden">Loading...</span>
               </div>
          </div>
 
@@ -118,4 +120,7 @@
 </script>
 
 <style scoped>
+  .marketplace {
+    height: 100%;
+  }
 </style>

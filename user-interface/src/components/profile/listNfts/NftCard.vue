@@ -49,11 +49,11 @@
            <!-- Name -->
            <div class="row justify-content-between mt-3 px-2" v-else>
              <div class="col-6">
-               <p class="text-muted fs-12px mb-0" style="">Name</p>
+               <p class="name-card text-muted">Name</p>
                <p class="text-truncate">{{ nft.metadata.name }}</p>
              </div>
              <div class="col-6 text-end">
-               <p class="text-muted fs-12px mb-0">Price</p>
+               <i class="fa-solid fa-coins text-muted fs-12px mb-0"></i>
                <div v-if="nft.price">
                  <p class="text-truncate">
                    <span>
@@ -101,5 +101,11 @@
   .card-nft:hover {
     box-shadow: 0px 0px 7px 1px rgba(255, 255, 255, 0.1);
     transform: translateY(-2px);
+  }
+
+  .name-card {
+    margin-top: 2px;
+    margin-bottom: 4px;
+    font-size: 12px;
   }
 </style>

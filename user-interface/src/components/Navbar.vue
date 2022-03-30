@@ -21,15 +21,15 @@
                <div class="navbar-nav pe-4">
                  <router-link class="nav-link me-lg-3"
                               :to="{ name: 'Marketplace' }"
-                              >Marketplace
+                              ><i class="fa-solid fa-scale-balanced me-2"></i>Merchant
                  </router-link>
                  <router-link class="nav-link me-lg-3"
                               :to="{ name: 'Profile' }"
-                              >Profile
+                              ><i class="fa-solid fa-dungeon me-2"></i>Den
                  </router-link>
                  <router-link class="nav-link"
                               :to="{ name: 'Faucet' }"
-                              >Faucet
+                              ><i class="fa-solid fa-coins me-2"></i>Welcome chest
                  </router-link>
                </div>
                <hr class="d-block d-lg-none">

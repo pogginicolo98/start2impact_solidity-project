@@ -49,7 +49,7 @@
 
     data() {
       return {
-        btnText: "Mint",
+        btnText: "<i class='fa-solid fa-gavel me-2'></i>Craft",
         isPending: false,
         isDisabled: false,
         image: {
@@ -120,10 +120,10 @@
 
         let msg = "";
         if (payload == "enable") {
-          msg = "<span aria-hidden='true' class='spinner-border spinner-border-sm me-2' role='status'></span>Minting";
+          msg = "<span aria-hidden='true' class='spinner-border spinner-border-sm me-2' role='status'></span>Crafting";
           this.isPending = true;
         } else if (payload == "disable") {
-          msg = "Mint";
+          msg = "<i class='fa-solid fa-gavel me-2'></i>Craft";
           this.isPending = false;
         }
         this.btnText = msg;
@@ -165,10 +165,10 @@
               })
               .then(receipt => {
                 if (receipt.events.Transfer.returnValues.to.toLowerCase() == this.wallet.address.toLowerCase()) {
-                  this.$toasted.show(`Successfully minted`, {icon: "check"});
+                  this.$toasted.show(`Item crafted`, {icon: "gavel"});
                   this.$emit('nftMinted', receipt.events.Transfer.returnValues.tokenId);
                 } else {
-                  this.$toasted.show(`Error occurred`, {icon: "ban"});
+                  this.$toasted.show(`Something went wrong`, {icon: "skull-crossbones"});
                 }
                 this.setLoadingStatus("disable");
               })
@@ -177,11 +177,11 @@
                 console.log(error);
                 this.isDisabled = false;
                 this.setLoadingStatus("disable");
-                this.$toasted.show(`Transaction error`, {icon: "ban"});
+                this.$toasted.show(`Something went wrong`, {icon: "skull-crossbones"});
               });
           } catch (error) {
             console.error(error);
-            this.$toasted.show(`IPFS error`, {icon: "ban"});
+            this.$toasted.show(`Something went wrong`, {icon: "skull-crossbones"});
             this.isDisabled = false;
           }
         }

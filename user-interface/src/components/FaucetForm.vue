@@ -2,7 +2,7 @@
   <div class="faucet-form">
     <form class="needs-validation"
           novalidate
-          @submit.prevent="handleRequest">
+          @submit.prevent="handleRedeem">
 
           <!-- Field -->
           <div class="mb-4">
@@ -11,7 +11,9 @@
             <label class="d-block position-relative input-wrap"
                    :class="{'focusOn': isFocused,
                             'focusOff': !isFocused}">
-                   <i class="fa-brands fa-ethereum position-absolute top-50 start-0 translate-middle ms-3"></i>
+                   <img alt="$WISP"
+                        class="position-absolute top-50 start-0 translate-middle ms-3"
+                        src="@/assets/images/token-logo-24x24.png">
                    <input aria-describedby="faucetFormFeedback"
                           class="form-control input-address"
                           placeholder="Ropsten address"
@@ -35,7 +37,7 @@
 
           </div> <!-- Field -->
 
-          <!-- Request button -->
+          <!-- Open button -->
           <span class="d-grid btn-wrap"
                 :class="{'btn-wrap-disabled': isDisabled,
                          'btn-wrap-pending': isPending}">
@@ -61,7 +63,7 @@
       return {
         isFocused: false,
         isPending: false,
-        btnText: "Request",
+        btnText: "<i class='fa-solid fa-coins me-2'></i>Open",
         isDisabled: false,
         destAddress: {
           value: null,
@@ -92,10 +94,10 @@
 
         let msg = "";
         if (payload == "enable") {
-          msg = "<span aria-hidden='true' class='spinner-border spinner-border-sm me-2' role='status'></span>Pending";
+          msg = "<span aria-hidden='true' class='spinner-border spinner-border-sm me-2' role='status'></span>Opening";
           this.isPending = true;
         } else if (payload == "disable") {
-          msg = "Request";
+          msg = "<i class='fa-solid fa-coins me-2'></i>Open";
           this.isPending = false;
         }
         this.btnText = msg;
@@ -119,14 +121,14 @@
         return true;
       },
 
-      async handleRequest() {
-        // Make a request to the WelcomeChest contract in order to receive the tokens at the specified address
+      async handleRedeem() {
+        // Make a Redeem to the WelcomeChest contract in order to receive the tokens at the specified address
 
         if (this.validateForm()) {
           const to = this.destAddress.value.toLowerCase();
           this.isDisabled = true;
 
-          await this.welcomeChest.methods.requestTokens(to).send({from: this.wallet.address})
+          await this.welcomeChest.methods.redeemTokens(to).send({from: this.wallet.address})
             .on("transactionHash", () => {
               this.destAddress.value = null;
               this.isDisabled = false;
@@ -135,19 +137,19 @@
             .then(receipt => {
               if (receipt.events.TokensSent.returnValues.to.toLowerCase() === to) {
                 const amount = this.web3.utils.fromWei(receipt.events.TokensSent.returnValues.amount);
-                this.$toasted.show(`${amount} $WISP received`, {icon: "check" });
+                this.$toasted.show(`${amount} $WISP received`, {icon: "coins" });
               } else {
-                this.$toasted.show(`Error occurred`, {icon: "ban"});
+                this.$toasted.show(`Something went wrong`, {icon: "skull-crossbones"});
               }
               this.setLoadingStatus("disable");
             })
             .catch(error => {
               if (error) {
-                console.error("error occurred executing WelcomeChest method 'requestTokens'");
+                console.error("error occurred executing WelcomeChest method 'redeemTokens'");
                 console.log(error);
                 this.isDisabled = false;
                 this.setLoadingStatus("disable");
-                this.$toasted.show(`Error occurred`, {icon: "ban"});
+                this.$toasted.show(`Something went wrong`, {icon: "skull-crossbones"});
               }
             });
         }

@@ -1,18 +1,18 @@
 <template>
   <div class="list-nfts">
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-3 mt-5 mb-4">
+    <div class="mt-5 mb-4">
 
       <!-- Loading -->
-      <template v-if="isLoading">
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-3" v-if="isLoading">
         <div class="col"
              v-for="index in balanceOfUser"
              :key="index">
              <NftCardComponent />
         </div>
-      </template>
+      </div>
 
       <!-- Items -->
-      <template v-else-if="nfts.length > 0">
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-3" v-else-if="nfts.length > 0">
         <div class="col"
              v-for="(nft, index) in nfts"
              :key="index">
@@ -26,12 +26,12 @@
                           <NftCardComponent :nft="nft" />
              </router-link>
         </div>
-      </template>
+      </div>
 
       <!-- No items -->
-      <template v-else>
-        <p class="text-center text-secondary fs-5 my-5">No items to display</p>
-      </template>
+      <div class="text-center" v-else>
+        <p class="text-secondary fs-5 my-5">You don't own any items</p>
+      </div>
 
     </div>
   </div> <!-- List NFTs -->
