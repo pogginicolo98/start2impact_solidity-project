@@ -1,6 +1,14 @@
 <template>
   <div class="nft-details">
-    <div class="container my-4 px-3 px-lg-0">
+    <div class="d-flex justify-content-center align-items-center height-100"
+         v-if="notFound">
+         <div class="text-center">
+           <i class="fa-solid fa-face-frown fs-45px mb-4"></i>
+           <h5 class="text-secondary">Sorry, there are no items for sale at the moment...</h5>
+         </div>
+    </div>
+
+    <div class="container my-4 px-3 px-lg-0" v-else>
       <div class="row">
 
         <!-- Title mobile formats -->
@@ -73,6 +81,7 @@
     data() {
       return {
         isLoading: true,
+        notFound: false,
         nft: {
           tokenId: this.tokenId,
           metadata: this.metadata != null ? this.metadata : null,
@@ -85,6 +94,7 @@
     created() {
       setTimeout(async () => {
         await this.initNft();
+        this.isLoading = false;
       }, 500);
     },
 
@@ -125,7 +135,16 @@
       },
 
       async getNftOwner() {
-        let owner = await this.treasureNFT.methods.ownerOf(this.nft.tokenId).call();
+        let owner;
+        this.treasureNFT.methods.ownerOf(this.nft.tokenId).call()
+          .then(response => {
+            owner = response;
+          })
+          .catch(error => {
+            console.log(error);
+            console.log("tokenid");
+            this.notFound = true;
+          });
         if (owner.toLowerCase() == this.merchant._address.toLowerCase()) {
           await this.getNftSale();
         } else {
@@ -136,18 +155,20 @@
 
       async initNft() {
         console.log("init nfts");
-        this.isLoading = true;
         if (this.nft.owner == null) {
           await this.getNftOwner();
           await this.getNftMetadata();
         }
-        this.isLoading = false;        
       },
 
       handelRefresh() {
         this.isLoading = true;
+        this.nft.metadata = null;
+        this.nft.price = null;
+        this.nft.owner = null;
         setTimeout(async () => {
           await this.initNft();
+          this.isLoading = false;
         }, 500);
       },
     },
@@ -167,4 +188,7 @@
 </script>
 
 <style scoped>
+  .nft-details {
+    height: 100%;
+  }
 </style>

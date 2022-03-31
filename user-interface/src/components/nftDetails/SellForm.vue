@@ -4,8 +4,17 @@
           novalidate
           @submit.prevent="handleSell">
 
+          <div class="mb-4 text-center" v-if="isApproved">
+            <h4>Establish the selling price</h4>
+            <h6 class="text-secondary">Set the amount of $WISP tokens your NFT will be sold for</h6>
+          </div>
+
+          <div class="mb-4 text-center" v-else>
+            <h4>Sign the contract with the merchant</h4>
+            <h6 class="text-secondary">Approve the TreasureNFT contract to allow the sale of your NFT</h6>
+          </div>
+
           <!-- Price -->
-          <h4 class="text-center mb-4">Choose the price and put the NFT up for sale</h4>
           <div class="input-wrap"
                v-if="isApproved"
                :class="{'focusOff': !price.isFocus,
@@ -71,7 +80,7 @@
 
     data() {
       return {
-        btnText: "Approve",
+        btnText: "<i class='fa-solid fa-scroll me-2'></i>Approve contract",
         isPending: false,
         isDisabled: false,
         isApproved: false,
@@ -88,7 +97,7 @@
         const contractApproved = await this.treasureNFT.methods.isApprovedForAll(this.wallet.address, this.merchant._address).call();
         if (contractApproved) {
           this.isApproved = true;
-          this.btnText = "Sell";
+          this.btnText = "<i class='fa-solid fa-hand-holding-hand me-2'></i>Give to the merchant";
         } else {
           this.isApproved = false;
         }
@@ -124,8 +133,8 @@
         } else if (payload == "disable") {
           this.isPending = false;
           msg = this.isApproved == true
-            ? "Sell"
-            : "Approve";
+            ? "<i class='fa-solid fa-hand-holding-hand me-2'></i>Give to the merchant"
+            : "<i class='fa-solid fa-scroll me-2'></i>Approve contract";
         }
         this.btnText = msg;
       },
@@ -158,7 +167,7 @@
           formValid = false;
         }
         if (this.price.value > (Math.pow(2, 256) - 1) / (Math.pow(10, 18))) {
-          this.price.errors.push("The price exceeds the maximum limit of the ERC20 standard");
+          this.price.errors.push("The price exceeds the maximum limit of the ERC-20 standard");
           formValid = false;
         }
         return formValid;
@@ -174,9 +183,9 @@
           .then(receipt => {
             if (receipt.events.ApprovalForAll.returnValues.approved == true) {
               this.isApproved = true;
-              this.$toasted.show(`Approved`, {icon: "check"});
+              this.$toasted.show(`Contract approved`, {icon: "scroll"});
             } else {
-              this.$toasted.show(`Approval error`, {icon: "ban"});
+              this.$toasted.show(`Something went wrong`, {icon: "skull-crossbones"});
             }
             this.setLoadingStatus("disable");
           })
@@ -186,7 +195,7 @@
             this.isDisabled = false;
             this.isApproved = false;
             this.setLoadingStatus("disable");
-            this.$toasted.show(`Approval error`, {icon: "ban"});
+            this.$toasted.show(`Something went wrong`, {icon: "skull-crossbones"});
           });
       },
 
@@ -203,10 +212,10 @@
               })
               .then(receipt => {
                 if (receipt.events.SaleCreated.returnValues.tokenId == this.tokenId) {
-                  this.$toasted.show(`Sale created`, {icon: "check"});
+                  this.$toasted.show(`Item for sale`, {icon: "scale-balanced"});
                   this.$emit('saleCreated');
                 } else {
-                  this.$toasted.show(`Transaction error`, {icon: "ban"});
+                  this.$toasted.show(`Something went wrong`, {icon: "skull-crossbones"});
                 }
                 this.setLoadingStatus("disable");
               })
@@ -215,7 +224,7 @@
                 console.log(error);
                 this.isDisabled = false;
                 this.setLoadingStatus("disable");
-                this.$toasted.show(`Transaction error`, {icon: "ban"});
+                this.$toasted.show(`Something went wrong`, {icon: "skull-crossbones"});
               });
           }
         } else {

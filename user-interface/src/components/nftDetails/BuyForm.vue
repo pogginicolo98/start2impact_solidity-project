@@ -1,7 +1,16 @@
 <template>
   <div class="buy-form">
-    <h4 class="text-center">Do you want to buy this NFT for {{ price }} $WISP?</h4>
-    <p class="text-muted text-center mb-4">If you don't have enough funds, the transaction will fail and you will lose your gas fees!</p>
+
+    <div class="mb-4 text-center" v-if="isApproved">
+      <h4>Do you want to buy this item at the price of {{ price }} $WISP?</h4>
+      <h6 class="text-secondary">The amount will be deducted from your account and the NFT will be transferred to your wallet</h6>
+    </div>
+
+    <div class="mb-4 text-center" v-else>
+      <h4>Sign the contract with the merchant</h4>
+      <h6 class="text-secondary">Approve the WispToken contract in order to buy the NFT</h6>
+    </div>
+
     <span class="d-grid btn-wrap"
           :class="{'btn-wrap-disabled': isDisabled,
                    'btn-wrap-pending': isPending}">
@@ -38,7 +47,7 @@
 
     data() {
       return {
-        btnText: "Approve",
+        btnText: "<i class='fa-solid fa-scroll me-2'></i>Approve contract",
         isPending: false,
         isDisabled: false,
         isApproved: false,
@@ -52,7 +61,7 @@
         let price = new bigNumber(this.web3.utils.toWei(this.price));
         if (approvedAmount.gte(price)) {
           this.isApproved = true;
-          this.btnText = "Buy";
+          this.btnText = "<i class='fa-solid fa-sack-dollar me-2'></i>Purchase";
         } else {
           this.isApproved = false;
         }
@@ -78,8 +87,8 @@
         } else if (payload == "disable") {
           this.isPending = false;
           msg = this.isApproved == true
-            ? "Buy"
-            : "Approve";
+            ? "<i class='fa-solid fa-sack-dollar me-2'></i>Purchase"
+            : "<i class='fa-solid fa-scroll me-2'></i>Approve contract";
         }
         this.btnText = msg;
       },
@@ -96,9 +105,9 @@
           .then(receipt => {
             if (receipt.events.Approval.returnValues.owner.toLowerCase() == this.wallet.address.toLowerCase()) {
               this.isApproved = true;
-              this.$toasted.show(`Approved`, {icon: "check"});
+              this.$toasted.show(`Contract approved`, {icon: "scroll"});
             } else {
-              this.$toasted.show(`Approval error`, {icon: "ban"});
+              this.$toasted.show(`Something went wrong`, {icon: "skull-crossbones"});
             }
             this.setLoadingStatus("disable");
           })
@@ -108,7 +117,7 @@
             this.isDisabled = false;
             this.isApproved = false;
             this.setLoadingStatus("disable");
-            this.$toasted.show(`Approval error`, {icon: "ban"});
+            this.$toasted.show(`Something went wrong`, {icon: "skull-crossbones"});
           });
       },
 
@@ -144,10 +153,10 @@
                 })
                 .then(receipt => {
                   if (receipt.events.ItemSold.returnValues.tokenId == this.tokenId) {
-                    this.$toasted.show(`Bought successfully`, {icon: "check"});
+                    this.$toasted.show(`Item purchased`, {icon: "sack-dollar"});
                     this.$emit('saleExecuted');
                   } else {
-                    this.$toasted.show(`Transaction error`, {icon: "ban"});
+                    this.$toasted.show(`Something went wrong`, {icon: "skull-crossbones"});
                   }
                   this.setLoadingStatus("disable");
                 })
@@ -156,7 +165,7 @@
                   console.log(error);
                   this.isDisabled = false;
                   this.setLoadingStatus("disable");
-                  this.$toasted.show(`Transaction error`, {icon: "ban"});
+                  this.$toasted.show(`Something went wrong`, {icon: "skull-crossbones"});
                 });
             } else {
               console.log("error");

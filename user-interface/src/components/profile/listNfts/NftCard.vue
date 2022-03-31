@@ -59,10 +59,10 @@
                    <span>
                      <div class="position-relative d-inline-block">
                        <img alt="$WISP"
-                            src="@/assets/images/token-logo-24x24.png">
+                            src="@/assets/images/token-logo-20x20.png">
                      </div>
                    </span>
-                   <span class="align-middle">{{ nft.price }}</span>
+                   <span class="align-middle ms-1">{{ nft.price }}</span>
                  </p>
                </div>
                <p class="text-secondary" v-else>Not for sale</p>

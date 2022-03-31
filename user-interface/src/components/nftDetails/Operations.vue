@@ -32,6 +32,7 @@
                </div>
 
                <div class="row justify-content-between" v-else>
+
                  <div class="col-12 col-lg-9">
                    <p class="text-secondary mb-2">Selling price</p>
                    <VueCustomTooltip label="$WISP">
@@ -40,19 +41,22 @@
                             src="@/assets/images/token-logo-32x32.png">
                      </div>
                    </VueCustomTooltip>
-                   <span class="fw-bold fs-3 align-middle">{{ nft.price }}</span>
+                   <span class="fs-24px fw-bold align-middle ms-1">{{ nft.price }}</span>
                  </div>
+
                  <div class="col-12 col-lg-3 mt-4 mt-lg-0" v-if="isOwner">
                    <CancelFormComponent :tokenId="nft.tokenId"
                                         @saleCanceled="refresh()" />
                  </div>
+
                  <div class="col-12 col-lg-3 mt-4 mt-lg-0" v-else>
                    <div class="d-grid">
                      <button type="button" class="btn btn-secondary my-2" v-if="!formEnabled" @click="formEnabled = !formEnabled">
-                       <i class='fa-solid fa-sack-dollar me-2'></i>Buy
+                       <i class='fa-solid fa-sack-dollar me-2'></i>Purchase
                      </button>
                    </div>
                  </div>
+
                </div>
 
                <div v-if="isOwner">

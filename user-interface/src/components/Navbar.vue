@@ -29,7 +29,7 @@
                  </router-link>
                  <router-link class="nav-link"
                               :to="{ name: 'Faucet' }"
-                              ><i class="fa-solid fa-coins me-2"></i>Welcome chest
+                              ><i class="fa-solid fa-gift me-2"></i>Welcome chest
                  </router-link>
                </div>
                <hr class="d-block d-lg-none">

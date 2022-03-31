@@ -4,12 +4,12 @@
 
       <!-- Buttons area -->
       <div class="col-12 text-end mb-4 mb-lg-2">
-        <VueCustomTooltip label="Refresh metadata">
+        <VueCustomTooltip label="Refresh metadata" position="is-bottom">
           <button type="button" class="btn btn-outline-secondary" @click="emitRefresh">
             <i class="fa-solid fa-arrow-rotate-right"></i>
           </button>
         </VueCustomTooltip>
-        <VueCustomTooltip label="Share">
+        <VueCustomTooltip label="Share" position="is-bottom">
           <button type="button" class="btn btn-outline-secondary ms-1" @click="copyToClipboard">
             <i class="fa-solid fa-share-nodes"></i>
           </button>

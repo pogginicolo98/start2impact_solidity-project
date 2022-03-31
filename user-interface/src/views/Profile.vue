@@ -7,7 +7,7 @@
           <div class="box px-4 px-md-5 py-4">
             <div class="text-center">
               <h2 class="mb-2"><i class="fa-solid fa-gavel me-2"></i>Craft new items</h2>
-              <!-- <h6 class="text-secondary">Mint your own NFTs</h6> -->
+              <h6 class="text-secondary">Mint ERC-721 NFTs via TreasureNFT smart contract</h6>
             </div>
             <MintComponent class="mt-4"
                                @nftMinted="onNftMinted($event)"/>

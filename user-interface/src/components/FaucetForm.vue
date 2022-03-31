@@ -63,7 +63,7 @@
       return {
         isFocused: false,
         isPending: false,
-        btnText: "<i class='fa-solid fa-coins me-2'></i>Open",
+        btnText: "<i class='fa-solid fa-box-open me-2'></i>Open",
         isDisabled: false,
         destAddress: {
           value: null,
@@ -97,7 +97,7 @@
           msg = "<span aria-hidden='true' class='spinner-border spinner-border-sm me-2' role='status'></span>Opening";
           this.isPending = true;
         } else if (payload == "disable") {
-          msg = "<i class='fa-solid fa-coins me-2'></i>Open";
+          msg = "<i class='fa-solid fa-box-open me-2'></i>Open";
           this.isPending = false;
         }
         this.btnText = msg;
@@ -137,7 +137,7 @@
             .then(receipt => {
               if (receipt.events.TokensSent.returnValues.to.toLowerCase() === to) {
                 const amount = this.web3.utils.fromWei(receipt.events.TokensSent.returnValues.amount);
-                this.$toasted.show(`${amount} $WISP received`, {icon: "coins" });
+                this.$toasted.show(`${amount} $WISP received`, {icon: "box-open" });
               } else {
                 this.$toasted.show(`Something went wrong`, {icon: "skull-crossbones"});
               }
