@@ -37,6 +37,28 @@ setTimeout(async () => {
       store.commit("setWeb3Instance", web3Instance);
       store.commit("SET_WALLET", { address: accounts[0], provider, signer });
       store.commit("SET_WALLET_CHECK_IN_PROCCESS", false);
+
+      // targets Rinkeby chain, id 4
+      const targetNetworkId = '0x539';
+
+      // checks if current chain matches with the one we need
+      // and returns true/false
+      const currentChainId = await window.ethereum.request({
+        method: 'eth_chainId',
+      });
+
+      // return true if network id is the same
+      if (currentChainId == targetNetworkId){
+        console.log(`This is localhost: ${currentChainId}`);
+      } else {
+        await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: targetNetworkId }],
+          });
+          // refresh
+        window.location.reload();
+      }
+
     }
   } else {
     console.log("setTimeout else");
@@ -92,6 +114,27 @@ export default {
           provider: provider,
           signer: signer,
         });
+
+        // targets Rinkeby chain, id 4
+        const targetNetworkId = '0x539';
+
+        // checks if current chain matches with the one we need
+        // and returns true/false
+        const currentChainId = await window.ethereum.request({
+          method: 'eth_chainId',
+        });
+
+        // return true if network id is the same
+        if (currentChainId == targetNetworkId){
+          console.log(`This is localhost: ${currentChainId}`);
+        } else {
+          await window.ethereum.request({
+              method: 'wallet_switchEthereumChain',
+              params: [{ chainId: targetNetworkId }],
+            });
+            // refresh
+          window.location.reload();
+        }
       } catch (error) {
         console.log("Error connecting wallet");
         console.log(error);

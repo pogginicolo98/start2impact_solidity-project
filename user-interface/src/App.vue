@@ -1,11 +1,10 @@
 <template>
   <div id="app">
-    <NavbarComponent class="sticky-top" v-if="isValidPath" />
+    <NavbarComponent class="sticky-top" />
     <div class="content">
       <router-view />
     </div>
-    <div class="footer"
-         v-if="isValidPath">
+    <div class="footer">
          <FooterComponent />
     </div>
   </div>

@@ -28,8 +28,8 @@
          <div class="d-flex justify-content-center align-items-center height-100"
               v-else-if="!loadingNfts">
               <div class="text-center">
-                <i class="fa-solid fa-face-frown fs-45px mb-4"></i>
-                <h5 class="text-secondary">Sorry, there are no items for sale at the moment...</h5>
+                <i class="fa-solid fa-face-frown fs-70px mb-4"></i>
+                <h2 class="text-secondary">Sorry, there are no items for sale at the moment...</h2>
               </div>
          </div>
 
