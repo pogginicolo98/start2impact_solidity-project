@@ -34,10 +34,6 @@ setTimeout(async () => {
         window.location.reload();
       });
 
-      store.commit("setWeb3Instance", web3Instance);
-      store.commit("SET_WALLET", { address: accounts[0], provider, signer });
-      store.commit("SET_WALLET_CHECK_IN_PROCCESS", false);
-
       // targets Rinkeby chain, id 4
       const targetNetworkId = '0x539';
 
@@ -58,6 +54,10 @@ setTimeout(async () => {
           // refresh
         window.location.reload();
       }
+
+      store.commit("setWeb3Instance", web3Instance);
+      store.commit("SET_WALLET", { address: accounts[0], provider, signer });
+      store.commit("SET_WALLET_CHECK_IN_PROCCESS", false);
 
     }
   } else {
@@ -108,13 +108,6 @@ export default {
           window.location.reload();
         });
 
-        store.commit("setWeb3Instance", web3Instance);
-        store.commit("SET_WALLET", {
-          address: address,
-          provider: provider,
-          signer: signer,
-        });
-
         // targets Rinkeby chain, id 4
         const targetNetworkId = '0x539';
 
@@ -135,6 +128,14 @@ export default {
             // refresh
           window.location.reload();
         }
+
+        store.commit("setWeb3Instance", web3Instance);
+        store.commit("SET_WALLET", {
+          address: address,
+          provider: provider,
+          signer: signer,
+        });
+
       } catch (error) {
         console.log("Error connecting wallet");
         console.log(error);

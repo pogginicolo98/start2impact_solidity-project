@@ -1,6 +1,6 @@
 <template>
   <div class="marketplace">
-    <div class="container height-100 mt-4">
+    <div class="container height-100 mt-4" v-if="!firstLoading && walletConnected">
 
          <!-- Title -->
          <div class="text-center" v-if="nfts.length > 0 && !loadingNfts">
@@ -28,20 +28,25 @@
          <div class="d-flex justify-content-center align-items-center height-100"
               v-else-if="!loadingNfts">
               <div class="text-center">
-                <i class="fa-solid fa-face-frown fs-70px mb-4"></i>
-                <h2 class="text-secondary">Sorry, there are no items for sale at the moment...</h2>
-              </div>
-         </div>
-
-         <!-- Spinner -->
-         <div class="d-flex justify-content-center align-items-center height-100"
-              v-show="loadingNfts">
-              <div class="spinner-border text-secondary" style="width: 3rem; height: 3rem;" role="status">
-                <span class="visually-hidden">Loading...</span>
+                <i class="fa-solid fa-shop-slash fs-70px mb-4"></i>
+                <h2>Sorry, there are currently no items for sale</h2>
               </div>
          </div>
 
     </div>
+
+    <div class="height-100" v-else-if="!firstLoading && !walletConnected">
+      <ConnectWalletComponent />
+    </div>
+
+    <!-- Spinner -->
+    <div class="d-flex justify-content-center align-items-center height-100"
+         v-else-if="firstLoading || loadingNfts">
+         <div class="spinner-border text-secondary" style="width: 3rem; height: 3rem;" role="status">
+           <span class="visually-hidden">Loading...</span>
+         </div>
+    </div>
+
   </div>
 </template>
 
@@ -50,20 +55,25 @@
   import merchantMixin from "@/mixins/Merchant";
   import treasureNFTMixin from "@/mixins/TreasureNFT";
   import { mapGetters } from "vuex";
-
   import NftCardComponent from "@/components/profile/listNfts/NftCard.vue";
+  import ConnectWalletComponent from "@/components/ConnectWallet.vue";
+  import walletConnectedMixin from "@/mixins/WalletConnected";
 
   export default {
     name: "Marketplace",
 
     data() {
       return {
+        firstLoading: true,
         loadingNfts: true,
         nfts: [],
       }
     },
 
     created() {
+      setTimeout(() => {
+        this.firstLoading = false;
+      }, 300);
       setTimeout(async () => {
         await this.getNfts();
       }, 500);
@@ -111,10 +121,12 @@
     mixins: [
       treasureNFTMixin,
       merchantMixin,
+      walletConnectedMixin,
     ],
 
     components: {
       NftCardComponent,
+      ConnectWalletComponent,
     },
   };
 </script>

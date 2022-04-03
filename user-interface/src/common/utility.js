@@ -13,4 +13,14 @@ function countDecimalPlaces(number) {
        - (match[2] ? +match[2] : 0));
 };
 
-export { countDecimalPlaces };
+function isInteger(value) {
+  if (typeof value == "string") {
+    return !isNaN(value) &&
+           parseInt(Number(value)) == value &&
+           !isNaN(parseInt(value, 10));
+  } else {
+    Number.isInteger(value);
+  }
+}
+
+export { countDecimalPlaces, isInteger };

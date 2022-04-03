@@ -1,14 +1,14 @@
 <template>
   <div class="nft-details">
     <div class="d-flex justify-content-center align-items-center height-100"
-         v-if="notFound">
+         v-if="!firstLoading && notFound && walletConnected">
          <div class="text-center">
-           <i class="fa-solid fa-face-frown fs-70px mb-4"></i>
-           <h2 class="text-secondary">The item you are looking for does not exist</h2>
+           <i class="fa-solid fa-ghost fs-70px mb-4"></i>
+           <h2>The item you are looking for does not exist</h2>
          </div>
     </div>
 
-    <div class="container my-4 px-3 px-lg-0" v-else>
+    <div class="container my-4 px-3 px-lg-0" v-else-if="!firstLoading && walletConnected">
       <div class="row">
 
         <!-- Title mobile formats -->
@@ -43,11 +43,25 @@
 
       </div>
     </div>
+
+    <div class="height-100" v-else-if="!firstLoading && !walletConnected">
+      <ConnectWalletComponent />
+    </div>
+
+    <!-- Spinner -->
+    <div class="d-flex justify-content-center align-items-center height-100"
+         v-else>
+         <div class="spinner-border text-secondary" style="width: 3rem; height: 3rem;" role="status">
+           <span class="visually-hidden">Loading...</span>
+         </div>
+    </div>
+
   </div> <!-- NFT details -->
 </template>
 
 <script>
   import { apiService } from "@/common/api.service.js";
+  import { isInteger } from "@/common/utility.js";
   import ImageDetailsComponent from "@/components/nftDetails/ImageDetails.vue";
   import InfoComponent from "@/components/nftDetails/Info.vue";
   import OperationsComponent from "@/components/nftDetails/Operations.vue";
@@ -55,6 +69,8 @@
   import merchantMixin from "@/mixins/Merchant";
   import treasureNFTMixin from "@/mixins/TreasureNFT";
   import { mapGetters } from "vuex";
+  import ConnectWalletComponent from "@/components/ConnectWallet.vue";
+  import walletConnectedMixin from "@/mixins/WalletConnected";
 
   export default {
     name: "NftDetails",
@@ -80,6 +96,7 @@
 
     data() {
       return {
+        firstLoading: true,
         isLoading: true,
         notFound: false,
         nft: {
@@ -92,6 +109,9 @@
     },
 
     created() {
+      setTimeout(() => {
+        this.firstLoading = false;
+      }, 300);
       setTimeout(async () => {
         await this.initNft();
         this.isLoading = false;
@@ -135,16 +155,14 @@
       },
 
       async getNftOwner() {
-        let owner;
-        this.treasureNFT.methods.ownerOf(this.nft.tokenId).call()
-          .then(response => {
-            owner = response;
-          })
-          .catch(error => {
-            console.log(error);
-            console.log("tokenid");
-            this.notFound = true;
-          });
+        let owner = "";
+        try {
+          owner = await this.treasureNFT.methods.ownerOf(this.nft.tokenId).call();
+        } catch (error) {
+          console.log(error);
+          console.log("tokenid");
+          this.notFound = true;
+        }
         if (owner.toLowerCase() == this.merchant._address.toLowerCase()) {
           await this.getNftSale();
         } else {
@@ -156,10 +174,12 @@
       async initNft() {
         console.log("init nfts");
         if (this.nft.owner == null) {
-          if (Number.isInteger(this.nft.tokenId)) {
+          if (isInteger(this.nft.tokenId)) {
             await this.getNftOwner();
             await this.getNftMetadata();
           } else {
+            console.log("not number");
+            console.log(this.nft.tokenId);
             this.notFound = true;
           }
         }
@@ -180,6 +200,7 @@
     mixins: [
       merchantMixin,
       treasureNFTMixin,
+      walletConnectedMixin,
     ],
 
     components: {
@@ -187,6 +208,7 @@
       OperationsComponent,
       InfoComponent,
       TitleComponent,
+      ConnectWalletComponent,
     },
   };
 </script>
