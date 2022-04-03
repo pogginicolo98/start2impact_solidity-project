@@ -212,7 +212,7 @@
               })
               .then(receipt => {
                 if (receipt.events.SaleCreated.returnValues.tokenId == this.tokenId) {
-                  this.$toasted.show(`Item for sale`, {icon: "scale-balanced"});
+                  this.$toasted.show(`Sale created`, {icon: "scale-balanced"});
                   this.$emit('saleCreated');
                 } else {
                   this.$toasted.show(`Something went wrong`, {icon: "skull-crossbones"});

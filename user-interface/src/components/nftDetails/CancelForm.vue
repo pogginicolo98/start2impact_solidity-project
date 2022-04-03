@@ -26,7 +26,7 @@
 
     data() {
       return {
-        btnText: "<i class='fa-solid fa-scale-balanced me-2'></i>Cancel",
+        btnText: "<i class='fa-solid fa-handshake-slash me-2'></i>Take back",
         isPending: false,
         isDisabled: false,
       }
@@ -48,7 +48,7 @@
           msg = "<span aria-hidden='true' class='spinner-border spinner-border-sm me-2' role='status'></span>Pending";
         } else if (payload == "disable") {
           this.isPending = false;
-          msg = "<i class='fa-solid fa-scale-balanced me-2'></i>Cancel";
+          msg = "<i class='fa-solid fa-handshake-slash me-2'></i>Take back";
         }
         this.btnText = msg;
       },
@@ -77,10 +77,10 @@
             })
             .then(receipt => {
               if (receipt.events.SaleCanceled.returnValues.tokenId == this.tokenId) {
-                this.$toasted.show(`Sale canceled`, {icon: "check"});
+                this.$toasted.show(`Sale canceled`, {icon: "scale-balanced"});
                 this.$emit('saleCanceled');
               } else {
-                this.$toasted.show(`Transaction error`, {icon: "ban"});
+                this.$toasted.show(`Something went wrong`, {icon: "skull-crossbones"});
               }
               this.setLoadingStatus("disable");
             })
@@ -89,7 +89,7 @@
               console.log(error);
               this.isDisabled = false;
               this.setLoadingStatus("disable");
-              this.$toasted.show(`Transaction error`, {icon: "ban"});
+              this.$toasted.show(`Something went wrong`, {icon: "skull-crossbones"});
             });
         }
       },
