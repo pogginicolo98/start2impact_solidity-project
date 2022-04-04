@@ -1,30 +1,27 @@
 <template>
-  <div class="nft-details">
+  <div class="nft-detail-content">
+
+    <!-- NFT not found -->
     <div class="d-flex justify-content-center align-items-center height-100"
-         v-if="!firstLoading && notFound && walletConnected">
+         v-if="notFound">
          <div class="text-center">
            <i class="fa-solid fa-ghost fs-70px mb-4"></i>
            <h2>The item you are looking for does not exist</h2>
          </div>
     </div>
 
-    <div class="container my-4 px-3 px-lg-0" v-else-if="!firstLoading && walletConnected">
+    <!-- NFT detail -->
+    <div class="container my-4 px-3 px-lg-0" v-else>
       <div class="row">
-
-        <!-- Title mobile formats -->
         <div class="col-12 d-lg-none mb-1">
           <TitleComponent :isLoading="isLoading"
                           :nft="nft"
                           @refresh="handelRefresh" />
         </div>
-
-        <!-- Image -->
         <div class="col-12 col-lg-5 ps-lg-4 pe-lg-3 mb-4">
           <ImageDetailsComponent :isLoading="isLoading"
                                  :nft="nft" />
         </div>
-
-        <!-- Title -->
         <div class="col-12 col-lg-7 pe-lg-4 mb-4">
           <TitleComponent class="d-none d-lg-block mb-5"
                           :isLoading="isLoading"
@@ -33,47 +30,34 @@
           <OperationsComponent :isLoading="isLoading"
                                :nft="nft"
                                @refresh="handelRefresh" />
-        </div> <!-- Title -->
-
-        <!-- Info -->
+        </div>
         <div class="col-12 col-lg-5 ps-lg-4 pe-lg-3">
           <InfoComponent :isLoading="isLoading"
-                               :nft="nft" />
-        </div> <!-- Info -->
-
+                         :nft="nft" />
+        </div>
       </div>
     </div>
 
-    <div class="height-100" v-else-if="!firstLoading && !walletConnected">
-      <ConnectWalletComponent />
-    </div>
-
-    <!-- Spinner -->
-    <div class="d-flex justify-content-center align-items-center height-100"
-         v-else>
-         <div class="spinner-border text-secondary" style="width: 3rem; height: 3rem;" role="status">
-           <span class="visually-hidden">Loading...</span>
-         </div>
-    </div>
-
-  </div> <!-- NFT details -->
+  </div>
 </template>
 
 <script>
   import { apiService } from "@/common/api.service.js";
   import { isInteger } from "@/common/utility.js";
-  import ImageDetailsComponent from "@/components/nftDetails/ImageDetails.vue";
-  import InfoComponent from "@/components/nftDetails/Info.vue";
-  import OperationsComponent from "@/components/nftDetails/Operations.vue";
-  import TitleComponent from "@/components/nftDetails/Title.vue";
+  import ImageDetailsComponent from "@/components/nft-detail/modules/ImageDetails.vue";
+  import InfoComponent from "@/components/nft-detail/modules/Info.vue";
+  import OperationsComponent from "@/components/nft-detail/modules/Operations.vue";
+  import TitleComponent from "@/components/nft-detail/modules/Title.vue";
+  import ConnectWalletComponent from "@/components/utility/ConnectWallet.vue";
+  import SpinnerComponent from "@/components/utility/Spinner.vue";
   import merchantMixin from "@/mixins/Merchant";
   import treasureNFTMixin from "@/mixins/TreasureNFT";
-  import { mapGetters } from "vuex";
-  import ConnectWalletComponent from "@/components/ConnectWallet.vue";
   import walletConnectedMixin from "@/mixins/WalletConnected";
 
+  import { mapGetters } from "vuex";
+
   export default {
-    name: "NftDetails",
+    name: "NFTDetailContentComponent",
 
     props: {
       tokenId: {
@@ -96,7 +80,6 @@
 
     data() {
       return {
-        firstLoading: true,
         isLoading: true,
         notFound: false,
         nft: {
@@ -109,9 +92,6 @@
     },
 
     created() {
-      setTimeout(() => {
-        this.firstLoading = false;
-      }, 300);
       setTimeout(async () => {
         await this.initNft();
         this.isLoading = false;
@@ -205,16 +185,17 @@
 
     components: {
       ImageDetailsComponent,
-      OperationsComponent,
       InfoComponent,
+      OperationsComponent,
       TitleComponent,
       ConnectWalletComponent,
+      SpinnerComponent,
     },
   };
 </script>
 
 <style scoped>
-  .nft-details {
+  .nft-detail-content {
     height: 100%;
   }
 </style>

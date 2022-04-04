@@ -1,10 +1,10 @@
 <template>
-  <div class="marketplace">
-
+  <div class="nft-detail">
+    
     <!-- Content -->
     <div class="container height-100 mt-4"
          v-show="!isLoading && walletConnected">
-         <MarketplaceContentComponent @loadingEnded="nftsLoaded" />
+         <MarketplaceContentComponent @loadingEnded="nftLoaded" />
     </div>
 
     <!-- Wallet not connected -->
@@ -23,13 +23,13 @@
 </template>
 
 <script>
-  import MarketplaceContentComponent from "@/components/marketplace/MarketplaceContent.vue";
+  import NFTDetailContentComponent from "@/components/marketplace/NFTDetailContent.vue";
   import ConnectWalletComponent from "@/components/utility/ConnectWallet.vue";
   import SpinnerComponent from "@/components/utility/Spinner.vue";
   import walletConnectedMixin from "@/mixins/WalletConnected";
 
   export default {
-    name: "Marketplace",
+    name: "NFTDetail",
 
     data() {
       return {
@@ -54,7 +54,7 @@
     ],
 
     components: {
-      MarketplaceContentComponent,
+      NFTDetailContentComponent,
       ConnectWalletComponent,
       SpinnerComponent,
     },
@@ -62,7 +62,7 @@
 </script>
 
 <style scoped>
-  .marketplace {
+  .nft-detail {
     height: 100%;
   }
 </style>

@@ -30,7 +30,7 @@
 
       <!-- No items -->
       <div class="text-center" v-else>
-        <p class="text-secondary fs-5 mx-auto my-5">You have no items for sale</p>
+        <i class="fa-solid fa-ellipsis text-secondary fs-5 my-5"></i>
       </div>
 
     </div>
@@ -39,7 +39,7 @@
 
 <script>
   import { apiService } from "@/common/api.service.js";
-  import NftCardComponent from "@/components/profile/listNfts/NftCard.vue";
+  import NftCardComponent from "@/components/utility/NftCard.vue";
   import merchantMixin from "@/mixins/Merchant";
   import treasureNFTMixin from "@/mixins/TreasureNFT";
   import { mapGetters } from "vuex";

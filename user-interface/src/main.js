@@ -1,26 +1,34 @@
+// Vue instance
 import Vue from "vue";
 import App from "./App.vue";
+
+// Plugins
 import router from "./router";
 import store from "./store";
-import 'bootstrap';
-import '@/assets/css/main.scss';
+import connectWallet from "./plugins/connectWallet";
+import connectIpfs from "./plugins/connectIpfs";
 import Clipboard from "v-clipboard";
 import Toasted from "vue-toasted";
 import VueCustomTooltip from '@adamdehaven/vue-custom-tooltip';
+
+// Style
+import 'bootstrap';
+import '@/assets/css/main.scss';
 import AOS from 'aos'
 import 'aos/dist/aos.css'
-import connectWallet from "./plugins/connectWallet";
-import connectIpfs from "./plugins/connectIpfs";
 
+// Init web3
 const Web3 = require("web3");
 const web3Instance = new Web3();
-
 if (window.ethereum) {
   web3Instance.currentProvider = window.ethereum;
 }
+Vue.prototype.$web3 = web3Instance;
 
+// Plugins
 Vue.use(connectWallet);
 Vue.use(connectIpfs);
+Vue.use(Clipboard);
 Vue.use(Toasted, {
   position: "bottom-right",
   duration: 8000,
@@ -28,7 +36,6 @@ Vue.use(Toasted, {
   iconPack: "fontawesome",
   singleton: true
 });
-Vue.use(Clipboard);
 Vue.use(VueCustomTooltip, {
   name: 'VueCustomTooltip',
   color: '#fff',
@@ -36,10 +43,6 @@ Vue.use(VueCustomTooltip, {
   borderRadius: 12,
   fontWeight: 400,
 })
-
-Vue.prototype.$web3 = web3Instance;
-
-Vue.config.productionTip = false;
 
 Vue.mixin({
   created () {
@@ -53,6 +56,8 @@ Vue.mixin({
     }
   },
 })
+
+Vue.config.productionTip = false;
 
 new Vue({
   router,

@@ -1,12 +1,12 @@
 <template>
-  <div class="navbarComponent">
-    <nav class="navbar navbar-dark navbar-expand-lg sticky-top">
+  <div class="navbar-component">
+    <nav class="navbar navbar-dark navbar-expand-lg">
       <div class="container">
 
         <router-link class="navbar-brand me-auto"
                      :to="{ name: 'Home' }"
                      ><img alt="logo"
-                           src="../assets/images/logo.png">
+                           src="../../assets/images/logo.png">
         </router-link>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">

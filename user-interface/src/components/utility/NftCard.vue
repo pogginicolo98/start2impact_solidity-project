@@ -62,7 +62,7 @@
                             src="@/assets/images/token-logo-20x20.png">
                      </div>
                    </span>
-                   <span class="align-middle ms-1">{{ nft.price }}</span>
+                   <span class="align-middle ms-1">{{ getPrice }}</span>
                  </p>
                </div>
                <p class="text-secondary" v-else>Not for sale</p>
@@ -89,6 +89,10 @@
       isLoading() {
         return this.nft == null || this.nft.metadata == null;
       },
+
+      getPrice() {
+        return this.web3.utils.fromWei(this.nft.price);
+      }
     },
   }
 </script>

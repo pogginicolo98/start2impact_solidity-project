@@ -51,7 +51,7 @@
   import ListNftsComponent from "@/components/profile/ListNfts.vue";
   import NftsForSaleComponent from "@/components/profile/NftsForSale.vue";
   import MintComponent from "@/components/profile/Mint.vue";
-  import ConnectWalletComponent from "@/components/ConnectWallet.vue";
+  import ConnectWalletComponent from "@/components/utility/ConnectWallet.vue";
   import walletConnectedMixin from "@/mixins/WalletConnected";
 
   export default {

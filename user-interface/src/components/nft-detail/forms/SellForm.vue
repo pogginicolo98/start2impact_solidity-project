@@ -11,7 +11,15 @@
 
           <div class="mb-4 text-center" v-else>
             <h4>Sign the contract with the merchant</h4>
-            <h6 class="text-secondary">Approve the TreasureNFT contract to allow the sale of your NFT</h6>
+            <h6 class="text-secondary">
+              Approve the
+              <a class="link-info"
+                 target="_blank"
+                 :href="contractLink"
+                 >TreasureNFT
+              </a>
+              contract in order to buy the NFTcontract to allow the sale of your NFT
+            </h6>
           </div>
 
           <!-- Price -->
@@ -113,6 +121,10 @@
         return this.price.errors.length == 0
           ? true
           : false;
+      },
+
+      contractLink() {
+        return `https://ropsten.etherscan.io/address/${this.treasureNFT._address}`;
       },
     },
 

@@ -30,7 +30,7 @@
 
       <!-- No items -->
       <div class="text-center" v-else>
-        <p class="text-secondary fs-5 my-5">You don't own any items</p>
+        <i class="fa-solid fa-ellipsis text-secondary fs-5 my-5"></i>
       </div>
 
     </div>
@@ -39,7 +39,7 @@
 
 <script>
   import { apiService } from "@/common/api.service.js";
-  import NftCardComponent from "@/components/profile/listNfts/NftCard.vue";
+  import NftCardComponent from "@/components/utility/NftCard.vue";
   import treasureNFTMixin from "@/mixins/TreasureNFT";
   import { mapGetters } from "vuex";
 

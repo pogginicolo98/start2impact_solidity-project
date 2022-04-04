@@ -8,7 +8,15 @@
 
     <div class="mb-4 text-center" v-else>
       <h4>Sign the contract with the merchant</h4>
-      <h6 class="text-secondary">Approve the WispToken contract in order to buy the NFT</h6>
+      <h6 class="text-secondary">
+        Approve the
+        <a class="link-info"
+           target="_blank"
+           :href="contractLink"
+           >WispToken
+        </a>
+        contract in order to buy the NFT
+      </h6>
     </div>
 
     <span class="d-grid btn-wrap"
@@ -72,6 +80,10 @@
       ...mapGetters({
         wallet: "getWallet",
       }),
+
+      contractLink() {
+        return `https://ropsten.etherscan.io/address/${this.wispToken._address}`;
+      },
     },
 
     methods: {

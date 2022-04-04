@@ -16,22 +16,22 @@ const routes = [
     component: Home,
   },
   {
-    path: "/marketplace",
+    path: "/merchant",
     name: "Marketplace",
     component: Marketplace,
   },
   {
-    path: "/faucet",
+    path: "/welcome-chest",
     name: "Faucet",
     component: Faucet,
   },
   {
-    path: "/profile",
+    path: "/den",
     name: "Profile",
     component: Profile,
   },
   {
-    path: "/marketplace/:tokenId",
+    path: "/merchant/:tokenId",
     name: "NftDetails",
     component: NftDetails,
     props: true

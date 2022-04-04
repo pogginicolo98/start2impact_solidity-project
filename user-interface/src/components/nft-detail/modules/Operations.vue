@@ -99,9 +99,9 @@
 <script>
   import merchantMixin from "@/mixins/Merchant";
   import treasureNFTMixin from "@/mixins/TreasureNFT";
-  import SellFormComponent from "@/components/nftDetails/SellForm.vue";
-  import CancelFormComponent from "@/components/nftDetails/CancelForm.vue";
-  import BuyFormComponent from "@/components/nftDetails/BuyForm.vue";
+  import SellFormComponent from "@/components/nft-detail/forms/SellForm.vue";
+  import CancelFormComponent from "@/components/nft-detail/forms/CancelForm.vue";
+  import BuyFormComponent from "@/components/nft-detail/forms/BuyForm.vue";
   import { mapGetters } from "vuex";
 
   export default {

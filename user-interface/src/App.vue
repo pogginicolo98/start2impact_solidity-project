@@ -1,41 +1,33 @@
 <template>
   <div id="app">
-    <NavbarComponent class="sticky-top" />
+
+    <!-- Navbar -->
+    <NavbarComponent />
+
+    <!-- Content -->
     <div class="content">
       <router-view />
     </div>
+
+    <!-- Footer -->
     <div class="footer">
-         <FooterComponent />
+      <FooterComponent />
     </div>
+
   </div>
 </template>
 
 <script>
   import "@/assets/css/app.css";
-  import FooterComponent from "@/components/Footer.vue";
-  import NavbarComponent from "@/components/Navbar.vue";
+  import FooterComponent from "@/components/footer/Footer.vue";
+  import NavbarComponent from "@/components/navbar/Navbar.vue";
 
   export default {
     name: "App",
 
-    data() {
-      return {
-        path: ["Home", "Marketplace", "Profile", "Faucet", "NftDetails"],
-      }
-    },
-
-    computed: {
-      isValidPath() {
-        if (this.path.includes(this.$route.name)) {
-          return true;
-        }
-        return false;
-      },
-    },
-
     components: {
-      NavbarComponent,
       FooterComponent,
+      NavbarComponent,
     },
   }
 </script>

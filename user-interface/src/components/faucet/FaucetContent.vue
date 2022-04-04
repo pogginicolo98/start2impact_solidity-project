@@ -1,63 +1,72 @@
 <template>
-  <div class="faucet-form">
-    <form class="needs-validation"
-          novalidate
-          @submit.prevent="handleRedeem">
+  <div class="faucet-content">
+    <div class="row justify-content-center align-items-center height-100 mx-1">
+      <div class="col-12 col-md-9 col-lg-7 col-xl-6 col-xl-6 box p-4 p-sm-5">
 
-          <!-- Field -->
-          <div class="mb-4">
+        <!-- Title -->
+        <div class="text-center">
+          <h1 class="mb-3">Open your welcome chest</h1>
+          <h6 class="text-secondary">Get 1000 $WISP free, enter your address below and redeem!</h6>
+        </div>
 
-            <!-- Input -->
-            <label class="d-block position-relative input-wrap"
-                   :class="{'focusOn': isFocused,
-                            'focusOff': !isFocused}">
-                   <img alt="$WISP"
-                        class="position-absolute top-50 start-0 translate-middle ms-3"
-                        src="@/assets/images/token-logo-24x24.png">
-                   <input aria-describedby="faucetFormFeedback"
-                          class="form-control input-address"
-                          placeholder="Ropsten address"
-                          type="text"
-                          v-model="destAddress.value"
-                          :class="{'is-invalid': !destAddressValid}"
-                          @blur="setFocused(false)"
-                          @focus="setFocused(true)">
-            </label> <!-- Input -->
+        <!-- Form -->
+        <form class="needs-validation mt-4"
+              novalidate
+              @submit.prevent="handleRedeem">
 
-            <!-- Feedback -->
-            <div class="d-block text-start invalid-feedback"
-                 id="faucetFormFeedback">
-                 <ul>
-                   <li v-for="(error, index) in destAddress.errors"
-                       :key="index"
-                       >{{ error }}
-                   </li>
-                 </ul>
-            </div>
+              <!-- Input address -->
+              <div class="mb-4">
+                <label class="d-block position-relative input-wrap"
+                       :class="{'focusOn': isFocused,
+                                'focusOff': !isFocused}">
+                       <img alt="$WISP"
+                            class="position-absolute top-50 start-0 translate-middle ms-3"
+                            src="@/assets/images/token-logo-24x24.png">
+                       <input aria-describedby="faucetFormFeedback"
+                              class="form-control input-address"
+                              placeholder="Ropsten address"
+                              type="text"
+                              v-model="destAddress.value"
+                              :class="{'is-invalid': !destAddressValid}"
+                              @blur="setFocused(false)"
+                              @focus="setFocused(true)">
+                </label>
+                <div class="d-block text-start invalid-feedback"
+                     id="faucetFormFeedback">
+                     <ul>
+                       <li v-for="(error, index) in destAddress.errors"
+                           :key="index"
+                           >{{ error }}
+                       </li>
+                     </ul>
+                </div>
+              </div>
 
-          </div> <!-- Field -->
+              <!-- Submit button -->
+              <span class="d-grid btn-wrap"
+                    :class="{'btn-wrap-disabled': isDisabled,
+                             'btn-wrap-pending': isPending}">
+                    <button class="btn btn-primary px-4 py-2"
+                            type="submit"
+                            v-html="btnText"
+                            :class="{'btn-pending': isPending}"
+                            :disabled="isDisabled">
+                    </button>
+              </span>
 
-          <!-- Open button -->
-          <span class="d-grid btn-wrap"
-                :class="{'btn-wrap-disabled': isDisabled,
-                         'btn-wrap-pending': isPending}">
-                <button class="btn btn-primary px-4 py-2"
-                        type="submit"
-                        v-html="btnText"
-                        :class="{'btn-pending': isPending}"
-                        :disabled="isDisabled">
-                </button>
-          </span>
-    </form>
-  </div> <!-- Faucet Form -->
+        </form>
+
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-  import welcomeChestMixin from "@/mixins/WelcomeChest";
   import { mapGetters } from "vuex";
+  import welcomeChestMixin from "@/mixins/WelcomeChest";
 
   export default {
-    name: "FaucetFormComponent",
+    name: "FaucetContentComponent",
 
     data() {
       return {
@@ -163,6 +172,10 @@
 </script>
 
 <style scoped>
+  .faucet-content {
+    height: 100%;
+  }
+
   .input-address {
     border-radius: 12px;
     border: none !important;
