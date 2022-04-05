@@ -37,9 +37,9 @@
 </template>
 
 <script>
-  import DescriptionFieldComponent from "@/components/profile/mint/DescriptionField.vue";
-  import ImageFieldComponent from "@/components/profile/mint/ImageField.vue";
-  import NameFieldComponent from "@/components/profile/mint/NameField.vue";
+  import DescriptionFieldComponent from "@/components/profile/forms/DescriptionField.vue";
+  import ImageFieldComponent from "@/components/profile/forms/ImageField.vue";
+  import NameFieldComponent from "@/components/profile/forms/NameField.vue";
   import store from "@/store";
   import treasureNFTMixin from "@/mixins/TreasureNFT";
   import { mapGetters } from "vuex";

@@ -4,7 +4,7 @@ import Home from "@/views/Home.vue";
 import Marketplace from "@/views/Marketplace.vue";
 import Faucet from "@/views/Faucet.vue";
 import Profile from "@/views/Profile.vue";
-import NftDetails from "@/views/NftDetails.vue";
+import NFTDetail from "@/views/NFTDetail.vue";
 import PageNotFound from "@/views/PageNotFound.vue";
 
 Vue.use(VueRouter);
@@ -32,8 +32,8 @@ const routes = [
   },
   {
     path: "/merchant/:tokenId",
-    name: "NftDetails",
-    component: NftDetails,
+    name: "NFTDetail",
+    component: NFTDetail,
     props: true
   },
   {

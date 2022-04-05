@@ -22,7 +22,7 @@
 </template>
 
 <script>
-  import ImageUploaderComponent from "@/components/profile/mint/ImageUploader.vue";
+  import ImageUploaderComponent from "@/components/profile/forms/ImageUploader.vue";
   import store from "@/store";
   import { mapGetters } from "vuex";
 

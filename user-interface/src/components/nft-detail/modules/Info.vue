@@ -20,10 +20,9 @@
              <div class="accordion-body">
                <p class="placeholder-glow"
                   v-if="isLoading">
-                  <span class="placeholder col-12"></span>
-                  <span class="placeholder col-12"></span>
-                  <span class="placeholder col-12"></span>
-                  <span class="placeholder col-12"></span>
+                  <span class="placeholder col-7"></span>
+                  <span class="placeholder col-9"></span>
+                  <span class="placeholder col-8"></span>
                </p>
                <template v-else>
                  <p class="text-secondary">Created by <a class="link-info" href="#">{{ getCreator }}</a></p>

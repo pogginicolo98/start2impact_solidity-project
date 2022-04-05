@@ -16,10 +16,10 @@
               <NftCardComponent v-if="!nft.metadata" />
               <router-link class="text-light"
                            v-else
-                           :to="{ name: 'NftDetails', params: { tokenId: nft.tokenId,
-                                                                metadata: nft.metadata,
-                                                                price: nft.price,
-                                                                owner: nft.owner } }">
+                           :to="{ name: 'NFTDetail', params: { tokenId: nft.tokenId,
+                                                               metadata: nft.metadata,
+                                                               price: nft.price,
+                                                               owner: nft.owner } }">
                            <NftCardComponent :marketplace="true"
                                              :nft="nft" />
               </router-link>
@@ -50,7 +50,7 @@
 
     data() {
       return {
-        loadingNfts: true,
+        loading: true,
         nfts: [],
       }
     },
@@ -68,7 +68,7 @@
       }),
 
       nftsForSale() {
-        return this.nfts.length > 0 && !loadingNfts;
+        return this.nfts.length > 0 && !this.loading;
       }
     },
 
@@ -115,8 +115,8 @@
           console.log(error);
         }
 
-        this.loadingNfts = false;
-        this.$emit('loadingEnded');
+        this.loading = false;
+        this.$emit('loadingStatus', false);
       },
     },
 

@@ -3,12 +3,12 @@
 
     <div class="mb-4 text-center" v-if="isApproved">
       <h4>Do you want to buy this item at the price of {{ price }} $WISP?</h4>
-      <h6 class="text-secondary">The amount will be deducted from your account and the NFT will be transferred to your wallet</h6>
+      <p class="text-secondary">The amount will be deducted from your account and the NFT will be transferred to your wallet</p>
     </div>
 
     <div class="mb-4 text-center" v-else>
       <h4>Sign the contract with the merchant</h4>
-      <h6 class="text-secondary">
+      <p class="text-secondary">
         Approve the
         <a class="link-info"
            target="_blank"
@@ -16,7 +16,7 @@
            >WispToken
         </a>
         contract in order to buy the NFT
-      </h6>
+      </p>
     </div>
 
     <span class="d-grid btn-wrap"

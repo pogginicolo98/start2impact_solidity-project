@@ -2,9 +2,9 @@
   <div class="marketplace">
 
     <!-- Content -->
-    <div class="container height-100 mt-4"
+    <div class="container height-100 my-4"
          v-show="!isLoading && walletConnected">
-         <MarketplaceContentComponent @loadingEnded="nftsLoaded" />
+         <MarketplaceContentComponent @loadingStatus="setLoading($event)" />
     </div>
 
     <!-- Wallet not connected -->
@@ -15,7 +15,7 @@
 
     <!-- Loading -->
     <div class="height-100"
-         v-else>
+         v-else-if="isLoading">
          <SpinnerComponent />
     </div>
 
@@ -44,8 +44,8 @@
     },
 
     methods: {
-      nftsLoaded() {
-        this.loadingNfts = false;
+      setLoading(payload) {
+        this.loadingNfts = payload;
       },
     },
 

@@ -1,10 +1,10 @@
 <template>
   <div class="nft-detail">
-    
+
     <!-- Content -->
-    <div class="container height-100 mt-4"
+    <div class="container height-100 my-4"
          v-show="!isLoading && walletConnected">
-         <MarketplaceContentComponent @loadingEnded="nftLoaded" />
+         <NFTDetailContentComponent :propNft="nft" />
     </div>
 
     <!-- Wallet not connected -->
@@ -15,7 +15,7 @@
 
     <!-- Loading -->
     <div class="height-100"
-         v-else>
+         v-else-if="isLoading">
          <SpinnerComponent />
     </div>
 
@@ -23,7 +23,7 @@
 </template>
 
 <script>
-  import NFTDetailContentComponent from "@/components/marketplace/NFTDetailContent.vue";
+  import NFTDetailContentComponent from "@/components/nft-detail/NFTDetailContent.vue";
   import ConnectWalletComponent from "@/components/utility/ConnectWallet.vue";
   import SpinnerComponent from "@/components/utility/Spinner.vue";
   import walletConnectedMixin from "@/mixins/WalletConnected";
@@ -31,21 +31,39 @@
   export default {
     name: "NFTDetail",
 
+    props: {
+      tokenId: {
+        type: String,
+        required: true
+      },
+      metadata: {
+        type: Object,
+        required: false
+      },
+      price: {
+        type: String,
+        required: false
+      },
+      owner: {
+        type: String,
+        required: false
+      },
+    },
+
     data() {
       return {
-        loadingNfts: true,
+        nft: {
+          tokenId: this.tokenId,
+          metadata: this.metadata != null ? this.metadata : null,
+          price: this.price != null ? this.price : null,
+          owner: this.owner != null ? this.owner : null,
+        },
       }
     },
 
     computed: {
       isLoading() {
-        return this.firstLoading || this.loadingNfts;
-      },
-    },
-
-    methods: {
-      nftsLoaded() {
-        this.loadingNfts = false;
+        return this.firstLoading;
       },
     },
 

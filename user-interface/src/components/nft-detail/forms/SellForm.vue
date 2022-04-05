@@ -6,12 +6,12 @@
 
           <div class="mb-4 text-center" v-if="isApproved">
             <h4>Establish the selling price</h4>
-            <h6 class="text-secondary">Set the amount of $WISP tokens your NFT will be sold for</h6>
+            <p class="text-secondary">Set the amount of $WISP tokens your NFT will be sold for</p>
           </div>
 
           <div class="mb-4 text-center" v-else>
             <h4>Sign the contract with the merchant</h4>
-            <h6 class="text-secondary">
+            <p class="text-secondary">
               Approve the
               <a class="link-info"
                  target="_blank"
@@ -19,7 +19,7 @@
                  >TreasureNFT
               </a>
               contract in order to buy the NFTcontract to allow the sale of your NFT
-            </h6>
+            </p>
           </div>
 
           <!-- Price -->
