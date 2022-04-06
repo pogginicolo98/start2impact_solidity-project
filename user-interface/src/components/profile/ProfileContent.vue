@@ -14,7 +14,7 @@
         </div>
       </div>
 
-      <!-- User NFTs -->
+      <!-- User's NFTs -->
       <div class="col-12 col-xl-7 col-xxl-8">
 
         <!-- Available NFTs -->
@@ -46,14 +46,7 @@
     data() {
       return {
         tokenId: null,
-        firstLoading: true,
       }
-    },
-
-    created() {
-      setTimeout(() => {
-        this.firstLoading = false;
-      }, 300);
     },
 
     methods: {

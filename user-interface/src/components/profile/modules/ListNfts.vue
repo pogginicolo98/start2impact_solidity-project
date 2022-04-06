@@ -53,12 +53,6 @@
       },
     },
 
-    watch: {
-      tokenId() {
-        this.onNftMinted(this.tokenId);
-      },
-    },
-
     data() {
       return {
         isLoading: true,
@@ -73,6 +67,12 @@
         await this.getNfts();
         this.isLoading = false;
       }, 500);
+    },
+
+    watch: {
+      tokenId() {
+        this.onNftMinted(this.tokenId);
+      },
     },
 
     computed: {

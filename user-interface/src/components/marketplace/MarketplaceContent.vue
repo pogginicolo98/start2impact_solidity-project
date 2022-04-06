@@ -58,7 +58,14 @@
     created() {
       setTimeout(async () => {
         await this.retrieveNfts();
+        this.loading = false;
       }, 500);
+    },
+
+    watch: {
+      loading() {
+        this.$emit('loadingStatus', this.loading);
+      },
     },
 
     computed: {
@@ -69,13 +76,12 @@
 
       nftsForSale() {
         return this.nfts.length > 0 && !this.loading;
-      }
+      },
     },
 
     methods: {
-      // Retrieve all NFTs for sale from Merchant
       async retrieveNfts() {
-        console.log("retrieve nfts...")
+        // Retrieve all NFTs for sale from Merchant smart contract
         try {
           let sellers = await this.merchant.methods.totalSellers().call();
 
@@ -114,9 +120,6 @@
           console.log("An error occurred while calling the method: retrieveNftsForSale");
           console.log(error);
         }
-
-        this.loading = false;
-        this.$emit('loadingStatus', false);
       },
     },
 
