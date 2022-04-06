@@ -3,13 +3,13 @@
 
     <!-- Content -->
     <div class="container height-100"
-         v-if="!firstLoading && walletConnected">
+         v-if="!isLoading && walletConnected">
          <FaucetContentComponent />
     </div>
 
     <!-- Wallet not connected -->
     <div class="height-100"
-         v-else-if="!firstLoading && !walletConnected">
+         v-else-if="!isLoading && !walletConnected">
          <ConnectWalletComponent />
     </div>
 
@@ -30,6 +30,12 @@
 
   export default {
     name: "Faucet",
+
+    computed: {
+      isLoading() {
+        return this.firstLoading;
+      }
+    },
 
     mixins: [
       walletConnectedMixin,

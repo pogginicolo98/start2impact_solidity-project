@@ -26,10 +26,16 @@
 
     data() {
       return {
-        btnText: "<i class='fa-solid fa-handshake-slash me-2'></i>Take back",
+        btnTextDefault: "<i class='fa-solid fa-handshake-slash me-2'></i>Take back",
+        btnTextLoading: "<span aria-hidden='true' class='spinner-border spinner-border-sm me-2' role='status'></span>Pending",
+        btnText: null,
         isPending: false,
         isDisabled: false,
       }
+    },
+
+    created() {
+      this.btnText = this.btnTextDefault;
     },
 
     computed: {
@@ -40,28 +46,26 @@
 
     methods: {
       setLoadingStatus(payload) {
-        // Set the button text and pending status
-
-        let msg = "";
         if (payload == "enable") {
           this.isPending = true;
-          msg = "<span aria-hidden='true' class='spinner-border spinner-border-sm me-2' role='status'></span>Pending";
+          this.btnText = this.btnTextLoading;
         } else if (payload == "disable") {
           this.isPending = false;
-          msg = "<i class='fa-solid fa-handshake-slash me-2'></i>Take back";
+          this.btnText = this.btnTextDefault;
         }
-        this.btnText = msg;
       },
 
       async handleCancel() {
         let index = null;
         this.isDisabled = true;
-
         const owner = await this.treasureNFT.methods.ownerOf(this.tokenId).call();
+
         if (owner.toLowerCase() == this.merchant._address.toLowerCase()) {
           const sales = await this.merchant.methods.salesOf(this.wallet.address).call();
+
           for (let i = 0; i < sales; i ++) {
             let sale = await this.merchant.methods.saleOfOwnerByIndex(this.wallet.address, i).call();
+
             if (sale.tokenId == this.tokenId) {
               index = i;
               break;

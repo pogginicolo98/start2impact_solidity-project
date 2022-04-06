@@ -1,11 +1,13 @@
 <template>
   <div class="buy-form">
 
+    <!-- Buy message -->
     <div class="mb-4 text-center" v-if="isApproved">
       <h4>Do you want to buy this item at the price of {{ price }} $WISP?</h4>
       <p class="text-secondary">The amount will be deducted from your account and the NFT will be transferred to your wallet</p>
     </div>
 
+    <!-- Approval message -->
     <div class="mb-4 text-center" v-else>
       <h4>Sign the contract with the merchant</h4>
       <p class="text-secondary">
@@ -19,6 +21,7 @@
       </p>
     </div>
 
+    <!-- Approve/Buy button -->
     <span class="d-grid btn-wrap"
           :class="{'btn-wrap-disabled': isDisabled,
                    'btn-wrap-pending': isPending}">
@@ -30,14 +33,15 @@
                   @click="handleBuy">
           </button>
     </span>
+
   </div>
 </template>
 
 <script>
+  import { mapGetters } from "vuex";
   import merchantMixin from "@/mixins/Merchant";
   import treasureNFTMixin from "@/mixins/TreasureNFT";
   import wispTokenMixin from "@/mixins/WispToken";
-  import { mapGetters } from "vuex";
 
   export default {
     name: "BuyFormComponent",
@@ -55,7 +59,11 @@
 
     data() {
       return {
-        btnText: "<i class='fa-solid fa-scroll me-2'></i>Approve contract",
+        btnTextApprove: "<i class='fa-solid fa-scroll me-2'></i>Approve contract",
+        btnTextApproving: "<span aria-hidden='true' class='spinner-border spinner-border-sm me-2' role='status'></span>Approving",
+        btnTextBuy: "<i class='fa-solid fa-sack-dollar me-2'></i>Purchase item",
+        btnTextBuying: "<span aria-hidden='true' class='spinner-border spinner-border-sm me-2' role='status'></span>Purchasing",
+        btnText: null,
         isPending: false,
         isDisabled: false,
         isApproved: false,
@@ -63,15 +71,24 @@
     },
 
     created() {
+      this.btnText = this.btnTextApprove;
       setTimeout(async () => {
-        let bigNumber = this.web3.utils.BN;
-        let approvedAmount = new bigNumber(await this.wispToken.methods.allowance(this.wallet.address, this.merchant._address).call());
-        let price = new bigNumber(this.web3.utils.toWei(this.price));
-        if (approvedAmount.gte(price)) {
-          this.isApproved = true;
-          this.btnText = "<i class='fa-solid fa-sack-dollar me-2'></i>Purchase";
-        } else {
+        try {
+          let bigNumber = this.web3.utils.BN;
+          let approvedAmount = new bigNumber(await this.wispToken.methods.allowance(this.wallet.address, this.merchant._address).call());
+          let price = new bigNumber(this.web3.utils.toWei(this.price));
+
+          if (approvedAmount.gte(price)) {
+            this.isApproved = true;
+            this.btnText = this.btnTextBuy;
+          } else {
+            this.isApproved = false;
+          }
+        } catch (error) {
+          console.log("WispToken contract: error while executing method 'allowance'");
+          console.log(error);
           this.isApproved = false;
+          this.$toasted.show(`WispToken allowance error`, {icon: "skull-crossbones"});
         }
       }, 500);
     },
@@ -88,28 +105,25 @@
 
     methods: {
       setLoadingStatus(payload) {
-        // Set the button text and pending status
-
-        let msg = "";
         if (payload == "enable") {
           this.isPending = true;
-          msg = this.isApproved == true
-            ? "<span aria-hidden='true' class='spinner-border spinner-border-sm me-2' role='status'></span>Pending"
-            : "<span aria-hidden='true' class='spinner-border spinner-border-sm me-2' role='status'></span>Approving";
+          this.btnText = this.isApproved == true
+            ? this.btnTextBuying
+            : this.btnTextApproving;
         } else if (payload == "disable") {
           this.isPending = false;
-          msg = this.isApproved == true
-            ? "<i class='fa-solid fa-sack-dollar me-2'></i>Purchase"
-            : "<i class='fa-solid fa-scroll me-2'></i>Approve contract";
+          this.btnText = this.isApproved == true
+            ? this.btnTextBuy
+            : this.btnTextApprove;
         }
-        this.btnText = msg;
       },
 
-      approve() {
+      async approve() {
         this.isDisabled = true;
         let bigNumber = this.web3.utils.BN;
         let amount = new bigNumber("2").pow(new bigNumber("256")).sub(new bigNumber("1"));
-        this.wispToken.methods.approve(this.merchant._address, amount).send({from: this.wallet.address})
+
+        await this.wispToken.methods.approve(this.merchant._address, amount).send({from: this.wallet.address})
           .on("transactionHash", () => {
             this.isDisabled = false;
             this.setLoadingStatus("enable");
@@ -135,11 +149,14 @@
 
       async getNftSale() {
         let sellers = await this.merchant.methods.totalSellers().call();
+
         for (let sellerIndex = 0; sellerIndex < sellers; sellerIndex++) {
           let sellerAddress = await this.merchant.methods.sellerByIndex(sellerIndex).call();
           let sellerSales = await this.merchant.methods.salesOf(sellerAddress).call();
+
           for (let saleIndex = 0; saleIndex < sellerSales; saleIndex++) {
             let sale = await this.merchant.methods.saleOfOwnerByIndex(sellerAddress, saleIndex).call();
+
             if (sale.tokenId == this.tokenId) {
               return {
                 seller: sellerAddress,
@@ -155,10 +172,12 @@
         if (this.isApproved) {
           this.isDisabled = true;
           let owner = await this.treasureNFT.methods.ownerOf(this.tokenId).call();
+
           if (owner.toLowerCase() == this.merchant._address.toLowerCase()) {
             let sale = await this.getNftSale();
+
             if (sale != null) {
-              this.merchant.methods.buyItemOfOwnerByIndex(sale.seller, sale.index).send({from: this.wallet.address})
+              await this.merchant.methods.buyItemOfOwnerByIndex(sale.seller, sale.index).send({from: this.wallet.address})
                 .on("transactionHash", () => {
                   this.isDisabled = false;
                   this.setLoadingStatus("enable");
@@ -185,7 +204,7 @@
             }
           }
         } else {
-          this.approve();
+          await this.approve();
         }
       },
     },

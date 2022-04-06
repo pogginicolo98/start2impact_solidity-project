@@ -3,20 +3,24 @@
     <nav class="navbar navbar-dark navbar-expand-lg">
       <div class="container">
 
+        <!-- Brand logo -->
         <router-link class="navbar-brand me-auto"
                      :to="{ name: 'Home' }"
                      ><img alt="logo"
                            src="../../assets/images/logo.png">
         </router-link>
 
+        <!-- Mobile menu button -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
 
+        <!-- Elements -->
         <div class="collapse navbar-collapse" id="navbarNav">
 
+          <!-- Central nav -->
           <div class="mx-auto my-4 my-lg-0"
-               v-show="metamaskConnected">
+               v-show="walletConnected">
                <hr class="d-block d-lg-none">
                <div class="navbar-nav pe-4">
                  <router-link class="nav-link me-lg-3"
@@ -34,11 +38,15 @@
                </div>
                <hr class="d-block d-lg-none">
           </div>
+
+          <!-- Connect wallet button -->
           <button class="btn btn-primary ms-auto mt-3 mb-4 my-lg-0"
-                  v-if="!metamaskConnected"
+                  v-if="!walletConnected"
                   @click="handleConnect"
                   >Connect Metamask
           </button>
+
+          <!-- Display wallet address -->
           <VueCustomTooltip position="is-left"
                             v-else
                             :label="tokenIdLabel">
@@ -48,7 +56,9 @@
                                     >{{ getAddress }}
                             </button>
           </VueCustomTooltip>
+
         </div>
+
       </div>
     </nav>
   </div>
@@ -56,6 +66,7 @@
 
 <script>
   import { mapGetters } from "vuex";
+  import walletConnectedMixin from "@/mixins/WalletConnected";
 
   export default {
     name: "NavbarComponent",
@@ -72,21 +83,19 @@
       }),
 
       getAddress() {
-        const address =
-          this.wallet && this.wallet.address
-            ? this.wallet.address.toString()
-            : "";
+        const address = this.wallet && this.wallet.address
+          ? this.wallet.address.toString()
+          : "";
+
         if (address && address.length === 42) {
           const str1 = String(address).slice(0, 6);
           const str2 = String(address).slice(address.length - 4, address.length);
           return `${str1}...${str2}`;
         }
+
         return "Error";
       },
 
-      metamaskConnected() {
-        return this.wallet && this.wallet.address;
-      },
     },
 
     methods: {
@@ -108,6 +117,10 @@
         }
       },
     },
+
+    mixins: [
+      walletConnectedMixin,
+    ],
   }
 </script>
 

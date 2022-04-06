@@ -41,7 +41,6 @@
 </script>
 
 <style scoped>
-
   .footer-component {
     border-top: 1px solid hsla(0,0%,100%,.2);
     background: transparent;

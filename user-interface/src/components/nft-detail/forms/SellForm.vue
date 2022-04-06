@@ -30,7 +30,7 @@
                <label class="position-relative d-block">
                  <img alt="$WISP"
                       class="position-absolute top-50 start-0 translate-middle ms-4"
-                      src="@/assets/images/token-logo-32x32.png">
+                      src="@/assets/images/token-logo-24x24.png">
                  <input aria-describedby="priceFormFeedback"
                         class="form-control input-field"
                         id="priceInput"
@@ -88,7 +88,11 @@
 
     data() {
       return {
-        btnText: "<i class='fa-solid fa-scroll me-2'></i>Approve contract",
+        btnTextApprove: "<i class='fa-solid fa-scroll me-2'></i>Approve contract",
+        btnTextApproving: "<span aria-hidden='true' class='spinner-border spinner-border-sm me-2' role='status'></span>Approving",
+        btnTextSell: "<i class='fa-solid fa-hand-holding-hand me-2'></i>Give to the merchant",
+        btnTextSelling: "<span aria-hidden='true' class='spinner-border spinner-border-sm me-2' role='status'></span>Selling",
+        btnText: null,
         isPending: false,
         isDisabled: false,
         isApproved: false,
@@ -101,11 +105,12 @@
     },
 
     created() {
+      this.btnText = this.btnTextApprove;
       setTimeout(async () => {
         const contractApproved = await this.treasureNFT.methods.isApprovedForAll(this.wallet.address, this.merchant._address).call();
         if (contractApproved) {
           this.isApproved = true;
-          this.btnText = "<i class='fa-solid fa-hand-holding-hand me-2'></i>Give to the merchant";
+          this.btnText = this.btnTextSell;
         } else {
           this.isApproved = false;
         }
@@ -134,21 +139,17 @@
       },
 
       setLoadingStatus(payload) {
-        // Set the button text and pending status
-
-        let msg = "";
         if (payload == "enable") {
           this.isPending = true;
-          msg = this.isApproved == true
-            ? "<span aria-hidden='true' class='spinner-border spinner-border-sm me-2' role='status'></span>Pending"
-            : "<span aria-hidden='true' class='spinner-border spinner-border-sm me-2' role='status'></span>Approving";
+          this.btnText = this.isApproved == true
+            ? this.btnTextSelling
+            : this.btnTextApproving;
         } else if (payload == "disable") {
           this.isPending = false;
-          msg = this.isApproved == true
-            ? "<i class='fa-solid fa-hand-holding-hand me-2'></i>Give to the merchant"
-            : "<i class='fa-solid fa-scroll me-2'></i>Approve contract";
+          this.btnText = this.isApproved == true
+            ? this.btnTextSell
+            : this.btnTextApprove;
         }
-        this.btnText = msg;
       },
 
       validateForm() {

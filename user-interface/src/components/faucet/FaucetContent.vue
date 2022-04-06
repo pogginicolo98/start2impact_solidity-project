@@ -12,7 +12,7 @@
         <!-- Form -->
         <form class="needs-validation mt-4"
               novalidate
-              @submit.prevent="handleRedeem">
+              @submit.prevent="handleSubmit">
 
               <!-- Input address -->
               <div class="mb-4">
@@ -56,6 +56,15 @@
 
         </form>
 
+        <!-- Add token button -->
+        <span class="d-grid btn-wrap mt-2">
+              <button class="btn btn-primary px-4 py-2"
+                      type="button"
+                      @click="addToken"
+                      ><i class="fa-solid fa-plus me-2"></i>Add token
+              </button>
+        </span>
+
       </div>
     </div>
   </div>
@@ -64,21 +73,28 @@
 <script>
   import { mapGetters } from "vuex";
   import welcomeChestMixin from "@/mixins/WelcomeChest";
+  import wispTokenMixin from "@/mixins/WispToken";
 
   export default {
     name: "FaucetContentComponent",
 
     data() {
       return {
+        btnTextDefault: "<i class='fa-solid fa-box-open me-2'></i>Open",
+        btnTextLoading: "<span aria-hidden='true' class='spinner-border spinner-border-sm me-2' role='status'></span>Opening",
+        btnText: null,
         isFocused: false,
         isPending: false,
-        btnText: "<i class='fa-solid fa-box-open me-2'></i>Open",
         isDisabled: false,
         destAddress: {
           value: null,
           errors: []
         },
       }
+    },
+
+    created() {
+      this.btnText = this.btnTextDefault;
     },
 
     computed: {
@@ -99,17 +115,13 @@
       },
 
       setLoadingStatus(payload) {
-        // Set the button text and pending status
-
-        let msg = "";
         if (payload == "enable") {
-          msg = "<span aria-hidden='true' class='spinner-border spinner-border-sm me-2' role='status'></span>Opening";
+          this.btnText = this.btnTextLoading;
           this.isPending = true;
         } else if (payload == "disable") {
-          msg = "<i class='fa-solid fa-box-open me-2'></i>Open";
+          this.btnText = this.btnTextDefault;
           this.isPending = false;
         }
-        this.btnText = msg;
       },
 
       validateForm() {
@@ -130,9 +142,7 @@
         return true;
       },
 
-      async handleRedeem() {
-        // Make a Redeem to the WelcomeChest contract in order to receive the tokens at the specified address
-
+      async handleSubmit() {
         if (this.validateForm()) {
           const to = this.destAddress.value.toLowerCase();
           this.isDisabled = true;
@@ -163,10 +173,23 @@
             });
         }
       },
+
+      async addToken() {
+        const params = {
+          type: 'ERC20',
+          options: {
+            address: this.wispToken._address,
+            symbol: 'WISP',
+            decimals: 18,
+          }
+        };
+        await window.ethereum.request({ method: 'wallet_watchAsset', params: params });
+      }
     },
 
     mixins: [
       welcomeChestMixin,
+      wispTokenMixin,
     ],
   }
 </script>

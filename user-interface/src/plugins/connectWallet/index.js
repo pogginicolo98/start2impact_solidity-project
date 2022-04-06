@@ -9,10 +9,7 @@ import store from "../../store";
  */
 setTimeout(async () => {
   if(window.ethereum?.isMetaMask) {
-    console.log("setTimeout");
     const provider = await detectEthereumProvider();
-    console.log("provider");
-    console.log(provider);
     const ethersProvider = new ethers.providers.Web3Provider(provider);
     const accounts = await window.ethereum.request({ method: "eth_accounts" });
     const web3Instance = new Web3(provider);
