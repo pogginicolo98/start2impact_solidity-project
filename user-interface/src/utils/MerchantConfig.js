@@ -1,7 +1,7 @@
 export default {
   contract: {
     name: "Merchant",
-    address: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
+    address: "0x480E600AAA113706d3470A206A138E61dcd7a394",
     abi: [
       {
         "inputs": [

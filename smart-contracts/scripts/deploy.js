@@ -38,7 +38,7 @@ async function main() {
   const merchant = await _merchant.deploy(wispToken.address, treasureNFT.address);
   console.log("Merchant contract address:", merchant.address);
 
-  const amount = ethers.utils.parseUnits("100000", 18);
+  const amount = ethers.utils.parseUnits("1000000000", 18);
   await wispToken.transfer(welcomeChest.address, amount);
 }
 

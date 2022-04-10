@@ -1,7 +1,7 @@
 export default {
   contract: {
     name: "WelcomeChest",
-    address: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+    address: "0x4A057427E66A3469cDcB626B1df2328759303D83",
     abi: [
       {
         "inputs": [

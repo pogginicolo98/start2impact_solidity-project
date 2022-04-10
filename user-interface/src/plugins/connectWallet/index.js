@@ -31,8 +31,8 @@ setTimeout(async () => {
         window.location.reload();
       });
 
-      // targets Rinkeby chain, id 4
-      const targetNetworkId = '0x539';
+      // targets Ropsten chain, id 3
+      const targetNetworkId = '0x3';
 
       // checks if current chain matches with the one we need
       // and returns true/false
@@ -105,8 +105,8 @@ export default {
           window.location.reload();
         });
 
-        // targets Rinkeby chain, id 4
-        const targetNetworkId = '0x539';
+        // targets Ropsten chain, id 3
+        const targetNetworkId = '0x3';
 
         // checks if current chain matches with the one we need
         // and returns true/false

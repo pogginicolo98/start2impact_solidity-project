@@ -1,7 +1,7 @@
 export default {
   contract: {
     name: "TreasureNFT",
-    address: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+    address: "0x7d8cA9EC5556a42b1B4F458a4DE1E7D10FA90F37",
     abi: [
       {
         "inputs": [],

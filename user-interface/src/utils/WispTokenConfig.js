@@ -1,7 +1,7 @@
 export default {
   contract: {
     name: "WispToken",
-    address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+    address: "0xF5D0ae294Cd5a45A14d77E3f3d7c3beA2e19Ea43",
     abi: [
       {
         "inputs": [
