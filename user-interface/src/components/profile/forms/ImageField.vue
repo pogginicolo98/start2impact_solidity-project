@@ -18,13 +18,13 @@
            </li>
          </ul>
     </div>
-  </div> <!-- Image field -->
+  </div>
 </template>
 
 <script>
-  import ImageUploaderComponent from "@/components/profile/forms/ImageUploader.vue";
   import store from "@/store";
   import { mapGetters } from "vuex";
+  import ImageUploaderComponent from "@/components/profile/forms/ImageUploader.vue";
 
   export default {
     name: "ImageFieldComponent",

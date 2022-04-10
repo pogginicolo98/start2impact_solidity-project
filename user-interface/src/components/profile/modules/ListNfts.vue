@@ -34,14 +34,14 @@
       </div>
 
     </div>
-  </div> <!-- List NFTs -->
+  </div>
 </template>
 
 <script>
+  import { mapGetters } from "vuex";
   import { apiService } from "@/common/api.service.js";
   import NftCardComponent from "@/components/utility/NftCard.vue";
   import treasureNFTMixin from "@/mixins/TreasureNFT";
-  import { mapGetters } from "vuex";
 
   export default {
     name: "ListNftsComponent",

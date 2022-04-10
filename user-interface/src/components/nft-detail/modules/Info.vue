@@ -24,8 +24,15 @@
                   <span class="placeholder col-9"></span>
                   <span class="placeholder col-8"></span>
                </p>
-               <template v-else>
-                 <p class="text-secondary">Created by <a class="link-info" href="#">{{ getCreator }}</a></p>
+               <div v-else>
+                 <p class="text-secondary">
+                   Created by
+                   <a class="link-info"
+                      target="_blank"
+                      :href="getCreatorLink"
+                      >{{ getCreator }}
+                   </a>
+                 </p>
                  <p class="text-break mb-0"
                     v-if="nft.metadata.description"
                     >{{ nft.metadata.description }}
@@ -34,10 +41,10 @@
                     v-else
                     >No description available
                  </p>
-               </template>
+               </div>
              </div>
         </div>
-      </div> <!-- Description -->
+      </div>
 
       <!-- Details -->
       <div class="accordion-item">
@@ -64,7 +71,7 @@
                  <div class="col-8 text-end">
                    <a class="link-info"
                       target="_blank"
-                      :href="contractLink"
+                      :href="getLink"
                       >{{ getContractAddr }}
                    </a>
                  </div>
@@ -98,15 +105,15 @@
 
              </div>
         </div>
-      </div> <!-- Details -->
+      </div>
 
     </div>
-  </div> <!-- Info -->
+  </div>
 </template>
 
 <script>
-  import treasureNFTMixin from "@/mixins/TreasureNFT";
   import { mapGetters } from "vuex";
+  import treasureNFTMixin from "@/mixins/TreasureNFT";
 
   export default {
     name: "InfoComponent",
@@ -149,8 +156,8 @@
         return tokenId;
       },
 
-      contractLink() {
-        return `https://ropsten.etherscan.io/tx/${this.treasureNFT._address}`;
+      getLink() {
+        return `https://ropsten.etherscan.io/address/${this.treasureNFT._address}`;
       },
 
       getCreator() {
@@ -162,6 +169,10 @@
           const str2 = String(address).slice(address.length - 4, address.length);
           return `${str1}...${str2}`;
         }
+      },
+
+      getCreatorLink() {
+        return `https://ropsten.etherscan.io/address/${this.nft.metadata.creator}`;
       },
     },
 

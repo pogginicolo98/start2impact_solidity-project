@@ -236,7 +236,7 @@ describe("Merchant contract", function () {
 
       // Check the results
       await expect(merchant.connect(addr1).buyItemOfOwnerByIndex(owner.address, 0))
-        .to.be.revertedWith("ERC20: transfer amount exceeds balance");
+        .to.be.revertedWith("WispToken: insufficient balance");
       const ownerBalance = await wispToken.balanceOf(owner.address);
       await expect(ownerBalance).to.equal(initialOwnerBalance);
       const ownerSales = await merchant.salesOf(owner.address);

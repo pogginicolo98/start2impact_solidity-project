@@ -1,28 +1,34 @@
 <template>
   <div class="sell-form">
+
+    <!-- Sell message -->
+    <div class="mb-4 text-center"
+         v-if="isApproved">
+         <h4>Establish the selling price</h4>
+         <p class="text-secondary">Set the amount of $WISP tokens your NFT will be sold for</p>
+    </div>
+
+    <!-- Approval message -->
+    <div class="mb-4 text-center"
+         v-else>
+         <h4>Sign the contract with the merchant</h4>
+         <p class="text-secondary">
+           Approve the
+           <a class="link-info"
+              target="_blank"
+              :href="getLink"
+              >TreasureNFT
+           </a>
+           contract in order to buy the NFTcontract to allow the sale of your NFT
+         </p>
+    </div>
+
+    <!-- Form -->
     <form class="needs-validation"
           novalidate
           @submit.prevent="handleSell">
 
-          <div class="mb-4 text-center" v-if="isApproved">
-            <h4>Establish the selling price</h4>
-            <p class="text-secondary">Set the amount of $WISP tokens your NFT will be sold for</p>
-          </div>
-
-          <div class="mb-4 text-center" v-else>
-            <h4>Sign the contract with the merchant</h4>
-            <p class="text-secondary">
-              Approve the
-              <a class="link-info"
-                 target="_blank"
-                 :href="contractLink"
-                 >TreasureNFT
-              </a>
-              contract in order to buy the NFTcontract to allow the sale of your NFT
-            </p>
-          </div>
-
-          <!-- Price -->
+          <!-- Input price -->
           <div class="input-wrap"
                v-if="isApproved"
                :class="{'focusOff': !price.isFocus,
@@ -67,7 +73,8 @@
           </span>
 
     </form>
-  </div> <!-- Price field -->
+
+  </div>
 </template>
 
 <script>
@@ -107,12 +114,17 @@
     created() {
       this.btnText = this.btnTextApprove;
       setTimeout(async () => {
-        const contractApproved = await this.treasureNFT.methods.isApprovedForAll(this.wallet.address, this.merchant._address).call();
-        if (contractApproved) {
-          this.isApproved = true;
-          this.btnText = this.btnTextSell;
-        } else {
+        try {
+          const contractApproved = await this.treasureNFT.methods.isApprovedForAll(this.wallet.address, this.merchant._address).call();
+          if (contractApproved) {
+            this.isApproved = true;
+            this.btnText = this.btnTextSell;
+          } else {
+            this.isApproved = false;
+          }
+        } catch (error) {
           this.isApproved = false;
+          this.logError("TreasureNFT allowance error", error);
         }
       }, 500);
     },
@@ -128,7 +140,7 @@
           : false;
       },
 
-      contractLink() {
+      getLink() {
         return `https://ropsten.etherscan.io/address/${this.treasureNFT._address}`;
       },
     },
@@ -167,8 +179,9 @@
         let formValid = true;
         this.price.errors = [];
         let decimals = countDecimalPlaces(this.price.value)
+
         if (decimals > 18) {
-          this.price.errors.push("The price exceeds 18 decimals");
+          this.price.errors.push("Maximum 18 decimal places");
           formValid = false;
         }
         if (this.price.value == null) {
@@ -180,15 +193,16 @@
           formValid = false;
         }
         if (this.price.value > (Math.pow(2, 256) - 1) / (Math.pow(10, 18))) {
-          this.price.errors.push("The price exceeds the maximum limit of the ERC-20 standard");
+          this.price.errors.push("The price exceeds the limit of the ERC-20 standard");
           formValid = false;
         }
+
         return formValid;
       },
 
-      approve() {
+      async approve() {
         this.isDisabled = true;
-        this.treasureNFT.methods.setApprovalForAll(this.merchant._address, true).send({from: this.wallet.address})
+        await this.treasureNFT.methods.setApprovalForAll(this.merchant._address, true).send({from: this.wallet.address})
           .on("transactionHash", () => {
             this.isDisabled = false;
             this.setLoadingStatus("enable");
@@ -198,26 +212,24 @@
               this.isApproved = true;
               this.$toasted.show(`Contract approved`, {icon: "scroll"});
             } else {
-              this.$toasted.show(`Something went wrong`, {icon: "skull-crossbones"});
+              this.logError("Transaction error", receipt);
             }
             this.setLoadingStatus("disable");
           })
           .catch(error => {
-            console.error("error occurred executing TreasureNFT method 'setApprovalForAll'");
-            console.log(error);
             this.isDisabled = false;
             this.isApproved = false;
             this.setLoadingStatus("disable");
-            this.$toasted.show(`Something went wrong`, {icon: "skull-crossbones"});
+            this.logError("Transaction error", error);
           });
       },
 
-      handleSell() {
+      async handleSell() {
         if (this.isApproved) {
           if (this.validateForm()) {
             const price = this.web3.utils.toWei(this.price.value);
             this.isDisabled = true;
-            this.merchant.methods.sellItem(this.tokenId, price).send({from: this.wallet.address})
+            await this.merchant.methods.sellItem(this.tokenId, price).send({from: this.wallet.address})
               .on("transactionHash", () => {
                 this.price.value = null;
                 this.isDisabled = false;
@@ -228,16 +240,14 @@
                   this.$toasted.show(`Sale created`, {icon: "scale-balanced"});
                   this.$emit('saleCreated');
                 } else {
-                  this.$toasted.show(`Something went wrong`, {icon: "skull-crossbones"});
+                  this.logError("Transaction error", receipt);
                 }
                 this.setLoadingStatus("disable");
               })
               .catch(error => {
-                console.error("error occurred executing Merchant method 'sellItem'");
-                console.log(error);
                 this.isDisabled = false;
                 this.setLoadingStatus("disable");
-                this.$toasted.show(`Something went wrong`, {icon: "skull-crossbones"});
+                this.logError("Transaction error", error);
               });
           }
         } else {

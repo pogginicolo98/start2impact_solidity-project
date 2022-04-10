@@ -26,7 +26,7 @@
            </li>
          </ul>
     </div>
-  </div> <!-- Name field -->
+  </div>
 </template>
 
 <script>

@@ -5,7 +5,7 @@
       <!-- Buttons area -->
       <div class="col-12 text-end mb-4 mb-lg-2">
         <VueCustomTooltip label="Refresh metadata" position="is-bottom">
-          <button type="button" class="btn btn-outline-secondary" @click="emitRefresh">
+          <button type="button" class="btn btn-outline-secondary" @click="refresh">
             <i class="fa-solid fa-arrow-rotate-right"></i>
           </button>
         </VueCustomTooltip>
@@ -20,25 +20,32 @@
       <div class="col-12">
 
         <!-- placeholder -->
-        <template v-if="isLoading">
+        <div v-if="isLoading">
           <h2 class="placeholder-glow">
             <span class="placeholder col-2"></span>
           </h2>
           <p class="placeholder-glow">
             <span class="placeholder col-3"></span>
           </p>
-        </template>
+        </div>
 
         <!-- Name -->
-        <template v-else>
+        <div v-else>
           <h2 class="text-truncate">{{ nft.metadata.name }}</h2>
-          <p class="text-secondary">Owned by <a class="link-info" href="#">{{ getOwner }}</a></p>
-        </template>
+          <p class="text-secondary">
+            Owned by
+            <a class="link-info"
+               target="_blank"
+               :href="getOwnerLink"
+               >{{ getOwner }}
+            </a>
+          </p>
+        </div>
 
-      </div> <!-- Name area -->
+      </div>
 
     </div>
-  </div> <!-- Title -->
+  </div>
 </template>
 
 <script>
@@ -73,10 +80,14 @@
           return `${str1}...${str2}`;
         }
       },
+
+      getOwnerLink() {
+        return `https://ropsten.etherscan.io/address/${this.nft.owner}`;
+      },
     },
 
     methods: {
-      emitRefresh() {
+      refresh() {
         this.$emit('refresh');
       },
 

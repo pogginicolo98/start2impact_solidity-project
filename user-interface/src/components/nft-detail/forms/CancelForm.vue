@@ -10,9 +10,9 @@
 </template>
 
 <script>
+  import { mapGetters } from "vuex";
   import merchantMixin from "@/mixins/Merchant";
   import treasureNFTMixin from "@/mixins/TreasureNFT";
-  import { mapGetters } from "vuex";
 
   export default {
     name: "CancelFormComponent",
@@ -56,45 +56,50 @@
       },
 
       async handleCancel() {
-        let index = null;
-        this.isDisabled = true;
-        const owner = await this.treasureNFT.methods.ownerOf(this.tokenId).call();
+        try {
+          let index = null;
+          this.isDisabled = true;
+          const owner = await this.treasureNFT.methods.ownerOf(this.tokenId).call();
 
-        if (owner.toLowerCase() == this.merchant._address.toLowerCase()) {
-          const sales = await this.merchant.methods.salesOf(this.wallet.address).call();
+          if (owner.toLowerCase() == this.merchant._address.toLowerCase()) {
+            const sales = await this.merchant.methods.salesOf(this.wallet.address).call();
 
-          for (let i = 0; i < sales; i ++) {
-            let sale = await this.merchant.methods.saleOfOwnerByIndex(this.wallet.address, i).call();
+            for (let i = 0; i < sales; i ++) {
+              let sale = await this.merchant.methods.saleOfOwnerByIndex(this.wallet.address, i).call();
 
-            if (sale.tokenId == this.tokenId) {
-              index = i;
-              break;
+              if (sale.tokenId == this.tokenId) {
+                index = i;
+                break;
+              }
             }
           }
-        }
 
-        if (index != null) {
-          this.merchant.methods.cancelSaleByIndex(index).send({from: this.wallet.address})
-            .on("transactionHash", () => {
-              this.isDisabled = false;
-              this.setLoadingStatus("enable");
-            })
-            .then(receipt => {
-              if (receipt.events.SaleCanceled.returnValues.tokenId == this.tokenId) {
-                this.$toasted.show(`Sale canceled`, {icon: "scale-balanced"});
-                this.$emit('saleCanceled');
-              } else {
-                this.$toasted.show(`Something went wrong`, {icon: "skull-crossbones"});
-              }
-              this.setLoadingStatus("disable");
-            })
-            .catch(error => {
-              console.error("error occurred executing Merchant method 'cancelSaleByIndex'");
-              console.log(error);
-              this.isDisabled = false;
-              this.setLoadingStatus("disable");
-              this.$toasted.show(`Something went wrong`, {icon: "skull-crossbones"});
-            });
+          if (index != null) {
+            this.merchant.methods.cancelSaleByIndex(index).send({from: this.wallet.address})
+              .on("transactionHash", () => {
+                this.isDisabled = false;
+                this.setLoadingStatus("enable");
+              })
+              .then(receipt => {
+                if (receipt.events.SaleCanceled.returnValues.tokenId == this.tokenId) {
+                  this.$toasted.show(`Sale canceled`, {icon: "scale-balanced"});
+                  this.$emit('saleCanceled');
+                } else {
+                  this.logError("Transaction error", receipt);
+                }
+                this.setLoadingStatus("disable");
+              })
+              .catch(error => {
+                this.isDisabled = false;
+                this.setLoadingStatus("disable");
+                this.logError("Transaction error", error);
+              });
+          } else {
+            this.isDisabled = false;
+            this.logError("Transaction error", "Sale not found");
+          }
+        } catch (error) {
+          this.logError("Transaction error", error);
         }
       },
     },

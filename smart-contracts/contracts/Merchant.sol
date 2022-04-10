@@ -167,6 +167,7 @@ abstract contract MarketplaceNFT is IMarketplaceNFT, SupportedTokens, SupportedN
     onlyExistingSales(owner)
     onlyValidIndex(owner, index)
     onlyWispApproved(msg.sender, owner, index)
+    onlySufficientBalance(msg.sender, owner, index)
   {
     uint256 amount = sales.get(owner)[index].price;
     uint256 tokenId = sales.get(owner)[index].tokenId;
@@ -211,6 +212,21 @@ abstract contract MarketplaceNFT is IMarketplaceNFT, SupportedTokens, SupportedN
     require(
       wisp.allowance(_buyer, address(this)) >= sales.get(_seller)[_index].price,
       "WispToken: contract not approved"
+    );
+    _;
+  }
+
+  /**
+   * @dev Allows execution only if the buyer has at least the required amount of ERC20 tokens
+   *
+   * @param _buyer The address of the buyer of the NFT
+   * @param _seller The address of the owner of the NFT
+   * @param _index The index representative of the sale of the owner
+   */
+  modifier onlySufficientBalance(address _buyer, address _seller, uint256 _index) {
+    require(
+      wisp.balanceOf(_buyer) >= sales.get(_seller)[_index].price,
+      "WispToken: insufficient balance"
     );
     _;
   }

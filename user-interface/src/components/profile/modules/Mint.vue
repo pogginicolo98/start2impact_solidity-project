@@ -33,16 +33,17 @@
           </span>
 
     </form>
-  </div> <!-- Mint -->
+  </div>
 </template>
 
 <script>
+  import store from "@/store";
+  import { mapGetters } from "vuex";
   import DescriptionFieldComponent from "@/components/profile/forms/DescriptionField.vue";
   import ImageFieldComponent from "@/components/profile/forms/ImageField.vue";
   import NameFieldComponent from "@/components/profile/forms/NameField.vue";
-  import store from "@/store";
   import treasureNFTMixin from "@/mixins/TreasureNFT";
-  import { mapGetters } from "vuex";
+
 
   export default {
     name: "MintComponent",
@@ -168,20 +169,17 @@
                   this.$toasted.show(`Item crafted`, {icon: "gavel"});
                   this.$emit('nftMinted', receipt.events.Transfer.returnValues.tokenId);
                 } else {
-                  this.$toasted.show(`Something went wrong`, {icon: "skull-crossbones"});
+                  this.logError("Transaction error", receipt);
                 }
                 this.setLoadingStatus("disable");
               })
               .catch(error => {
-                console.error("error occurred executing TreasureNFT method 'mint'");
-                console.log(error);
                 this.isDisabled = false;
                 this.setLoadingStatus("disable");
-                this.$toasted.show(`Something went wrong`, {icon: "skull-crossbones"});
+                this.logError("Transaction error", error);
               });
           } catch (error) {
-            console.error(error);
-            this.$toasted.show(`Something went wrong`, {icon: "skull-crossbones"});
+            this.logError("Transaction error", error);
             this.isDisabled = false;
           }
         }
@@ -193,9 +191,9 @@
     ],
 
     components: {
+      DescriptionFieldComponent,
       ImageFieldComponent,
       NameFieldComponent,
-      DescriptionFieldComponent,
     },
   }
 </script>

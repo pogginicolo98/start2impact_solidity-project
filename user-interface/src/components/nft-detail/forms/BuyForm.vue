@@ -2,23 +2,25 @@
   <div class="buy-form">
 
     <!-- Buy message -->
-    <div class="mb-4 text-center" v-if="isApproved">
-      <h4>Do you want to buy this item at the price of {{ price }} $WISP?</h4>
-      <p class="text-secondary">The amount will be deducted from your account and the NFT will be transferred to your wallet</p>
+    <div class="mb-4 text-center"
+         v-if="isApproved">
+         <h4>Do you want to buy this item at the price of {{ getPrice }} $WISP?</h4>
+         <p class="text-secondary">The amount will be deducted from your account and the NFT will be transferred to your wallet</p>
     </div>
 
     <!-- Approval message -->
-    <div class="mb-4 text-center" v-else>
-      <h4>Sign the contract with the merchant</h4>
-      <p class="text-secondary">
-        Approve the
-        <a class="link-info"
-           target="_blank"
-           :href="contractLink"
-           >WispToken
-        </a>
-        contract in order to buy the NFT
-      </p>
+    <div class="mb-4 text-center"
+         v-else>
+         <h4>Sign the contract with the merchant</h4>
+         <p class="text-secondary">
+           Approve the
+           <a class="link-info"
+              target="_blank"
+              :href="getLink"
+              >WispToken
+           </a>
+           contract in order to buy the NFT
+         </p>
     </div>
 
     <!-- Approve/Buy button -->
@@ -76,7 +78,7 @@
         try {
           let bigNumber = this.web3.utils.BN;
           let approvedAmount = new bigNumber(await this.wispToken.methods.allowance(this.wallet.address, this.merchant._address).call());
-          let price = new bigNumber(this.web3.utils.toWei(this.price));
+          let price = new bigNumber(this.price);
 
           if (approvedAmount.gte(price)) {
             this.isApproved = true;
@@ -85,10 +87,8 @@
             this.isApproved = false;
           }
         } catch (error) {
-          console.log("WispToken contract: error while executing method 'allowance'");
-          console.log(error);
           this.isApproved = false;
-          this.$toasted.show(`WispToken allowance error`, {icon: "skull-crossbones"});
+          this.logError("WispToken allowance error", error);
         }
       }, 500);
     },
@@ -98,8 +98,12 @@
         wallet: "getWallet",
       }),
 
-      contractLink() {
+      getLink() {
         return `https://ropsten.etherscan.io/address/${this.wispToken._address}`;
+      },
+
+      getPrice() {
+        return this.web3.utils.fromWei(this.price);
       },
     },
 
@@ -121,9 +125,9 @@
       async approve() {
         this.isDisabled = true;
         let bigNumber = this.web3.utils.BN;
-        let amount = new bigNumber("2").pow(new bigNumber("256")).sub(new bigNumber("1"));
+        let maxAmount = new bigNumber("2").pow(new bigNumber("256")).sub(new bigNumber("1"));
 
-        await this.wispToken.methods.approve(this.merchant._address, amount).send({from: this.wallet.address})
+        await this.wispToken.methods.approve(this.merchant._address, maxAmount.toString()).send({from: this.wallet.address})
           .on("transactionHash", () => {
             this.isDisabled = false;
             this.setLoadingStatus("enable");
@@ -131,80 +135,84 @@
           .then(receipt => {
             if (receipt.events.Approval.returnValues.owner.toLowerCase() == this.wallet.address.toLowerCase()) {
               this.isApproved = true;
-              this.$toasted.show(`Contract approved`, {icon: "scroll"});
+              this.$toasted.show("Contract approved", {icon: "scroll"});
             } else {
-              this.$toasted.show(`Something went wrong`, {icon: "skull-crossbones"});
+              this.logError("Transaction error", receipt);
             }
             this.setLoadingStatus("disable");
           })
           .catch(error => {
-            console.error("error occurred executing WispToken method 'approve'");
-            console.log(error);
             this.isDisabled = false;
             this.isApproved = false;
             this.setLoadingStatus("disable");
-            this.$toasted.show(`Something went wrong`, {icon: "skull-crossbones"});
+            this.logError("Transaction error", error);
           });
       },
 
       async getNftSale() {
-        let sellers = await this.merchant.methods.totalSellers().call();
+        try {
+          let sellers = await this.merchant.methods.totalSellers().call();
 
-        for (let sellerIndex = 0; sellerIndex < sellers; sellerIndex++) {
-          let sellerAddress = await this.merchant.methods.sellerByIndex(sellerIndex).call();
-          let sellerSales = await this.merchant.methods.salesOf(sellerAddress).call();
+          for (let sellerIndex = 0; sellerIndex < sellers; sellerIndex++) {
+            let sellerAddress = await this.merchant.methods.sellerByIndex(sellerIndex).call();
+            let sellerSales = await this.merchant.methods.salesOf(sellerAddress).call();
 
-          for (let saleIndex = 0; saleIndex < sellerSales; saleIndex++) {
-            let sale = await this.merchant.methods.saleOfOwnerByIndex(sellerAddress, saleIndex).call();
+            for (let saleIndex = 0; saleIndex < sellerSales; saleIndex++) {
+              let sale = await this.merchant.methods.saleOfOwnerByIndex(sellerAddress, saleIndex).call();
 
-            if (sale.tokenId == this.tokenId) {
-              return {
-                seller: sellerAddress,
-                index: saleIndex
-              };
+              if (sale.tokenId == this.tokenId) {
+                return {
+                  seller: sellerAddress,
+                  index: saleIndex
+                };
+              }
             }
           }
+        } catch (error) {
+          this.logError("Transaction error", error);
         }
         return null;
       },
 
       async handleBuy() {
-        if (this.isApproved) {
-          this.isDisabled = true;
-          let owner = await this.treasureNFT.methods.ownerOf(this.tokenId).call();
+        try {
+          if (this.isApproved) {
+            this.isDisabled = true;
+            let owner = await this.treasureNFT.methods.ownerOf(this.tokenId).call();
 
-          if (owner.toLowerCase() == this.merchant._address.toLowerCase()) {
-            let sale = await this.getNftSale();
+            if (owner.toLowerCase() == this.merchant._address.toLowerCase()) {
+              let sale = await this.getNftSale();
 
-            if (sale != null) {
-              await this.merchant.methods.buyItemOfOwnerByIndex(sale.seller, sale.index).send({from: this.wallet.address})
-                .on("transactionHash", () => {
-                  this.isDisabled = false;
-                  this.setLoadingStatus("enable");
-                })
-                .then(receipt => {
-                  if (receipt.events.ItemSold.returnValues.tokenId == this.tokenId) {
-                    this.$toasted.show(`Item purchased`, {icon: "sack-dollar"});
-                    this.$emit('saleExecuted');
-                  } else {
-                    this.$toasted.show(`Something went wrong`, {icon: "skull-crossbones"});
-                  }
-                  this.setLoadingStatus("disable");
-                })
-                .catch(error => {
-                  console.error("error occurred executing Merchant method 'buyItemOfOwnerByIndex'");
-                  console.log(error);
-                  this.isDisabled = false;
-                  this.setLoadingStatus("disable");
-                  this.$toasted.show(`Something went wrong`, {icon: "skull-crossbones"});
-                });
-            } else {
-              console.log("error");
-              this.isDisabled = false;
+              if (sale != null) {
+                await this.merchant.methods.buyItemOfOwnerByIndex(sale.seller, sale.index).send({from: this.wallet.address})
+                  .on("transactionHash", () => {
+                    this.isDisabled = false;
+                    this.setLoadingStatus("enable");
+                  })
+                  .then(receipt => {
+                    if (receipt.events.ItemSold.returnValues.tokenId == this.tokenId) {
+                      this.$toasted.show(`Item purchased`, {icon: "sack-dollar"});
+                      this.$emit('saleExecuted');
+                    } else {
+                      this.logError("Transaction error", receipt);
+                    }
+                    this.setLoadingStatus("disable");
+                  })
+                  .catch(error => {
+                    this.isDisabled = false;
+                    this.setLoadingStatus("disable");
+                    this.logError("Transaction error", error);
+                  });
+              } else {
+                this.isDisabled = false;
+                this.logError("Transaction error", "Sale not found");
+              }
             }
+          } else {
+            await this.approve();
           }
-        } else {
-          await this.approve();
+        } catch (error) {
+          this.logError("Transaction error", error);
         }
       },
     },

@@ -34,15 +34,16 @@
       </div>
 
     </div>
-  </div> <!-- NFTs for sale -->
+  </div>
 </template>
 
 <script>
+  import { mapGetters } from "vuex";
   import { apiService } from "@/common/api.service.js";
   import NftCardComponent from "@/components/utility/NftCard.vue";
   import merchantMixin from "@/mixins/Merchant";
   import treasureNFTMixin from "@/mixins/TreasureNFT";
-  import { mapGetters } from "vuex";
+
 
   export default {
     name: "NftsForSaleComponent",
@@ -85,7 +86,7 @@
           };
           let sale = await this.merchant.methods.saleOfOwnerByIndex(this.wallet.address, i).call();
           nft.tokenId = sale.tokenId;
-          nft.price = this.web3.utils.fromWei(sale.price);
+          nft.price = sale.price;
           let tokenUri = await this.treasureNFT.methods.tokenURI(sale.tokenId).call();
           await apiService(tokenUri)
             .then(response => {

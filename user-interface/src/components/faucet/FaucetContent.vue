@@ -4,18 +4,18 @@
       <div class="col-12 col-md-9 col-lg-7 col-xl-6 col-xl-6 box p-4 p-sm-5">
 
         <!-- Title -->
-        <div class="text-center">
+        <div class="text-center mb-5">
           <h1 class="mb-3">Open your welcome chest</h1>
-          <h6 class="text-secondary">Get 1000 $WISP free, enter your address below and redeem!</h6>
+          <p class="text-secondary">Get 1000 $WISP free, enter your address below and redeem!</p>
         </div>
 
         <!-- Form -->
-        <form class="needs-validation mt-4"
+        <form class="needs-validation"
               novalidate
               @submit.prevent="handleSubmit">
 
               <!-- Input address -->
-              <div class="mb-4">
+              <div class="mb-3">
                 <label class="d-block position-relative input-wrap"
                        :class="{'focusOn': isFocused,
                                 'focusOff': !isFocused}">
@@ -55,6 +55,13 @@
               </span>
 
         </form>
+
+        <!-- Spacer -->
+        <div class="row justify-content-center my-2">
+          <div class="col-10 text-secondary">
+            <hr>
+          </div>
+        </div>
 
         <!-- Add token button -->
         <span class="d-grid btn-wrap mt-2">

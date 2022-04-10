@@ -92,7 +92,7 @@
 
       getPrice() {
         return this.web3.utils.fromWei(this.nft.price);
-      }
+      },
     },
   }
 </script>

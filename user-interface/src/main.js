@@ -55,6 +55,13 @@ Vue.mixin({
       return this.$web3
     }
   },
+  methods: {
+    logError(message, error) {
+      console.log(message);
+      console.log(error);
+      this.$toasted.show(message, {icon: "skull-crossbones"});
+    },
+  },
 })
 
 Vue.config.productionTip = false;

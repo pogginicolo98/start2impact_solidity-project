@@ -120,10 +120,9 @@
           let metadata = await apiService(tokenUri);
           return metadata;
         } catch (error) {
-          console.log(error);
+          this.logError("Transaction error", error);
           return null;
         }
-
       },
 
       async getSale(tokenId) {
@@ -142,12 +141,10 @@
               }
             }
           }
-
-          return null;
         } catch (error) {
-          console.log(error);
-          return null;
+          this.logError("Transaction error", error);
         }
+        return null;
       },
 
       async getOwner(tokenId) {
@@ -155,7 +152,7 @@
           let owner = await this.treasureNFT.methods.ownerOf(tokenId).call();
           return owner;
         } catch (error) {
-          console.log(error);
+          this.logError("Transaction error", error);
           return null;
         }
       },
@@ -186,7 +183,7 @@
               this.notFound = true;
             }
           } catch (error) {
-            console.log(error);
+            this.logError("Transaction error", error);
             this.notFound = true;
           }
         }

@@ -26,7 +26,7 @@
                 </transition>
               </div>
 
-       </label> <!-- Box image -->
+       </label>
 
        <!-- Hidden input image -->
        <input accept="image/*"
@@ -47,7 +47,7 @@
          </div>
        </transition>
 
-  </div> <!-- Image uploader -->
+  </div>
 </template>
 
 <script>

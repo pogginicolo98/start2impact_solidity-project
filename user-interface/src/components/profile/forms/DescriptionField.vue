@@ -27,7 +27,7 @@
            </li>
          </ul>
     </div>
-  </div> <!-- Description field -->
+  </div>
 </template>
 
 <script>
