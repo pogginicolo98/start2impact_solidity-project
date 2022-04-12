@@ -1,9 +1,10 @@
 // Only requiring hardhat-waffle here because it depends on hardhat-ethers so adding both isn't necessary.
 require("@nomiclabs/hardhat-waffle");
 require('hardhat-docgen');
+require("@nomiclabs/hardhat-etherscan");
 require('dotenv').config();
 
-const { API_URL, PRIVATE_KEY } = process.env;
+const { API_URL, PRIVATE_KEY, ETHERSCAN_API_KEY } = process.env;
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
@@ -27,5 +28,14 @@ module.exports = {
     path: './docs',
     clear: true,
     runOnCompile: false,
+  },
+  etherscan: {
+    apiKey: {
+        mainnet: `${ETHERSCAN_API_KEY}`,
+        ropsten: `${ETHERSCAN_API_KEY}`,
+        rinkeby: `${ETHERSCAN_API_KEY}`,
+        goerli: `${ETHERSCAN_API_KEY}`,
+        kovan: `${ETHERSCAN_API_KEY}`
+    }
   }
 };
