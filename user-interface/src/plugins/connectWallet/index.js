@@ -31,24 +31,16 @@ setTimeout(async () => {
         window.location.reload();
       });
 
-      // targets Ropsten chain, id 3
       const targetNetworkId = '0x3';
-
-      // checks if current chain matches with the one we need
-      // and returns true/false
       const currentChainId = await window.ethereum.request({
         method: 'eth_chainId',
       });
 
-      // return true if network id is the same
-      if (currentChainId == targetNetworkId){
-        console.log(`This is localhost: ${currentChainId}`);
-      } else {
+      if (currentChainId != targetNetworkId){
         await window.ethereum.request({
             method: 'wallet_switchEthereumChain',
             params: [{ chainId: targetNetworkId }],
           });
-          // refresh
         window.location.reload();
       }
 
@@ -59,8 +51,6 @@ setTimeout(async () => {
     }
   } else {
     console.log("setTimeout else");
-    // const web3Instance = new Web3("https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161");
-    // store.commit("setWeb3Instance", web3Instance);
   }
 
   store.commit("SET_WALLET_CHECK_IN_PROCCESS", false);
@@ -105,24 +95,16 @@ export default {
           window.location.reload();
         });
 
-        // targets Ropsten chain, id 3
         const targetNetworkId = '0x3';
-
-        // checks if current chain matches with the one we need
-        // and returns true/false
         const currentChainId = await window.ethereum.request({
           method: 'eth_chainId',
         });
 
-        // return true if network id is the same
-        if (currentChainId == targetNetworkId){
-          console.log(`This is localhost: ${currentChainId}`);
-        } else {
+        if (currentChainId != targetNetworkId){
           await window.ethereum.request({
               method: 'wallet_switchEthereumChain',
               params: [{ chainId: targetNetworkId }],
             });
-            // refresh
           window.location.reload();
         }
 

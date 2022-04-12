@@ -7,7 +7,8 @@ import store from "../../store";
  */
 setTimeout(async () => {
   try {
-    const ipfs = create('http://13.38.213.148:5001/');
+    const server = this.$store.getters.getServer;
+    const ipfs = create(`http://${server}/`);
     store.commit("SET_IPFS", ipfs);
   } catch (error) {
     console.log("Error connecting to IPFS node");
@@ -20,7 +21,8 @@ export default {
     Vue.prototype.$connectIPFS = async () => {
       console.log("Connect IPFS");
       try {
-        const ipfs = create('http://13.38.213.148:5001/');
+        const server = this.$store.getters.getServer;
+        const ipfs = create(`http://${server}/`);
         store.commit("SET_IPFS", ipfs);
       } catch (error) {
         console.log("Error connecting to IPFS node");

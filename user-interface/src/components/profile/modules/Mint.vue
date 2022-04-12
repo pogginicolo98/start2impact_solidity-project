@@ -74,6 +74,7 @@
         wallet: "getWallet",
         form: "getMintForm",
         ipfs: "getIpfs",
+        ipfsServer: "getServer",
       }),
     },
 
@@ -146,7 +147,7 @@
 
             if (image != null) {
               const imageCid = await this.ipfs.add(image);
-              imageUri = `http://192.168.1.143/ipfs/${imageCid.path}`;
+              imageUri = `http://${this.ipfsServer}/ipfs/${imageCid.path}`;
             }
             const metadata = {
               "name": name,
@@ -155,7 +156,7 @@
               "creator": this.wallet.address
             }
             const metadataCid = await this.ipfs.add(JSON.stringify(metadata));
-            const metadataUri = `http://192.168.1.143/ipfs/${metadataCid.path}`;
+            const metadataUri = `http://${this.ipfsServer}/ipfs/${metadataCid.path}`;
 
             this.treasureNFT.methods.mint(this.wallet.address, metadataUri).send({from: this.wallet.address})
               .on("transactionHash", () => {

@@ -25,6 +25,10 @@ if (window.ethereum) {
 }
 Vue.prototype.$web3 = web3Instance;
 
+// Init IPFS
+let ipfsServer = window.location.hostname;
+store.commit("SET_SERVER", ipfsServer);
+
 // Plugins
 Vue.use(connectWallet);
 Vue.use(connectIpfs);
