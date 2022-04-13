@@ -69,16 +69,65 @@ This project is for **illustrative** and **educational** purposes only, therefor
 # Deploy in production
 
 ### Setup
-...
+Clone the repository and install the required packages:
+```
+$ sudo apt-get update
+$ sudo apt-get upgrade
+$ sudo apt-get install net-tools nginx
+$ git clone https://github.com/pogginicolo98/start2impact_solidity-project.git
+```
 
 ### IPFS
-...
+Download and init IPFS:
+```
+$ mkdir ipfs-node
+ipfs-node$ wget https://dist.ipfs.io/go-ipfs/v0.12.0/go-ipfs_v0.12.0_linux-amd64.tar.gz
+ipfs-node$ tar -xvzf go-ipfs_v0.12.0_linux-amd64.tar.gz
+ipfs-node/go-ipfs$ sudo bash install.sh
+$ ipfs init --profile server
+$ sudo systemctl daemon-reload
+$ sudo systemctl enable ipfs
+$ sudo systemctl start ipfs
+$ ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin "[\"*\"]"
+$ ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods '["PUT", "GET", "POST"]'
+$ sudo systemctl restart ipfs
+```
+Check that the service is running correctly:
+```
+$ sudo systemctl status ipfs
+```
 
 ### Nginx
-...
+Configure Nginx to Proxy Pass to IPFS and serve the vue.js app. It helps to protect the website from attackers.\
+Update `/etc/nginx/nginx.conf` Nginx config file in order to upload large files (images in that case)
+```
+http{
+	...
+	client_max_body_size 100M; 
+}
+```
+Open `start2impact_solidity-project/setup/PROJECT_NAME` and replace placeholders with production data.\
+Then add the website configuration:
+```
+start2impact_solidity-project$ sudo cp setup/PROJECT_NAME /etc/nginx/sites-available/chainbid
+$ sudo ln -s /etc/nginx/sites-available/echoes_of_the_past /etc/nginx/sites-enabled/
+$ sudo nginx -t
+$ sudo systemctl restart nginx
+$ sudo systemctl enable nginx
+```
+Check that the service is running correctly:
+```
+$ sudo systemctl status nginx
+```
 
 ### Reboot
-...
+If everythings is running correctly reboot the system and then the web-app should be available at the address of the server: `$ sudo reboot`
 
 ### Debugging
-...
+List of commands useful for debugging possible errors:\
+`$ sudo journalctl -u <service>`: Service logs\
+`$ sudo systemctl status <service>`: Service status
+
+**Services**
+* ipfs
+* nginx
