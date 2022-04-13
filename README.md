@@ -56,7 +56,20 @@ This project is for **illustrative** and **educational** purposes only, therefor
 # Components and technologies
 
 ### Smart contracts
-...
+The dapp is made up of 4 main smart contracts:
+
+1. **[WispToken](https://ropsten.etherscan.io/address/0xF5D0ae294Cd5a45A14d77E3f3d7c3beA2e19Ea43)**  
+	* Standard: **ERC-20**  
+	* Description: Token contract that keeps track of the token of the platform, made with [Openzeppelin](https://docs.openzeppelin.com/contracts/4.x/erc20) libraries.
+2. **[TreasureNFT](https://ropsten.etherscan.io/address/0x7d8cA9EC5556a42b1B4F458a4DE1E7D10FA90F37)**  
+	* Standard: **ERC-721**  
+	* Description: NFT contract that keeps track and manage the NFTs of the platform, made with [Openzeppelin](https://docs.openzeppelin.com/contracts/4.x/erc721) libraries.
+3. **[WelcomeChest](https://ropsten.etherscan.io/address/0x4A057427E66A3469cDcB626B1df2328759303D83)**  
+	* Standard: **None**  
+	* Description: Faucet contract that transfers some $WISP from its account to the account provided.
+4. **[Merchant](https://ropsten.etherscan.io/address/0x480E600AAA113706d3470A206A138E61dcd7a394)**  
+	* Standard: **None**  
+	* Description: 213
 
 ### Front-end
 ...
@@ -83,7 +96,7 @@ Download and init IPFS:
 $ mkdir ipfs-node
 ipfs-node$ wget https://dist.ipfs.io/go-ipfs/v0.12.0/go-ipfs_v0.12.0_linux-amd64.tar.gz
 ipfs-node$ tar -xvzf go-ipfs_v0.12.0_linux-amd64.tar.gz
-ipfs-node/go-ipfs$ sudo bash install.sh
+ipfs-node$ sudo bash go-ipfs/install.sh
 $ ipfs init --profile server
 $ sudo systemctl daemon-reload
 $ sudo systemctl enable ipfs
@@ -109,7 +122,7 @@ http{
 Open `start2impact_solidity-project/setup/PROJECT_NAME` and replace placeholders with production data.\
 Then add the website configuration:
 ```
-start2impact_solidity-project$ sudo cp setup/PROJECT_NAME /etc/nginx/sites-available/chainbid
+start2impact_solidity-project$ sudo cp setup/PROJECT_NAME /etc/nginx/sites-available/echoes_of_the_past
 $ sudo ln -s /etc/nginx/sites-available/echoes_of_the_past /etc/nginx/sites-enabled/
 $ sudo nginx -t
 $ sudo systemctl restart nginx
