@@ -1,9 +1,9 @@
 <h1 align="center">Start2Impact Solidity Project:<br>Echoes Of The Past</h1>
 
 ### Description:
-Prototype of a fantasy themed NFT marketplace.  
-This is a decentralized application through which NFTs can be minted and sold for the platform's token.  
-Minting and sale are managed by smart contracts, while the metadata are saved via the IPFS protocol.
+Prototype of a fantasy themed **NFT marketplace**.  
+This is a decentralized application through which NFTs can be **minted** and **sold** for the platform's **token**.  
+Minting and sale are managed by **smart contracts**, while the metadata are saved via the **IPFS protocol**.
 
 ### Notes for use:
   * In order to interact with the dapp you must connect the **[Metamask](https://metamask.io/)** wallet and select the **Ropsten network**, in addition you will need some Ethers (**$rETH**) to be able to pay the gas fees. You can get **$rETH** for free via a **faucet**. (**[Dimensions](https://faucet.dimensions.network/)**, **[Egorfine](https://faucet.egorfine.com/)**, **[Ropsten faucet](https://ropsten.faucet.kr/)**)
@@ -69,13 +69,22 @@ The dapp is made up of 4 main smart contracts:
 	* Description: Faucet contract that transfers some $WISP from its account to the account provided.
 4. **[Merchant](https://ropsten.etherscan.io/address/0x480E600AAA113706d3470A206A138E61dcd7a394)**  
 	* Standard: **None**  
-	* Description: 213
+	* Description: Contract that manages the sale of NFTs. Users can list NFTs by setting the price in WISP. Once the sales order is created, the smart contract blocks the NFT until the order is executed or canceled. If the order is executed the NFT for sale will be transferred to the buyer and the sum in WISP will be transferred to the seller.
 
 ### Front-end
-...
+* [Vue.js (2.6)](https://github.com/vuejs/vue#readme) - Core
+* [Vue router (3.5)](https://github.com/vuejs/vue-router#readme) - Page routing
+* [Vuex (3.6)](https://github.com/vuejs/vuex#readme) - State management
+* [Bootstrap (5.1)](https://getbootstrap.com/) - Style
+* [Web3.js (1.7)](https://github.com/ChainSafe/web3.js#readme) - Ethereum interface
+* [Detect provider (1.2)](https://github.com/MetaMask/detect-provider#readme) - Wallet management
+* [IPFS HTTP client (55.0)](https://www.npmjs.com/package/ipfs-http-client) - Decentralized storage
 
 ### Storage
-...
+The server hosting the webapp also provide an [IPFS](https://ipfs.io/) node to allow users to upload and request metadata and resources quickly.  
+The node is publicly accessible at the following routes:
+* /api/v0/add - Resource upload
+* /ipfs - Resource request
 
 ***
 
