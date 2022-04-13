@@ -1,0 +1,30 @@
+server {
+    server_name <IP_ADDRESS>;
+    charset utf-8;
+
+    # IPFS APIs requests
+    location /api/v0/add {
+        proxy_pass http://localhost:5001;
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        allow all;
+    }
+
+    # IPFS data requests
+    location /ipfs {
+        proxy_pass http://localhost:8080;
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        allow all;
+    }
+
+    # Webapp
+    location / {
+        root /home/<USER>/<PROJECT_DIR>/dist;
+        try_files $uri /index.html;
+    }
+
+    # logs
+    error_log  /var/log/nginx/<PROJECT-NAME>.log;
+    access_log /var/log/nginx/<PROJECT-NAME>.log;
+}
