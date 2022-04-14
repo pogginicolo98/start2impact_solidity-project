@@ -50,9 +50,9 @@ This page is the equivalent of a faucet where you can request free tokens (**$WI
 This page is similar to a ***profile*** page. The ***Den*** is divided into three sections:
 * **Craft new items**  
 	In this section you can mint new NFTs, the metadata will be saved via IPFS and associated with the token that is being minted.
-* **Available NFTs**  
+* **Your items available**  
 	Shown here are your NFTs that are not for sale and available for transfer or sale.
-* **NFTs for sale**  
+* **Your items for sale**  
 	Shown here are your NFTs which are blocked by the **[Merchant](https://ropsten.etherscan.io/address/0x480E600AAA113706d3470A206A138E61dcd7a394)** smart contract for sale.
 
 ### Merchant
