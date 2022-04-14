@@ -13,7 +13,7 @@ Minting and sale are managed by **smart contracts**, while the metadata are save
 ### Disclaimer:
 This project is for **illustrative** and **educational** purposes only, therefore some structural choices such as index sales management and the absence of a back-end or sub-graphs are **not intended as definitive and suitable solutions for a real use case**.
 
-**Docs:** [Project presentation slides](https://github.com/pogginicolo98/start2impact_final-project/blob/f6252fbec2a5c0d103f4663f683b39d397eb60f8/docs/Project%20presentation.pdf)  
+**Docs:** [Project presentation slides](https://github.com/pogginicolo98/start2impact_solidity-project/blob/7caf956b74110d6051b6c93aeed769530ed981d6/docs/start2impact_solidity-project%20presentation.pdf)  
 **Live demo:** [Echoes Of The Past](http://13.38.213.148/)
 
 ***
