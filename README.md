@@ -38,21 +38,30 @@ This project is for **illustrative** and **educational** purposes only, therefor
 ***
 
 # User interface
-L'interfaccia è molto simile ad un comune marketplace NFT ed essendo questo un prototipo le funzionalità sono poche ed essenziali.  
+The interface is very similar to a common NFT marketplace but with a **customized user experience**. This means that the classic **minting** and **trading** operations are contextualized in a **fantasy** world, where NFTs are simple items to ***craft*** and the sale is brokered by a ***merchant***.  
 To facilitate testing, there is a form to request some platform's tokens for free.
 
-
 ### Welcome chest
-Questa sezione 
+`/welcome-chest`  
+This page is the equivalent of a faucet where you can request free tokens (**$WISP**) in order to interact with the platform without friction.
 
 ### Den
-...
+`/den`  
+This page is similar to a ***profile*** page. The ***Den*** is divided into three sections:
+* **Craft new items**  
+	In this section you can mint new NFTs, the metadata will be saved via IPFS and associated with the token that is being minted.
+* **Available NFTs**  
+	Shown here are your NFTs that are not for sale and available for transfer or sale.
+* **NFTs for sale**  
+	Shown here are your NFTs which are blocked by the **[Merchant](https://ropsten.etherscan.io/address/0x480E600AAA113706d3470A206A138E61dcd7a394)** smart contract for sale.
 
 ### Merchant
-...
+`/merchant`  
+This is the main page, all NFTs for sale are listed here. By clicking on one of them you will be redirected to the dedicated page in order to see the detailed information of the selected NFT and possibly proceed with the purchase.
 
 ### NFT detail
-...
+`/merchant/<TOKEN_ID>`  
+This page shows the complete details of the NFT, if it is yours you can decide to put it on sale or withdraw it if it is already, otherwise if it is not yours and it is for sale you can proceed with the purchase. In addition to these operations, you can consult the description and additional information such as the ID of the token, the standard and the address of the contract that issued it.
 
 ***
 
