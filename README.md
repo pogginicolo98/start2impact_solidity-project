@@ -38,9 +38,12 @@ This project is for **illustrative** and **educational** purposes only, therefor
 ***
 
 # User interface
+L'interfaccia è molto simile ad un comune marketplace NFT ed essendo questo un prototipo le funzionalità sono poche ed essenziali.  
+To facilitate testing, there is a form to request some platform's tokens for free.
+
 
 ### Welcome chest
-...
+Questa sezione 
 
 ### Den
 ...
@@ -83,8 +86,8 @@ The dapp is made up of 4 main smart contracts:
 ### Storage
 The server hosting the webapp also provide an [IPFS](https://ipfs.io/) node to allow users to upload and request metadata and resources quickly.  
 The node is publicly accessible at the following routes:
-* /api/v0/add - Resource upload
-* /ipfs - Resource request
+* `/api/v0/add` - Resource upload
+* `/ipfs` - Resource request
 
 ***
 
@@ -151,5 +154,5 @@ List of commands useful for debugging possible errors:\
 `$ sudo systemctl status <service>`: Service status
 
 **Services**
-* ipfs
-* nginx
+* `ipfs`
+* `nginx`
